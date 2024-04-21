@@ -36,6 +36,7 @@ fun SignUpScreen(
     onUsernameChange: (String) -> Unit,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
+    onNavigateToLogin: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -75,7 +76,7 @@ fun SignUpScreen(
             isPasswordTextField = true
         )
         Button(
-            onClick = { /*TODO*/ },
+            onClick = { onNavigateToLogin() },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(ButtonHeight),
@@ -99,6 +100,7 @@ fun PreviewSignUpScreen() {
         uiState = SignUpState(),
         onUsernameChange = {},
         onEmailChange = {},
-        onPasswordChange = {}
+        onPasswordChange = {},
+        onNavigateToLogin = {}
     )
 }

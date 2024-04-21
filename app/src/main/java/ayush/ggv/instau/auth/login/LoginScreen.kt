@@ -28,11 +28,12 @@ import ayush.ggv.instau.ui.theme.ButtonHeight
 import ayush.ggv.instau.ui.theme.ExtraLargeSpacing
 import ayush.ggv.instau.ui.theme.LargeSpacing
 import ayush.ggv.instau.ui.theme.MediumSpacing
+import com.ramcosta.composedestinations.annotation.Destination
 
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
-    uiState: SignUpState,
+    uiState: LoginState,
     onUsernameChange: (String) -> Unit,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
@@ -92,7 +93,7 @@ fun LoginScreen(
 @Preview
 fun PreviewLoginScreen() {
     LoginScreen(
-        uiState = SignUpState(),
+        uiState = LoginState(),
         onUsernameChange = {},
         onEmailChange = {},
         onPasswordChange = {}
