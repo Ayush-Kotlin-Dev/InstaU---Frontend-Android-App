@@ -90,4 +90,17 @@ dependencies {
 
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.28.0")
 
+    //serialization
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+
+    //dependencies versions
+    val coroutinesVersion = "1.6.4"
+    val koinVersion = "3.3.2"
+    val ktorVersion = "2.2.1"
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
+    implementation("io.ktor:ktor-client-core:$ktorVersion")
+    implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+    api("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+    api("io.insert-koin:koin-core:$koinVersion")
+
 }
