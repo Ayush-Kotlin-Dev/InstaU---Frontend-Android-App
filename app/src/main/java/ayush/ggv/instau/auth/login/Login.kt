@@ -1,6 +1,8 @@
 package ayush.ggv.instau.auth.login
 
 import androidx.compose.runtime.Composable
+import ayush.ggv.instau.destinations.HomeDestination
+import ayush.ggv.instau.destinations.LoginDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
@@ -10,12 +12,16 @@ import org.koin.androidx.compose.koinViewModel
 fun Login(
     navigator: DestinationsNavigator
 ) {
-    val viewModel : LoginViewModel  = koinViewModel()
+    val viewModel: LoginViewModel = koinViewModel()
     LoginScreen(
-        uiState = viewModel.uiState ,
-        onUsernameChange = viewModel::updateEmail,
-        onEmailChange =  viewModel::updateEmail,
-    ) {
-
-    }
+        uiState = viewModel.uiState,
+        onEmailChange = viewModel::updateEmail,
+        onPasswordChange = viewModel::updatePassword,
+        onNavigateToHome = {
+            navigator.navigate(HomeDestination) {
+                popUpTo(LoginDestination.route) { inclusive = true }
+            }
+        },
+        onSignInClick = viewModel::signIn
+    )
 }

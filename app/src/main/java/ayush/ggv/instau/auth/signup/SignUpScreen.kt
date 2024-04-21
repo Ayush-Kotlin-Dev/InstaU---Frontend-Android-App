@@ -1,7 +1,9 @@
-package ayush.ggv.instau.auth
+package ayush.ggv.instau.auth.signup
 
 import androidx.compose.runtime.Composable
-import ayush.ggv.instau.auth.destinations.LoginDestination
+import ayush.ggv.instau.destinations.HomeDestination
+import ayush.ggv.instau.destinations.LoginDestination
+import ayush.ggv.instau.destinations.SignUpNDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
@@ -11,7 +13,7 @@ import org.koin.androidx.compose.koinViewModel
 fun SignUpN(
     navigator: DestinationsNavigator
 ) {
-    val viewModel : SignUpViewModel  = koinViewModel()
+    val viewModel : SignUpViewModel = koinViewModel()
 
     SignUpScreen(
         uiState = viewModel.uiState,
@@ -21,5 +23,11 @@ fun SignUpN(
         onNavigateToLogin = {
             navigator.navigate(LoginDestination)
         },
+        onNavigateToHome = {
+            navigator.navigate(HomeDestination){
+                popUpTo(SignUpNDestination.route){inclusive = true}
+            }        },
+        onSignupClick = viewModel::signUp
+
     )
 }

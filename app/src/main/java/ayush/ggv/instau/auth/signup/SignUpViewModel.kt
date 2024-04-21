@@ -1,29 +1,25 @@
-package ayush.ggv.instau.auth.login
+package ayush.ggv.instau.auth.signup
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ayush.ggv.instau.data.auth.domain.usecases.signinusecase.SignInuseCase
 import ayush.ggv.instau.data.auth.domain.usecases.signupusecases.SignUpUseCase
 import kotlinx.coroutines.launch
 import ayush.ggv.instau.util.Result
+class SignUpViewModel(
+    private val signUpUseCase: SignUpUseCase
+) : ViewModel() {
 
+    var uiState by mutableStateOf(SignUpState())
+    private set
 
-class LoginViewModel(
-    private val signInuseCase: SignInuseCase
-)  : ViewModel(
-
-){
-    var uiState by mutableStateOf(LoginState())
-        private set
-
-    fun signIn (){
+    fun signUp(){
         viewModelScope.launch {
-            uiState = uiState.copy( isAuthenticating = true)
-
-            val authResultData = signInuseCase(uiState.email, uiState.password)
+            uiState = uiState.copy(isAuthenticating = true)
+            val authResultData = signUpUseCase(uiState.username, uiState.email, uiState.password)
+            uiState = uiState.copy(isAuthenticating = false)
 
             uiState = when(authResultData){
                 is Result.Error -> {
@@ -33,7 +29,6 @@ class LoginViewModel(
                     )
                 }
                 is Result.Success -> {
-
                     uiState.copy(
                         isAuthenticating = false,
                         authenticationSucceed = true
@@ -44,11 +39,14 @@ class LoginViewModel(
                     uiState.copy(
                         isAuthenticating = true
                     )
+                }
             }
         }
     }
-    }
 
+    fun updateUsername(username: String) {
+        uiState = uiState.copy(username = username)
+    }
     fun updateEmail(email: String) {
         uiState = uiState.copy(email = email)
     }
@@ -58,11 +56,12 @@ class LoginViewModel(
 
 }
 
-data class LoginState(
+data class SignUpState(
+    val username : String = "",
     val email: String = "",
     val password: String = "",
-    val isAuthenticating: Boolean = false,
-    val authErrorMessage: String? = null,
+    val isAuthenticating : Boolean = false,
+    val authErrorMessage: String ? = null,
     val authenticationSucceed: Boolean = false
 
 )

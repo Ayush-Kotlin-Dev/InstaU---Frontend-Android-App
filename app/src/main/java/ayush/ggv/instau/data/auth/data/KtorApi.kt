@@ -10,11 +10,11 @@ import io.ktor.http.takeFrom
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
+private const val BASE_URL = "http://192.168.1.4:8081/ "
 
-private const val BASE_URL = "http://192.168.1.4:8080/"
-abstract class KtorApi{
+abstract class KtorApi {
     val client = HttpClient {
-        install(ContentNegotiation) {
+        install(ContentNegotiation){
             json(Json {
                 ignoreUnknownKeys = true
                 useAlternativeNames = false
@@ -22,7 +22,7 @@ abstract class KtorApi{
         }
     }
 
-    fun HttpRequestBuilder.endPoint(path: String){
+    fun HttpRequestBuilder.endPoint(path: String) {
         url {
             takeFrom(BASE_URL)
             path(path)

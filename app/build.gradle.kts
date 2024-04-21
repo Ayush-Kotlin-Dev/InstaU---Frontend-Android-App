@@ -1,8 +1,10 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-    kotlin("plugin.serialization") version "1.8.20"
     id("com.google.devtools.ksp")
+    id ("kotlinx-serialization")
+
+
 
 
 }
@@ -98,8 +100,9 @@ dependencies {
     val koinVersion = "3.3.2"
     val ktorVersion = "2.2.1"
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
-    implementation("io.ktor:ktor-client-core:$ktorVersion")
-    implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+
+    implementation ("io.ktor:ktor-client-cio:$ktorVersion")
+            implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
     api("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
     api("io.insert-koin:koin-core:$koinVersion")
 

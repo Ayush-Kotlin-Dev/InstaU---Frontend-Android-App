@@ -1,4 +1,4 @@
-package ayush.ggv.instau.auth.login
+package ayush.ggv.instau.auth.signup
 
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -32,19 +32,24 @@ import ayush.ggv.instau.ui.theme.ButtonHeight
 import ayush.ggv.instau.ui.theme.ExtraLargeSpacing
 import ayush.ggv.instau.ui.theme.LargeSpacing
 import ayush.ggv.instau.ui.theme.MediumSpacing
-import com.ramcosta.composedestinations.annotation.Destination
 
 @Composable
-fun LoginScreen(
+fun SignUpScreen(
     modifier: Modifier = Modifier,
-    uiState: LoginState,
+    uiState: SignUpState,
+    onUsernameChange: (String) -> Unit,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
+    onNavigateToLogin: () -> Unit,
     onNavigateToHome: () -> Unit,
-    onSignInClick : () -> Unit
+    onSignupClick: () -> Unit
 ) {
     val context = LocalContext.current
-    Box(modifier = Modifier.fillMaxSize() , contentAlignment = Alignment.Center){
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
         Column(
             modifier = modifier
                 .fillMaxSize()
@@ -65,6 +70,11 @@ fun LoginScreen(
         ) {
 
             CustomTextFields(
+                value = uiState.username,
+                onValueChange = onUsernameChange,
+                hint = R.string.username_hint
+            )
+            CustomTextFields(
                 value = uiState.email,
                 onValueChange = onEmailChange,
                 hint = R.string.email_hint,
@@ -78,7 +88,7 @@ fun LoginScreen(
                 isPasswordTextField = true
             )
             Button(
-                onClick = { onSignInClick() },
+                onClick = { onSignupClick() },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(ButtonHeight),
@@ -87,43 +97,43 @@ fun LoginScreen(
                     pressedElevation = 0.dp
                 ),
                 shape = MaterialTheme.shapes.medium
-            ){
-                Text(text = stringResource(id = R.string.login_button_label) )
+            ) {
+                Text(text = stringResource(id = R.string.signup_button_hint))
             }
 
 
         }
-
-        if(uiState.isAuthenticating){
-            //show progress bar
-            CircularProgressIndicator()
+    }
+    if(uiState.isAuthenticating){
+        //show progress bar
+        CircularProgressIndicator()
+    }
+    LaunchedEffect (
+        key1 = uiState.authenticationSucceed  ,
+        key2 = uiState.authErrorMessage
+    ){
+        if (uiState.authenticationSucceed) {
+            onNavigateToHome()
         }
-        LaunchedEffect (
-            key1 = uiState.authenticationSucceed  ,
-            key2 = uiState.authErrorMessage
-        ){
-            if (uiState.authenticationSucceed) {
-                onNavigateToHome()
-            }
 
-            if (uiState.authErrorMessage != null) {
-                Toast.makeText(context, uiState.authErrorMessage, Toast.LENGTH_SHORT).show()
-            }
-
+        if (uiState.authErrorMessage != null) {
+            Toast.makeText(context, uiState.authErrorMessage, Toast.LENGTH_SHORT).show()
         }
+
     }
 
 }
 
-
 @Composable
-@Preview
-fun PreviewLoginScreen() {
-    LoginScreen(
-        uiState = LoginState(),
+@Preview(showBackground = true)
+fun PreviewSignUpScreen() {
+    SignUpScreen(
+        uiState = SignUpState(),
+        onUsernameChange = {},
         onEmailChange = {},
         onPasswordChange = {},
+        onNavigateToLogin = {},
         onNavigateToHome = {},
-        onSignInClick = {}
+        onSignupClick = {}
     )
 }

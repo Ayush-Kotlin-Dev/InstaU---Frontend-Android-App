@@ -4,7 +4,6 @@ import ayush.ggv.instau.data.auth.domain.model.AuthResultData
 import ayush.ggv.instau.data.auth.domain.repository.AuthRepository
 import ayush.ggv.instau.data.toAuthResultData
 import ayush.ggv.instau.util.Result
-
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

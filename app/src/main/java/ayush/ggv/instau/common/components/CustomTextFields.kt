@@ -25,7 +25,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import ayush.ggv.instau.R
-import ayush.ggv.instau.auth.SignUpState
 
 @Composable
 fun CustomTextFields(
