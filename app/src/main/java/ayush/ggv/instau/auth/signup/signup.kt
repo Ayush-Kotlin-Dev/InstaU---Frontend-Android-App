@@ -19,6 +19,10 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -75,20 +79,23 @@ fun SignUpScreen(
             CustomTextFields(
                 value = uiState.username,
                 onValueChange = onUsernameChange,
-                hint = R.string.username_hint
+                hint = R.string.username_hint ,
+                leadingIcon = Icons.Default.AccountCircle
             )
             CustomTextFields(
                 value = uiState.email,
                 onValueChange = onEmailChange,
                 hint = R.string.email_hint,
-                keyboardType = KeyboardType.Email
+                keyboardType = KeyboardType.Email,
+                leadingIcon = Icons.Default.Email
             )
             CustomTextFields(
                 value = uiState.password,
                 onValueChange = onPasswordChange,
                 hint = R.string.password_hint,
                 keyboardType = KeyboardType.Password,
-                isPasswordTextField = true
+                isPasswordTextField = true,
+                leadingIcon = Icons.Default.Lock
             )
             Button(
                 onClick = { onSignupClick() },
@@ -99,9 +106,14 @@ fun SignUpScreen(
                     defaultElevation = 0.dp,
                     pressedElevation = 0.dp
                 ),
-                shape = MaterialTheme.shapes.medium
+                shape = MaterialTheme.shapes.medium,
+                enabled = !uiState.isAuthenticating  && uiState.username.isNotBlank() && uiState.email.isNotBlank() && uiState.password.isNotBlank()
             ) {
-                Text(text = stringResource(id = R.string.signup_button_hint))
+                if (uiState.isAuthenticating) {
+                    CircularProgressIndicator(color = MaterialTheme.colors.onPrimary)
+                } else {
+                    Text(text = stringResource(id = R.string.signup_button_hint))
+                }
             }
             GoToLogin(modifier) {
                 onNavigateToLogin()

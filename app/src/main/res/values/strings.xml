@@ -11,4 +11,5 @@
     <string name="home_destination_title">Social App</string>
     <string name="dont_have_account">Don\'t have an account ?</string>
     <string name="sign_up">SignUp</string>
+    <string name="label_password">password\n</string>
 </resources>

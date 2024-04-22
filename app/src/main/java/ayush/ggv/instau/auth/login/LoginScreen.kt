@@ -19,6 +19,9 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -72,14 +75,16 @@ fun LoginScreen(
                 value = uiState.email,
                 onValueChange = onEmailChange,
                 hint = R.string.email_hint,
-                keyboardType = KeyboardType.Email
+                keyboardType = KeyboardType.Email,
+                leadingIcon = Icons.Default.Email
             )
             CustomTextFields(
                 value = uiState.password,
                 onValueChange = onPasswordChange,
                 hint = R.string.password_hint,
                 keyboardType = KeyboardType.Password,
-                isPasswordTextField = true
+                isPasswordTextField = true,
+                leadingIcon = Icons.Default.Lock
             )
             Button(
                 onClick = { onSignInClick() },
@@ -90,16 +95,18 @@ fun LoginScreen(
                     defaultElevation = 0.dp,
                     pressedElevation = 0.dp
                 ),
-                shape = MaterialTheme.shapes.medium
+                shape = MaterialTheme.shapes.medium,
+                enabled = !uiState.isAuthenticating  && uiState.email.isNotBlank() && uiState.password.isNotBlank()
             ) {
-                Text(text = stringResource(id = R.string.login_button_label))
+                if (uiState.isAuthenticating) {
+                    CircularProgressIndicator(color = MaterialTheme.colors.onPrimary)
+                } else {
+                    Text(text = stringResource(id = R.string.login_button_label))
+                }
             }
             GotoSignUp(
                 { onNavigateToSignUp() }
             )
-
-
-
         }
 
         if (uiState.isAuthenticating) {

@@ -11,6 +11,8 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -18,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -34,7 +37,10 @@ fun CustomTextFields(
     keyboardType: KeyboardType = KeyboardType.Text,
     isPasswordTextField: Boolean = false,
     isSingleLine: Boolean = true,
-    @StringRes hint: Int
+    @StringRes hint: Int,
+    leadingIcon: ImageVector? = null,
+    isError: Boolean = false,  // New parameter for error state
+    errorMessage: String? = null  // New parameter for error message
 ) {
     var isPasswordVisible by remember { mutableStateOf(false) }
     TextField(
@@ -71,8 +77,16 @@ fun CustomTextFields(
                 color = MaterialTheme.colors.onSurface.copy(alpha = 0.5f)
             )
         },
-        shape = MaterialTheme.shapes.medium
+        shape = MaterialTheme.shapes.medium,
+        leadingIcon = leadingIcon?.let {  // Use the leadingIcon parameter here
+            {
+                Icon(
+                    imageVector = it, contentDescription = null
+                )
+            }
+        }
     )
+
 }
 
 @Composable
