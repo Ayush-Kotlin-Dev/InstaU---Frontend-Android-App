@@ -21,7 +21,10 @@ fun SignUpN(
         onEmailChange = viewModel::updateEmail,
         onPasswordChange = viewModel::updatePassword,
         onNavigateToLogin = {
-            navigator.navigate(LoginDestination)
+            navigator.navigate(LoginDestination){
+                popUpTo(SignUpNDestination.route){inclusive = true}
+
+            }
         },
         onNavigateToHome = {
             navigator.navigate(HomeDestination){

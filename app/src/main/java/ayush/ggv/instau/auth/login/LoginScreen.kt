@@ -2,10 +2,12 @@ package ayush.ggv.instau.auth.login
 
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -32,6 +34,7 @@ import ayush.ggv.instau.ui.theme.ButtonHeight
 import ayush.ggv.instau.ui.theme.ExtraLargeSpacing
 import ayush.ggv.instau.ui.theme.LargeSpacing
 import ayush.ggv.instau.ui.theme.MediumSpacing
+import ayush.ggv.instau.ui.theme.SmallSpacing
 import com.ramcosta.composedestinations.annotation.Destination
 
 @Composable
@@ -41,10 +44,11 @@ fun LoginScreen(
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onNavigateToHome: () -> Unit,
-    onSignInClick : () -> Unit
+    onSignInClick: () -> Unit,
+    onNavigateToSignUp: () -> Unit
 ) {
     val context = LocalContext.current
-    Box(modifier = Modifier.fillMaxSize() , contentAlignment = Alignment.Center){
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(
             modifier = modifier
                 .fillMaxSize()
@@ -87,21 +91,25 @@ fun LoginScreen(
                     pressedElevation = 0.dp
                 ),
                 shape = MaterialTheme.shapes.medium
-            ){
-                Text(text = stringResource(id = R.string.login_button_label) )
+            ) {
+                Text(text = stringResource(id = R.string.login_button_label))
             }
+            GotoSignUp(
+                { onNavigateToSignUp() }
+            )
+
 
 
         }
 
-        if(uiState.isAuthenticating){
+        if (uiState.isAuthenticating) {
             //show progress bar
             CircularProgressIndicator()
         }
-        LaunchedEffect (
-            key1 = uiState.authenticationSucceed  ,
+        LaunchedEffect(
+            key1 = uiState.authenticationSucceed,
             key2 = uiState.authErrorMessage
-        ){
+        ) {
             if (uiState.authenticationSucceed) {
                 onNavigateToHome()
             }
@@ -115,6 +123,33 @@ fun LoginScreen(
 
 }
 
+@Composable
+fun GotoSignUp(
+    onNavigateToSignUp: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(SmallSpacing)
+    ) {
+        Text(
+            text = stringResource(id = R.string.dont_have_account),
+            modifier = modifier,
+            color = MaterialTheme.colors.onBackground,
+            style = MaterialTheme.typography.caption
+        )
+        Text(
+            text = stringResource(id = R.string.sign_up),
+            style = MaterialTheme.typography.caption,
+            color = MaterialTheme.colors.primary,
+            modifier = modifier.clickable {
+                onNavigateToSignUp()
+            }
+        )
+    }
+}
+
 
 @Composable
 @Preview
@@ -124,6 +159,7 @@ fun PreviewLoginScreen() {
         onEmailChange = {},
         onPasswordChange = {},
         onNavigateToHome = {},
-        onSignInClick = {}
+        onSignInClick = {},
+        onNavigateToSignUp = {}
     )
 }

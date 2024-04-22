@@ -9,4 +9,6 @@
     <string name="signup_destination_title">SignUp</string>
     <string name="no_destination_title" />
     <string name="home_destination_title">Social App</string>
+    <string name="dont_have_account">Don\'t have an account ?</string>
+    <string name="sign_up">SignUp</string>
 </resources>
