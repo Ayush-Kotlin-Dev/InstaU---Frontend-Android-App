@@ -9,7 +9,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 
 
 @Composable
-@Destination
+@Destination(start = true)
 fun Home() {
     Box(modifier = Modifier.fillMaxSize()) {
         Text(text = "Home")

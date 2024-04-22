@@ -6,15 +6,21 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import ayush.ggv.instau.common.components.AppBar
+import ayush.ggv.instau.destinations.HomeDestination
+import ayush.ggv.instau.destinations.LoginDestination
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ramcosta.composedestinations.DestinationsNavHost
 
 @Composable
-fun SocialApp() {
+fun SocialApp(
+    token: String? = null
+) {
+
     val navHostController = rememberNavController()
 
     val scaffoldState = rememberScaffoldState()
@@ -49,6 +55,15 @@ fun SocialApp() {
         )
 
     }
+    LaunchedEffect(key1 = token) {
+        if (token != null && token.isEmpty()) {
+            navHostController.navigate(LoginDestination.route) {
+                popUpTo(HomeDestination.route) {
+                    inclusive = true
+                }
+            }
+        }
 
 
+    }
 }

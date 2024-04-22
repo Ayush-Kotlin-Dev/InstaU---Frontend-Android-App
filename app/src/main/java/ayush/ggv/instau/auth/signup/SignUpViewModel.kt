@@ -3,13 +3,17 @@ package ayush.ggv.instau.auth.signup
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import ayush.ggv.instau.common.datastore.UserSettings
+import ayush.ggv.instau.common.datastore.toUserSettings
 import ayush.ggv.instau.data.auth.domain.usecases.signupusecases.SignUpUseCase
 import kotlinx.coroutines.launch
 import ayush.ggv.instau.util.Result
 class SignUpViewModel(
-    private val signUpUseCase: SignUpUseCase
+    private val signUpUseCase: SignUpUseCase,
+    private val dataStore: DataStore<UserSettings>
 ) : ViewModel() {
 
     var uiState by mutableStateOf(SignUpState())
@@ -29,6 +33,9 @@ class SignUpViewModel(
                     )
                 }
                 is Result.Success -> {
+                    dataStore.updateData {
+                        authResultData.data!!.toUserSettings()
+                    }
                     uiState.copy(
                         isAuthenticating = false,
                         authenticationSucceed = true

@@ -9,7 +9,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-@Destination(start = true)
+@Destination
 fun SignUpN(
     navigator: DestinationsNavigator
 ) {
