@@ -15,15 +15,8 @@ class SignUpUseCase : KoinComponent {
         email: String,
         password: String
     ) : Result<AuthResultData> {
-        //all checks for username and password
-        if(name.isBlank() || name.length < 3) {
-            return Result.Error("Name should be atleast 3 characters long")
-        }
         if(email.isBlank() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             return Result.Error("Invalid email")
-        }
-        if(password.isBlank() || password.length < 6) {
-            return Result.Error("Password should be atleast 6 characters long")
         }
         return repository.signUp(name, email, password)
     }

@@ -2,6 +2,7 @@ package ayush.ggv.instau.common.components
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
@@ -43,49 +44,61 @@ fun CustomTextFields(
     errorMessage: String? = null  // New parameter for error message
 ) {
     var isPasswordVisible by remember { mutableStateOf(false) }
-    TextField(
-        value = value,
-        onValueChange = onValueChange,
-        modifier = modifier.fillMaxWidth(),
-        textStyle = MaterialTheme.typography.body2,
-        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = keyboardType),
-        singleLine = isSingleLine,
-        colors = TextFieldDefaults.textFieldColors(
-            backgroundColor = if (isSystemInDarkTheme()) MaterialTheme.colors.surface else MaterialTheme.colors.onSurface.copy(
-                alpha = 0.1f
+    Column {
+        TextField(
+            value = value,
+            onValueChange = onValueChange,
+            modifier = modifier.fillMaxWidth(),
+            textStyle = MaterialTheme.typography.body2,
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = keyboardType),
+            singleLine = isSingleLine,
+            colors = TextFieldDefaults.textFieldColors(
+                backgroundColor = if (isSystemInDarkTheme()) MaterialTheme.colors.surface else MaterialTheme.colors.onSurface.copy(
+                    alpha = 0.1f
+                ),
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent
             ),
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent
-        ),
-        visualTransformation = if (isPasswordTextField) {
-            if (isPasswordVisible)
-                VisualTransformation.None
-            else PasswordVisualTransformation()
-        } else VisualTransformation.None,
-        trailingIcon = if (isPasswordTextField) {
-            {
-                PasswordEyeIcon(
-                    isPasswordVisible = isPasswordVisible,
-                    onPasswordToggleClick = { isPasswordVisible = !isPasswordVisible }
+            visualTransformation = if (isPasswordTextField) {
+                if (isPasswordVisible)
+                    VisualTransformation.None
+                else PasswordVisualTransformation()
+            } else VisualTransformation.None,
+            trailingIcon = if (isPasswordTextField) {
+                {
+                    PasswordEyeIcon(
+                        isPasswordVisible = isPasswordVisible,
+                        onPasswordToggleClick = { isPasswordVisible = !isPasswordVisible }
+                    )
+                }
+            } else null,
+            placeholder = {
+                Text(
+                    text = stringResource(id = hint),
+                    style = MaterialTheme.typography.body2,
+                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.5f)
                 )
-            }
-        } else null,
-        placeholder = {
+            },
+            shape = MaterialTheme.shapes.medium,
+            leadingIcon = leadingIcon?.let {  // Use the leadingIcon parameter here
+                {
+                    Icon(
+                        imageVector = it, contentDescription = null
+                    )
+                }
+            },
+            isError = isError,  // Pass the error state to the TextField
+        )
+        if (isError && !errorMessage.isNullOrEmpty()) {
+            // Display the error message if isError is true and errorMessage is not null or empty
             Text(
-                text = stringResource(id = hint),
-                style = MaterialTheme.typography.body2,
-                color = MaterialTheme.colors.onSurface.copy(alpha = 0.5f)
+                text = errorMessage,
+                style = MaterialTheme.typography.caption,
+                color = MaterialTheme.colors.error
             )
-        },
-        shape = MaterialTheme.shapes.medium,
-        leadingIcon = leadingIcon?.let {  // Use the leadingIcon parameter here
-            {
-                Icon(
-                    imageVector = it, contentDescription = null
-                )
-            }
         }
-    )
+    }
+
 
 }
 

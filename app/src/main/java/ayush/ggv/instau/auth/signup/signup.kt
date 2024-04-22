@@ -80,7 +80,13 @@ fun SignUpScreen(
                 value = uiState.username,
                 onValueChange = onUsernameChange,
                 hint = R.string.username_hint ,
-                leadingIcon = Icons.Default.AccountCircle
+                leadingIcon = Icons.Default.AccountCircle ,
+                isError = uiState.usernameErrorMessage != null,
+                errorMessage = uiState.usernameErrorMessage
+
+
+
+
             )
             CustomTextFields(
                 value = uiState.email,
@@ -95,7 +101,9 @@ fun SignUpScreen(
                 hint = R.string.password_hint,
                 keyboardType = KeyboardType.Password,
                 isPasswordTextField = true,
-                leadingIcon = Icons.Default.Lock
+                leadingIcon = Icons.Default.Lock,
+                isError = uiState.passwordErrorMessage != null,
+                errorMessage = uiState.passwordErrorMessage
             )
             Button(
                 onClick = { onSignupClick() },
@@ -107,8 +115,12 @@ fun SignUpScreen(
                     pressedElevation = 0.dp
                 ),
                 shape = MaterialTheme.shapes.medium,
-                enabled = !uiState.isAuthenticating  && uiState.username.isNotBlank() && uiState.email.isNotBlank() && uiState.password.isNotBlank()
-            ) {
+                enabled = !uiState.isAuthenticating
+                        && uiState.username.isNotBlank()
+                        && uiState.email.isNotBlank()
+                        && uiState.password.isNotBlank()
+                        && uiState.usernameErrorMessage == null
+                        && uiState.passwordErrorMessage == null            ) {
                 if (uiState.isAuthenticating) {
                     CircularProgressIndicator(color = MaterialTheme.colors.onPrimary)
                 } else {
