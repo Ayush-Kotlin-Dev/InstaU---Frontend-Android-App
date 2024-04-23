@@ -78,18 +78,12 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation ("androidx.compose.material:material:1.6.6")
-
     implementation("io.github.raamcosta.compose-destinations:core:1.8.38-beta")
     ksp("io.github.raamcosta.compose-destinations:ksp:1.8.38-beta")
-
     implementation("androidx.core:core-splashscreen:1.0.1")
-
     implementation("androidx.datastore:datastore-preferences:1.1.0")
-
     implementation("io.insert-koin:koin-androidx-compose:3.4.1")
-
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
-
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.28.0")
 
     //serialization
@@ -100,10 +94,12 @@ dependencies {
     val koinVersion = "3.3.2"
     val ktorVersion = "2.2.1"
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
-
     implementation ("io.ktor:ktor-client-cio:$ktorVersion")
-            implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+    implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
     api("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
     api("io.insert-koin:koin-core:$koinVersion")
+
+    //coil compose
+    implementation("io.coil-kt:coil-compose:2.6.0")
 
 }
