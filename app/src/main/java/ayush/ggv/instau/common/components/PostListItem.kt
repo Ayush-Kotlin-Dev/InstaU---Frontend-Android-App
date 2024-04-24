@@ -11,10 +11,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -64,8 +66,8 @@ fun PostListItem(
             )
             .clickable { onPostClick(post) }
             .padding(
-                horizontal = LargeSpacing,
-                vertical = MediumSpacing
+                horizontal = 2.dp,
+                vertical = 2.dp
             )
     ) {
         PostItemHeader(
@@ -77,7 +79,7 @@ fun PostListItem(
             }
         )
         AsyncImage(
-            model = post.authorImage,
+            model = post.imageUrl,
             contentDescription = null,
             modifier = modifier
                 .fillMaxWidth()
@@ -100,13 +102,10 @@ fun PostListItem(
             style = MaterialTheme.typography.body2,
             modifier = modifier
                 .padding(horizontal = LargeSpacing),
-            maxLines = if (isDetailScreen) {
-                20
-            } else {
-                2
-            },
+            maxLines = if (isDetailScreen) 20 else 2,
             overflow = TextOverflow.Ellipsis
         )
+
 
 
     }
@@ -131,7 +130,10 @@ fun PostItemHeader(
         horizontalArrangement = Arrangement.spacedBy(MediumSpacing)
     ) {
 
-        CircleImage(imageUrl = profileUrl, modifier = modifier.size(30.dp)) {
+        CircleImage(
+            imageUrl = profileUrl,
+            modifier = modifier.size(30.dp))
+        {
             onProfileClick()
         }
         Text(
@@ -203,9 +205,9 @@ fun PostLikeRow(
                 painter = painterResource(id = R.drawable.like_icon_outlined),
                 contentDescription = null,
                 tint = if (MaterialTheme.colors.isLight) {
-                    Color.LightGray
+                    LightGray
                 } else {
-                    Color.DarkGray
+                    DarkGray
 
                 }
             )
@@ -223,9 +225,9 @@ fun PostLikeRow(
                 painter = painterResource(id = R.drawable.chat_icon_outlined),
                 contentDescription = null,
                 tint = if (MaterialTheme.colors.isLight) {
-                    Color.LightGray
+                    LightGray
                 } else {
-                    Color.DarkGray
+                    DarkGray
 
                 }
             )

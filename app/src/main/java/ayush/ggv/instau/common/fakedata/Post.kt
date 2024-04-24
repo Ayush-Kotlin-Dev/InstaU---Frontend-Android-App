@@ -21,13 +21,13 @@ val samplePosts = listOf(
     Post(
         id = "11",
         text = "This is a beautiful day! Enjoying the sunshine and the great weather.",
-        imageUrl = "https://picsum.photos/402",
+        imageUrl = "https://picsum.photos/408",
         createdAt = "20 min",
         likesCount = 12,
         commentCount = 3,
         authorId = 1,
         authorName = "Ayush",
-        authorImage = "https://picsum.photos/200"
+        authorImage = "https://picsum.photos/201"
     ),
     Post(
         id = "12",
@@ -38,7 +38,7 @@ val samplePosts = listOf(
         commentCount = 23,
         authorId = 2,
         authorName = "Vaibhav",
-        authorImage = "https://picsum.photos/200"
+        authorImage = "https://picsum.photos/202"
     ),
     Post(
         id = "13",
@@ -49,7 +49,7 @@ val samplePosts = listOf(
         commentCount = 41,
         authorId = 3,
         authorName = "Paras",
-        authorImage = "https://picsum.photos/200"
+        authorImage = "https://picsum.photos/203"
     ),
     Post(
         id = "14",
@@ -60,7 +60,7 @@ val samplePosts = listOf(
         commentCount = 13,
         authorId = 3,
         authorName = "Omkar",
-        authorImage = "https"
+        authorImage = "https://picsum.photos/204"
     ),
     Post(
         id = "15",
@@ -71,6 +71,6 @@ val samplePosts = listOf(
         commentCount = 23,
         authorId = 2,
         authorName = "KhaoMasam",
-        authorImage = "https://picsum.photos/200"
+        authorImage = "https://picsum.photos/205"
     ),
 )

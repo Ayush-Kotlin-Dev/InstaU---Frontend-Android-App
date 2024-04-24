@@ -108,11 +108,6 @@ fun LoginScreen(
                 { onNavigateToSignUp() }
             )
         }
-
-        if (uiState.isAuthenticating) {
-            //show progress bar
-            CircularProgressIndicator()
-        }
         LaunchedEffect(
             key1 = uiState.authenticationSucceed,
             key2 = uiState.authErrorMessage

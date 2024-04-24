@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -43,6 +44,8 @@ fun CustomTextFields(
     isError: Boolean = false,  // New parameter for error state
     errorMessage: String? = null  // New parameter for error message
 ) {
+    val buttonColors = ButtonDefaults.outlinedButtonColors()
+    val leadingIconColor = buttonColors.contentColor(enabled = true).value
     var isPasswordVisible by remember { mutableStateOf(false) }
     Column {
         TextField(
@@ -83,10 +86,12 @@ fun CustomTextFields(
             leadingIcon = leadingIcon?.let {  // Use the leadingIcon parameter here
                 {
                     Icon(
-                        imageVector = it, contentDescription = null
+                        imageVector = it, contentDescription = null , tint = MaterialTheme.colors.onSurface
                     )
                 }
             },
+
+
             isError = isError,  // Pass the error state to the TextField
         )
         if (isError && !errorMessage.isNullOrEmpty()) {
