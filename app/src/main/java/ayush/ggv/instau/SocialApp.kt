@@ -13,9 +13,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import ayush.ggv.instau.common.components.AppBar
-import ayush.ggv.instau.destinations.HomeDestination
-import ayush.ggv.instau.destinations.LoginDestination
-import ayush.ggv.instau.destinations.SignUpNDestination
+import ayush.ggv.instau.presentation.NavGraphs
+import ayush.ggv.instau.presentation.destinations.HomeDestination
+import ayush.ggv.instau.presentation.destinations.LoginDestination
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.utils.currentDestinationAsState

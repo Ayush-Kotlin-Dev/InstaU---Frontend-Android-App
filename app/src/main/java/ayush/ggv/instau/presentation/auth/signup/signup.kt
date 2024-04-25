@@ -1,4 +1,4 @@
-package ayush.ggv.instau.auth.login
+package ayush.ggv.instau.presentation.auth.signup
 
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -20,6 +20,7 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.runtime.Composable
@@ -38,20 +39,24 @@ import ayush.ggv.instau.ui.theme.ExtraLargeSpacing
 import ayush.ggv.instau.ui.theme.LargeSpacing
 import ayush.ggv.instau.ui.theme.MediumSpacing
 import ayush.ggv.instau.ui.theme.SmallSpacing
-import com.ramcosta.composedestinations.annotation.Destination
 
 @Composable
-fun LoginScreen(
+fun SignUpScreen(
     modifier: Modifier = Modifier,
-    uiState: LoginState,
+    uiState: SignUpState,
+    onUsernameChange: (String) -> Unit,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
+    onNavigateToLogin: () -> Unit,
     onNavigateToHome: () -> Unit,
-    onSignInClick: () -> Unit,
-    onNavigateToSignUp: () -> Unit
+    onSignupClick: () -> Unit
 ) {
     val context = LocalContext.current
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
         Column(
             modifier = modifier
                 .fillMaxSize()
@@ -72,6 +77,18 @@ fun LoginScreen(
         ) {
 
             CustomTextFields(
+                value = uiState.username,
+                onValueChange = onUsernameChange,
+                hint = R.string.username_hint ,
+                leadingIcon = Icons.Default.AccountCircle ,
+                isError = uiState.usernameErrorMessage != null,
+                errorMessage = uiState.usernameErrorMessage
+
+
+
+
+            )
+            CustomTextFields(
                 value = uiState.email,
                 onValueChange = onEmailChange,
                 hint = R.string.email_hint,
@@ -84,10 +101,12 @@ fun LoginScreen(
                 hint = R.string.password_hint,
                 keyboardType = KeyboardType.Password,
                 isPasswordTextField = true,
-                leadingIcon = Icons.Default.Lock
+                leadingIcon = Icons.Default.Lock,
+                isError = uiState.passwordErrorMessage != null,
+                errorMessage = uiState.passwordErrorMessage
             )
             Button(
-                onClick = { onSignInClick() },
+                onClick = { onSignupClick() },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(ButtonHeight),
@@ -96,72 +115,70 @@ fun LoginScreen(
                     pressedElevation = 0.dp
                 ),
                 shape = MaterialTheme.shapes.medium,
-                enabled = !uiState.isAuthenticating  && uiState.email.isNotBlank() && uiState.password.isNotBlank()
-            ) {
+                enabled = !uiState.isAuthenticating
+                        && uiState.username.isNotBlank()
+                        && uiState.email.isNotBlank()
+                        && uiState.password.isNotBlank()
+                        && uiState.usernameErrorMessage == null
+                        && uiState.passwordErrorMessage == null            ) {
                 if (uiState.isAuthenticating) {
                     CircularProgressIndicator(color = MaterialTheme.colors.onPrimary)
                 } else {
-                    Text(text = stringResource(id = R.string.login_button_label))
+                    Text(text = stringResource(id = R.string.signup_button_hint))
                 }
             }
-            GotoSignUp(
-                { onNavigateToSignUp() }
-            )
-        }
-        LaunchedEffect(
-            key1 = uiState.authenticationSucceed,
-            key2 = uiState.authErrorMessage
-        ) {
-            if (uiState.authenticationSucceed) {
-                onNavigateToHome()
+            GoToLogin(modifier) {
+                onNavigateToLogin()
             }
 
-            if (uiState.authErrorMessage != null) {
-                Toast.makeText(context, uiState.authErrorMessage, Toast.LENGTH_SHORT).show()
-            }
 
         }
+    }
+    LaunchedEffect (
+        key1 = uiState.authenticationSucceed  ,
+        key2 = uiState.authErrorMessage
+    ){
+        if (uiState.authenticationSucceed) {
+            onNavigateToHome()
+        }
+
+        if (uiState.authErrorMessage != null) {
+            Toast.makeText(context, uiState.authErrorMessage, Toast.LENGTH_SHORT).show()
+        }
+
     }
 
 }
 
 @Composable
-fun GotoSignUp(
-    onNavigateToSignUp: () -> Unit,
-    modifier: Modifier = Modifier
+fun GoToLogin(modifier: Modifier = Modifier,
+              onNavigateToLogin: () -> Unit
 ) {
     Row(
-        modifier = modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(SmallSpacing)
-    ) {
-        Text(
-            text = stringResource(id = R.string.dont_have_account),
-            modifier = modifier,
-            color = MaterialTheme.colors.onBackground,
-            style = MaterialTheme.typography.caption
+        modifier = modifier, horizontalArrangement = Arrangement.spacedBy(
+            SmallSpacing
         )
+    ) {
+        Text(text = "Have already an account?", style = MaterialTheme.typography.caption)
         Text(
-            text = stringResource(id = R.string.sign_up),
+            text = "Login",
             style = MaterialTheme.typography.caption,
             color = MaterialTheme.colors.primary,
-            modifier = modifier.clickable {
-                onNavigateToSignUp()
-            }
+            modifier = modifier.clickable { onNavigateToLogin() }
         )
     }
 }
 
-
 @Composable
-@Preview
-fun PreviewLoginScreen() {
-    LoginScreen(
-        uiState = LoginState(),
+@Preview(showBackground = true)
+fun PreviewSignUpScreen() {
+    SignUpScreen(
+        uiState = SignUpState(),
+        onUsernameChange = {},
         onEmailChange = {},
         onPasswordChange = {},
+        onNavigateToLogin = {},
         onNavigateToHome = {},
-        onSignInClick = {},
-        onNavigateToSignUp = {}
+        onSignupClick = {}
     )
 }

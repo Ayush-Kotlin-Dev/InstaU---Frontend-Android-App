@@ -1,4 +1,4 @@
-package ayush.ggv.instau.home
+package ayush.ggv.instau.presentation.home
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,8 +18,8 @@ import ayush.ggv.instau.common.fakedata.FollowsUser
 import ayush.ggv.instau.common.fakedata.Post
 import ayush.ggv.instau.common.fakedata.samplePosts
 import ayush.ggv.instau.common.fakedata.sampleUsers
-import ayush.ggv.instau.home.onboarding.OnBoardingSection
-import ayush.ggv.instau.home.onboarding.OnBoardingUiState
+import ayush.ggv.instau.presentation.home.onboarding.OnBoardingSection
+import ayush.ggv.instau.presentation.home.onboarding.OnBoardingUiState
 import com.ramcosta.composedestinations.annotation.Destination
 
 

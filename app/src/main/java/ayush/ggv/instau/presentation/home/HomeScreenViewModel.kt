@@ -1,4 +1,4 @@
-package ayush.ggv.instau.home
+package ayush.ggv.instau.presentation.home
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import ayush.ggv.instau.common.fakedata.Post
 import ayush.ggv.instau.common.fakedata.samplePosts
 import ayush.ggv.instau.common.fakedata.sampleUsers
-import ayush.ggv.instau.home.onboarding.OnBoardingUiState
+import ayush.ggv.instau.presentation.home.onboarding.OnBoardingUiState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 

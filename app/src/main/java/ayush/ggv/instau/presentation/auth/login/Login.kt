@@ -1,9 +1,9 @@
-package ayush.ggv.instau.auth.login
+package ayush.ggv.instau.presentation.auth.login
 
 import androidx.compose.runtime.Composable
-import ayush.ggv.instau.destinations.HomeDestination
-import ayush.ggv.instau.destinations.LoginDestination
-import ayush.ggv.instau.destinations.SignUpNDestination
+import ayush.ggv.instau.presentation.destinations.HomeDestination
+import ayush.ggv.instau.presentation.destinations.LoginDestination
+import ayush.ggv.instau.presentation.destinations.SignUpNDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel

@@ -1,4 +1,4 @@
-package ayush.ggv.instau.home
+package ayush.ggv.instau.presentation.home
 
 import androidx.compose.runtime.Composable
 import com.ramcosta.composedestinations.annotation.Destination

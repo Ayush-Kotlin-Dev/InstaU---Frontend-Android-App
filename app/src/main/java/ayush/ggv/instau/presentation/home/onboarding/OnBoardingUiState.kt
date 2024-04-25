@@ -1,4 +1,4 @@
-package ayush.ggv.instau.home.onboarding
+package ayush.ggv.instau.presentation.home.onboarding
 
 import ayush.ggv.instau.common.fakedata.FollowsUser
 

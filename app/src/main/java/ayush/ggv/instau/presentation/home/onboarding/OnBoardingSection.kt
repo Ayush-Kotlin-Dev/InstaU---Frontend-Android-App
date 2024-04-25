@@ -1,4 +1,4 @@
-package ayush.ggv.instau.home.onboarding
+package ayush.ggv.instau.presentation.home.onboarding
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

@@ -1,4 +1,4 @@
-package ayush.ggv.instau.auth.login
+package ayush.ggv.instau.presentation.auth.login
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

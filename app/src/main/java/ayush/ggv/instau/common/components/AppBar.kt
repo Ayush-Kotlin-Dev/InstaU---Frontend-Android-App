@@ -16,9 +16,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import ayush.ggv.instau.R
-import ayush.ggv.instau.destinations.HomeDestination
-import ayush.ggv.instau.destinations.LoginDestination
-import ayush.ggv.instau.destinations.SignUpNDestination
+import ayush.ggv.instau.presentation.destinations.HomeDestination
+import ayush.ggv.instau.presentation.destinations.LoginDestination
+import ayush.ggv.instau.presentation.destinations.PostDetailDestination
+import ayush.ggv.instau.presentation.destinations.SignUpNDestination
 import ayush.ggv.instau.ui.theme.SmallElevation
 import com.ramcosta.composedestinations.utils.currentDestinationAsState
 
@@ -85,6 +86,7 @@ fun getAppBarTitle(currentDestinationRoute: String?): Int {
         LoginDestination.route -> R.string.login_destination_title
         SignUpNDestination.route -> R.string.signup_destination_title
         HomeDestination.route -> R.string.home_destination_title
+        PostDetailDestination.route -> R.string.post_detail_destination_title
         else -> R.string.app_name
 
     }
@@ -92,5 +94,9 @@ fun getAppBarTitle(currentDestinationRoute: String?): Int {
 
 // should show navigation icon only when current destination is not HomeDestination
 fun shouldShowNavigationIcon(currentDestinationRoute: String?): Boolean {
-    return false
+    return !(
+            currentDestinationRoute == HomeDestination.route
+                    || currentDestinationRoute == LoginDestination.route
+                    || currentDestinationRoute == SignUpNDestination.route
+            )
 }

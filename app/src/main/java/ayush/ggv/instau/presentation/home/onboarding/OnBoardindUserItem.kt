@@ -1,4 +1,4 @@
-package ayush.ggv.instau.home.onboarding
+package ayush.ggv.instau.presentation.home.onboarding
 
 import android.content.res.Configuration
 import androidx.compose.foundation.clickable
