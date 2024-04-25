@@ -36,3 +36,20 @@ Submit a pull request detailing the changes you've made and any relevant informa
 
 ## License
 This project is licensed under the MIT License.
+
+
+
+
+## Login Page
+
+<img src="https://github.com/Ayushrai2005/InstaU/blob/5fc599cd5d21cabb102ff0453f04df5a404c37c0/app/src/main/res/assests/SS1_Login.png" width="300"><br><br>
+
+## SignUp Page
+
+<img src="https://github.com/Ayushrai2005/InstaU/blob/5fc599cd5d21cabb102ff0453f04df5a404c37c0/app/src/main/res/assests/SS2_Signup.png" width="300"><br><br>
+
+## HomeScreen
+
+<img src="https://github.com/Ayushrai2005/InstaU/blob/5fc599cd5d21cabb102ff0453f04df5a404c37c0/app/src/main/res/assests/SS3_HomeScreen.png" width="300"><br><br>
+
+
