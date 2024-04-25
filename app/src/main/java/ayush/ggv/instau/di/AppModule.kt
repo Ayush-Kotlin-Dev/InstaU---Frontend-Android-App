@@ -13,6 +13,8 @@ import ayush.ggv.instau.data.auth.domain.repository.AuthRepository
 import ayush.ggv.instau.data.auth.domain.usecases.signinusecase.SignInuseCase
 import ayush.ggv.instau.data.auth.domain.usecases.signupusecases.SignUpUseCase
 import ayush.ggv.instau.presentation.home.HomeScreenViewModel
+import ayush.ggv.instau.presentation.post.PostDetailScreenViewModel
+import ayush.ggv.instau.presentation.post.PostDetailUiState
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -28,6 +30,7 @@ val appModule = module {
     viewModel { LoginViewModel(get() , get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
     viewModel { MainActivityViewModel(get()) }
     viewModel{ HomeScreenViewModel() }
+    viewModel { PostDetailScreenViewModel()}
     single{
         DataStoreFactory.create(
             serializer = UserSettingsSerializer,

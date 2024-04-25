@@ -39,6 +39,7 @@ import ayush.ggv.instau.R
 import ayush.ggv.instau.common.fakedata.Post
 import ayush.ggv.instau.common.fakedata.samplePosts
 import ayush.ggv.instau.ui.theme.DarkGray
+import ayush.ggv.instau.ui.theme.ExtraLargeSpacing
 import ayush.ggv.instau.ui.theme.LargeSpacing
 import ayush.ggv.instau.ui.theme.LightGray
 import ayush.ggv.instau.ui.theme.MediumSpacing
@@ -60,14 +61,12 @@ fun PostListItem(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .aspectRatio(ratio = 0.7f)
             .background(
                 color = MaterialTheme.colors.surface,
             )
             .clickable { onPostClick(post) }
             .padding(
-                horizontal = 2.dp,
-                vertical = 2.dp
+                bottom = ExtraLargeSpacing
             )
     ) {
         PostItemHeader(

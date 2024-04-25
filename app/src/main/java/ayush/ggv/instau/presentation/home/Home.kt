@@ -1,6 +1,7 @@
 package ayush.ggv.instau.presentation.home
 
 import androidx.compose.runtime.Composable
+import ayush.ggv.instau.presentation.destinations.PostDetailDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
@@ -16,7 +17,8 @@ fun Home (
     HomeScreen(
         onBoardingUiState = viewModel.onBoardingUiState,
         postsUiState = viewModel.postsUiState,
-        onPostClick = { post ->
+        onPostClick = {
+        navigator.navigate(PostDetailDestination(it.id))
 
         },
         onProfileClick = { userId ->
