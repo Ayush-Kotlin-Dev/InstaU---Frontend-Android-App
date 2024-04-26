@@ -24,11 +24,11 @@ import ayush.ggv.instau.ui.theme.SocialAppTheme
 fun FollowsButton(
     modifier : Modifier = Modifier,
     @StringRes text: Int,
-    onFollowButtonClick: (Boolean) -> Unit,
+    onFollowButtonClick: () -> Unit,
     isOutline : Boolean = false
 ) {
     Button(
-        onClick = { onFollowButtonClick(isOutline) },
+        onClick = { onFollowButtonClick() },
         modifier = modifier,
         colors = if(isOutline) {
             ButtonDefaults.outlinedButtonColors()

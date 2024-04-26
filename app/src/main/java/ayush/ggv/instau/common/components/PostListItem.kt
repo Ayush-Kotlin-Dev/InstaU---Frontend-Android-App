@@ -52,8 +52,8 @@ fun PostListItem(
     post: Post,
     onPostClick: (Post) -> Unit,
     onProfileClick: (Int) -> Unit,
-    onLikeClick: () -> Unit,
-    onCommentClick: () -> Unit,
+    onLikeClick: (String) -> Unit,
+    onCommentClick: (String) -> Unit,
     isDetailScreen: Boolean = false
 
 
@@ -91,8 +91,8 @@ fun PostListItem(
             }
         )
         PostLikeRow(
-            onLikeClick = { onLikeClick() },
-            onCommentClick = { onCommentClick() },
+            onLikeClick = { onLikeClick(post.id) },
+            onCommentClick = { onCommentClick(post.id) },
             likesCount = post.commentCount,
             commentsCount = post.commentCount
         )

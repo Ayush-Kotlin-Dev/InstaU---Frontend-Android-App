@@ -19,6 +19,7 @@ import ayush.ggv.instau.R
 import ayush.ggv.instau.presentation.destinations.HomeDestination
 import ayush.ggv.instau.presentation.destinations.LoginDestination
 import ayush.ggv.instau.presentation.destinations.PostDetailDestination
+import ayush.ggv.instau.presentation.destinations.ProfileDestination
 import ayush.ggv.instau.presentation.destinations.SignUpNDestination
 import ayush.ggv.instau.ui.theme.SmallElevation
 import com.ramcosta.composedestinations.utils.currentDestinationAsState
@@ -87,6 +88,7 @@ fun getAppBarTitle(currentDestinationRoute: String?): Int {
         SignUpNDestination.route -> R.string.signup_destination_title
         HomeDestination.route -> R.string.home_destination_title
         PostDetailDestination.route -> R.string.post_detail_destination_title
+        ProfileDestination.route -> R.string.profile_destination_title
         else -> R.string.app_name
 
     }
