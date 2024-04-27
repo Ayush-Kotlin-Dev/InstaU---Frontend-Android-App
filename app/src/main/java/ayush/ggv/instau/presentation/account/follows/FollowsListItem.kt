@@ -39,7 +39,7 @@ fun FollowsListItem(
     ) {
         CircleImage(imageUrl = imageUrl, modifier = Modifier.size(50.dp), onClick = onImageClick)
 
-        Spacer(modifier = Modifier.width(16.dp))
+        Spacer(modifier = Modifier.width(2.dp))
 
         Column {
             Text(
