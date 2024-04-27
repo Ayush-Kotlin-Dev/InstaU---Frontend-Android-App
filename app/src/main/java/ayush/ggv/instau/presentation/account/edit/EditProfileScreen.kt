@@ -1,5 +1,6 @@
 package ayush.ggv.instau.presentation.account.edit
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -30,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
@@ -56,6 +58,7 @@ fun EditProfileScreen(
     onUploadSuccess: () -> Unit,
     fetchProfile: () -> Unit
 ) {
+    val context = LocalContext.current
 
     Box(
         modifier = modifier
@@ -198,8 +201,8 @@ fun EditProfileScreen(
             if (editProfileUiState.uploadSuccess) {
                 onUploadSuccess()
             }
-            if(editProfileUiState.errorMessage != null){
-                fetchProfile()
+            if(editProfileUiState.profile!=null  &&  editProfileUiState.errorMessage != null){
+                Toast.makeText(context, editProfileUiState.errorMessage, Toast.LENGTH_SHORT).show()
             }
         }
     )

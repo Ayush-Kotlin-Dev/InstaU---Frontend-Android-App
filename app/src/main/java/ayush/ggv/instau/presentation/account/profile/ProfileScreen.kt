@@ -74,7 +74,7 @@ fun ProfileScreen(
                 ProfileHeaderSection(
                     imageUrl = userInfoUiState.profile?.profileUrl?: "",
                     name = userInfoUiState.profile?.name ?: "",
-                    bio = userInfoUiState.profile?.bio ?: "",
+                    bio = userInfoUiState.profile?.bio ?: "ayush",
                     followersCount = userInfoUiState.profile?.followersCount ?: 0,
                     followingCount = userInfoUiState.profile?.followingCount ?: 0,
                     onButtonClick = onButtonClick,

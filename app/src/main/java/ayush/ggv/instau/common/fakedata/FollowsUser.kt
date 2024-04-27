@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 data class FollowsUser(
     val id: Int,
     val name: String,
+    val bio : String = " my name is $name , i am a developer",
     val profileUrl: String,
     val isFollowing: Boolean = false
 )

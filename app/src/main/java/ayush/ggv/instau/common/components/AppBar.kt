@@ -16,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import ayush.ggv.instau.R
+import ayush.ggv.instau.presentation.destinations.EditProfileDestination
 import ayush.ggv.instau.presentation.destinations.HomeDestination
 import ayush.ggv.instau.presentation.destinations.LoginDestination
 import ayush.ggv.instau.presentation.destinations.PostDetailDestination
@@ -89,6 +90,8 @@ fun getAppBarTitle(currentDestinationRoute: String?): Int {
         HomeDestination.route -> R.string.home_destination_title
         PostDetailDestination.route -> R.string.post_detail_destination_title
         ProfileDestination.route -> R.string.profile_destination_title
+        EditProfileDestination.route -> R.string.edit_profile_destination_title
+
         else -> R.string.app_name
 
     }

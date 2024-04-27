@@ -3,6 +3,8 @@ package ayush.ggv.instau.presentation.account.edit
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ayush.ggv.instau.common.fakedata.Profile
@@ -15,6 +17,9 @@ class EditProfileViewModel(
 ) :ViewModel() {
 
     var uiState by mutableStateOf(EditProfileUiState())
+        private set
+
+    var bioTextFieldValue : TextFieldValue by mutableStateOf(TextFieldValue())
         private set
 
     fun fetchProfile(userId : Int){
@@ -30,10 +35,14 @@ class EditProfileViewModel(
                 },
                 isLoading = false
             )
+            bioTextFieldValue = bioTextFieldValue.copy(
+                text = uiState.profile?.bio ?: "",
+                selection = TextRange(index = uiState.profile?.bio?.length ?: 0)
+            )
         }
     }
 
-    fun updateProfile(profile: Profile){
+    fun updateProfile(){
 
         viewModelScope.launch {
             uiState = uiState.copy(
@@ -44,9 +53,21 @@ class EditProfileViewModel(
                 isLoading = false,
                 uploadSuccess = true
             )
-
-
         }
+    }
+    fun onNameChange(inputName : String){
+        uiState = uiState.copy(
+            profile = uiState.profile?.copy(
+                name = inputName
+            )
+        )
+
+    }
+    fun onBioChange(inputBio : TextFieldValue){
+        bioTextFieldValue = bioTextFieldValue.copy(
+            text = inputBio.text,
+            selection = TextRange(inputBio.text.length)
+        )
     }
 }
 

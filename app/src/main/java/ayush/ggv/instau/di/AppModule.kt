@@ -12,6 +12,7 @@ import ayush.ggv.instau.data.auth.data.KtorApi
 import ayush.ggv.instau.data.auth.domain.repository.AuthRepository
 import ayush.ggv.instau.data.auth.domain.usecases.signinusecase.SignInuseCase
 import ayush.ggv.instau.data.auth.domain.usecases.signupusecases.SignUpUseCase
+import ayush.ggv.instau.presentation.account.edit.EditProfileViewModel
 import ayush.ggv.instau.presentation.account.profile.ProfileScreenViewModel
 import ayush.ggv.instau.presentation.home.HomeScreenViewModel
 import ayush.ggv.instau.presentation.post.PostDetailScreenViewModel
@@ -33,6 +34,7 @@ val appModule = module {
     viewModel{ HomeScreenViewModel() }
     viewModel { PostDetailScreenViewModel()}
     viewModel{ProfileScreenViewModel()}
+    viewModel { EditProfileViewModel()}
     single{
         DataStoreFactory.create(
             serializer = UserSettingsSerializer,

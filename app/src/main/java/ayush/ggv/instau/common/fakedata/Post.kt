@@ -58,19 +58,8 @@ val samplePosts = listOf(
         createdAt = "Mar 31, 2023",
         likesCount = 90,
         commentCount = 13,
-        authorId = 3,
+        authorId = 4,
         authorName = "Omkar",
         authorImage = "https://picsum.photos/204"
-    ),
-    Post(
-        id = "15",
-        text = "Just finished a great book. Highly recommend 'The Great Gatsby' to anyone who loves classic literature.",
-        imageUrl = "https://picsum.photos/404",
-        createdAt = "May 03, 2023",
-        likesCount = 121,
-        commentCount = 23,
-        authorId = 2,
-        authorName = "KhaoMasam",
-        authorImage = "https://picsum.photos/205"
     ),
 )
