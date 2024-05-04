@@ -33,7 +33,7 @@ val sampleProfiles = listOf(
     Profile(
         id = 3,
         name = "Paras",
-        bio = "Bio for Paras",
+        bio = "i am paras ,A professional Web developer",
         profileUrl = "https://picsum.photos/203",
         followersCount = 150,
         followingCount = 65
