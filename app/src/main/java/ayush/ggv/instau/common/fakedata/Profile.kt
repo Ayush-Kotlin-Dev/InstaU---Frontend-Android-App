@@ -21,6 +21,7 @@ val sampleProfiles = listOf(
         followersCount = 100,
         followingCount = 50
     ),
+
     Profile(
         id = 2,
         name = "Vaibhav",
@@ -36,13 +37,5 @@ val sampleProfiles = listOf(
         profileUrl = "https://picsum.photos/203",
         followersCount = 150,
         followingCount = 65
-    ),
-    Profile(
-        id = 4,
-        name = "Omkar",
-        bio = "Bio for Omkar",
-        profileUrl = "https://picsum.photos/204",
-        followersCount = 180,
-        followingCount = 80
     )
 )

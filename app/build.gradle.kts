@@ -102,6 +102,17 @@ dependencies {
     //coil compose
     implementation("io.coil-kt:coil-compose:2.6.0")
 
+    val room = "2.6.1"
+    // Room
+    implementation("androidx.room:room-runtime:$room")
+    implementation("androidx.room:room-ktx:$room")
+    ksp("androidx.room:room-compiler:$room")
+    implementation("androidx.room:room-paging:2.6.1")
+
+    // Paging 3.0
+    implementation("androidx.paging:paging-compose:1.0.0-alpha14")
+
+
 
 
 }

@@ -1,7 +1,6 @@
 package ayush.ggv.instau.data
 
-import ayush.ggv.instau.data.auth.data.AuthResponse
-import ayush.ggv.instau.data.auth.data.AuthResponseData
+import ayush.ggv.instau.model.AuthResponseData
 import ayush.ggv.instau.data.auth.domain.model.AuthResultData
 
 fun AuthResponseData.toAuthResultData() : AuthResultData{

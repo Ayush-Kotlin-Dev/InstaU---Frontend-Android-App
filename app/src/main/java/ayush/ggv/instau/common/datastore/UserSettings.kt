@@ -15,7 +15,8 @@ data class UserSettings(
 )
 
 fun UserSettings.toAuthResultData(): AuthResultData {
-    return AuthResultData(id,
+    return AuthResultData(
+        id,
         name,
         bio,
         avatar,
