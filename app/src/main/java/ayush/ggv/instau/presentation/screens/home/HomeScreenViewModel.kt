@@ -75,7 +75,7 @@ class HomeScreenViewModel(
                         )
                     }
                     postsUiState = postsUiState.copy(
-                        posts = convertedPosts!!,
+                        posts = convertedPosts!!.reversed(),
                         isLoading = false
                     )
                 }

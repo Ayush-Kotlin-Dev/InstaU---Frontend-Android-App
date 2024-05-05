@@ -22,7 +22,6 @@ import ayush.ggv.instau.util.Result
 
 class AddPostViewModel(
     private val addPostUseCase: AddPostUseCase,
-    private val dataStore: DataStore<UserSettings>
 ) :ViewModel(
 
 ){
@@ -58,20 +57,24 @@ fun onCaptionChange(inputCaption : String){
                 ),
                 token = token
             )
-//            when(createPostResult){
-//                is Result.Error -> {
-//                    uiState = uiState.copy(
-//                        isLoading = false,
-//                        error = createPostResult.message
-//                    )
-//                }
-//                is Result.Success -> {
-//                    uiState = uiState.copy(
-//                        isLoading = false,
-//                        AddPost = createPostResult.data
-//                    )
-//                }
-//            }
+            when(createPostResult){
+                is Result.Error -> {
+                    uiState = uiState.copy(
+                        isLoading = false,
+                        error = createPostResult.message
+                    )
+                }
+                is Result.Success -> {
+                    uiState = uiState.copy(
+                        isLoading = false,
+                        uploadSuccess = true
+                    )
+                }
+                is Result.Loading ->
+                    uiState = uiState.copy(
+                        isLoading = true
+                    )
+            }
         }
 
 

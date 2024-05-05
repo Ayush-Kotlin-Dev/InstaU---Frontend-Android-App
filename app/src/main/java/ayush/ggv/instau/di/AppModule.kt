@@ -47,7 +47,7 @@ val appModule = module {
     viewModel{ ProfileScreenViewModel() }
     viewModel { EditProfileViewModel() }
     viewModel{ FollowsViewModel() }
-    viewModel { AddPostViewModel( get() , get()) }
+    viewModel { AddPostViewModel( get()) }
     single{
         DataStoreFactory.create(
             serializer = UserSettingsSerializer,

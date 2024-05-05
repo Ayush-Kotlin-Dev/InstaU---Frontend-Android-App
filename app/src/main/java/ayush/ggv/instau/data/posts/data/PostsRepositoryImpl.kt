@@ -6,7 +6,9 @@ import ayush.ggv.instau.model.PostTextParams
 import ayush.ggv.instau.model.PostsResponse
 import ayush.ggv.instau.util.Result
 
-class PostsRepositoryImpl(private val postService: PostService) : PostRepository {
+class PostsRepositoryImpl(
+    private val postService: PostService  ,
+) : PostRepository {
     override suspend fun getFeedPosts(
         currentUserId: Long, page: Int, limit: Int , token : String
     ): Result<PostsResponse> {

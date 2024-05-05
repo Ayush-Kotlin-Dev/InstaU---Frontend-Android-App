@@ -45,6 +45,9 @@ import ayush.ggv.instau.ui.theme.LightGray
 import ayush.ggv.instau.ui.theme.MediumSpacing
 import ayush.ggv.instau.ui.theme.SocialAppTheme
 import coil.compose.AsyncImage
+import java.time.Duration
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun PostListItem(
@@ -58,6 +61,12 @@ fun PostListItem(
 
 
 ) {
+
+    // Parse the date string into a LocalDateTime object
+    val dateTime = LocalDateTime.parse(post.createdAt, DateTimeFormatter.ISO_DATE_TIME)
+
+    // Format the LocalDateTime object into a "time ago" string
+    val timeAgo = formatTimeAgo(dateTime)
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -72,7 +81,7 @@ fun PostListItem(
         PostItemHeader(
             name = post.authorName,
             profileUrl = post.authorImage,
-            date = post.createdAt,
+            date = timeAgo,
             onProfileClick = {
                 onProfileClick(post.authorId)
             }
@@ -262,3 +271,12 @@ fun PostListItemPreview() {
     }
 }
 
+fun formatTimeAgo(dateTime: LocalDateTime): String {
+    val duration = Duration.between(dateTime, LocalDateTime.now())
+    return when {
+        duration.toDays() > 0 -> "${duration.toDays()} days ago"
+        duration.toHours() > 0 -> "${duration.toHours()} hours ago"
+        duration.toMinutes() > 0 -> "${duration.toMinutes()} minutes ago"
+        else -> "just now"
+    }
+}
