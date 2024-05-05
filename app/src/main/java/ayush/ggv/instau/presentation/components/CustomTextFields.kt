@@ -1,3 +1,4 @@
+
 package ayush.ggv.instau.presentation.components
 
 import androidx.annotation.StringRes
@@ -44,8 +45,6 @@ fun CustomTextFields(
     isError: Boolean = false,  // New parameter for error state
     errorMessage: String? = null  // New parameter for error message
 ) {
-    val buttonColors = ButtonDefaults.outlinedButtonColors()
-    val leadingIconColor = buttonColors.contentColor(enabled = true).value
     var isPasswordVisible by remember { mutableStateOf(false) }
     Column {
         TextField(

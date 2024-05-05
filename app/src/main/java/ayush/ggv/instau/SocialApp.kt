@@ -14,6 +14,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
@@ -35,8 +36,10 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import ayush.ggv.instau.presentation.components.AppBar
 import ayush.ggv.instau.presentation.screens.NavGraphs
+import ayush.ggv.instau.presentation.screens.destinations.AddPostDestination
 import ayush.ggv.instau.presentation.screens.destinations.HomeDestination
 import ayush.ggv.instau.presentation.screens.destinations.LoginDestination
+import ayush.ggv.instau.presentation.screens.destinations.ProfileDestination
 import com.exyte.animatednavbar.AnimatedNavigationBar
 import com.exyte.animatednavbar.animation.balltrajectory.Parabolic
 import com.exyte.animatednavbar.animation.indendshape.Height
@@ -45,10 +48,12 @@ import com.exyte.animatednavbar.utils.noRippleClickable
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.utils.currentDestinationAsState
+import kotlinx.coroutines.flow.MutableSharedFlow
 
 @Composable
 fun SocialApp(
-    token: String? = null
+    token: String? = null,
+    userId : Long? = null,
 ) {
 
 
@@ -100,6 +105,7 @@ fun SocialApp(
         },
         bottomBar =  {
             if(currentDestination?.route == HomeDestination.route) {
+                Box(modifier = Modifier.padding( top = 10.dp))  {
                 AnimatedNavigationBar(
                     modifier = Modifier.height(64.dp),
                     selectedIndex = selectedIndex,
@@ -108,12 +114,19 @@ fun SocialApp(
                     indentAnimation = Height(tween(300)),
                     ballColor = MaterialTheme.colors.primary,
                     barColor = MaterialTheme.colors.surface,
-
                     ) {
                     navigationBarItems.forEach { item ->
                         Box(
                             modifier = Modifier
-                                .noRippleClickable { selectedIndex = item.ordinal }
+                                .noRippleClickable {
+                                    selectedIndex = item.ordinal
+                                    when(item) {
+                                        NavigationBarItems.ADD -> {
+                                            navHostController.navigate(AddPostDestination(userId = userId!! , token).route)
+                                        }
+                                        NavigationBarItems.PROFILE -> navHostController.navigate(ProfileDestination.route)
+                                        else -> {}
+                                    }}
                                 .fillMaxSize(),
 
                             contentAlignment = Alignment.Center
@@ -129,6 +142,7 @@ fun SocialApp(
 
                         }
                     }
+                }
 
                 }
             }
@@ -157,7 +171,7 @@ fun SocialApp(
 }
 enum class NavigationBarItems (val icons : ImageVector){
     HOME(icons = Icons.Filled.Home),
-    SEARCH(icons = Icons.Filled.Search),
+    ADD(icons = Icons.Filled.Add),
     PROFILE(icons = Icons.Filled.Person)
 }
 

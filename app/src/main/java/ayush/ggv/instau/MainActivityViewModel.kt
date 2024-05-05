@@ -11,4 +11,5 @@ class MainActivityViewModel(
 ) : ViewModel() {
 
     val authState = datastore.data.map { it.toAuthResultData().token }
+    val userId = datastore.data.map { it.toAuthResultData().id }
 }

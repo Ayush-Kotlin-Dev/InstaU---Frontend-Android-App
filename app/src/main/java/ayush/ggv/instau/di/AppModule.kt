@@ -13,12 +13,15 @@ import ayush.ggv.instau.data.auth.domain.repository.AuthRepository
 import ayush.ggv.instau.data.posts.data.PostService
 import ayush.ggv.instau.data.posts.data.PostsRepositoryImpl
 import ayush.ggv.instau.data.posts.domain.repository.PostRepository
+import ayush.ggv.instau.domain.usecases.postsusecase.AddPostUseCase
 import ayush.ggv.instau.domain.usecases.postusecase.PostUseCase
 import ayush.ggv.instau.domain.usecases.signinusecase.SignInuseCase
 import ayush.ggv.instau.domain.usecases.signupusecases.SignUpUseCase
 import ayush.ggv.instau.presentation.screens.account.edit.EditProfileViewModel
 import ayush.ggv.instau.presentation.screens.account.follows.FollowsViewModel
 import ayush.ggv.instau.presentation.screens.account.profile.ProfileScreenViewModel
+import ayush.ggv.instau.presentation.screens.add_post.AddPostScreen
+import ayush.ggv.instau.presentation.screens.add_post.AddPostViewModel
 import ayush.ggv.instau.presentation.screens.home.HomeScreenViewModel
 import ayush.ggv.instau.presentation.screens.post.PostDetailScreenViewModel
 import org.koin.android.ext.koin.androidContext
@@ -35,6 +38,7 @@ val appModule = module {
     factory { SignUpUseCase() }
     factory { SignInuseCase() }
     factory { PostUseCase() }
+    factory {  AddPostUseCase()}
     viewModel { SignUpViewModel(get() , get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
     viewModel { LoginViewModel(get() , get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
     viewModel { MainActivityViewModel(get()) }
@@ -43,6 +47,7 @@ val appModule = module {
     viewModel{ ProfileScreenViewModel() }
     viewModel { EditProfileViewModel() }
     viewModel{ FollowsViewModel() }
+    viewModel { AddPostViewModel( get() , get()) }
     single{
         DataStoreFactory.create(
             serializer = UserSettingsSerializer,

@@ -26,7 +26,10 @@ class MainActivity : ComponentActivity() {
                     val token = viewModel.authState.collectAsStateWithLifecycle(
                         initialValue = null
                     )
-                    SocialApp( token = token.value)
+                    val userId = viewModel.userId.collectAsStateWithLifecycle(
+                        initialValue = null
+                    )
+                    SocialApp( token = token.value , userId = userId.value)
                 }
             }
         }

@@ -42,10 +42,8 @@ class HomeScreenViewModel(
     fun fetchData() {
         onBoardingUiState = onBoardingUiState.copy(isLoading = true)
         postsUiState = postsUiState.copy(isLoading = true)
-//        var currentUserId = -1L
         val page = 1
         val limit = 10
-//        var token = ""
         viewModelScope.launch {
             dataStore.data.map { it.toAuthResultData() }.collect { userSettings ->
                 currentUserId.value = userSettings.id

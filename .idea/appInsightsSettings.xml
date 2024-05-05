@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="ayush.ggv.instau" />
+                  <option name="mobileSdkAppId" value="1:399708034813:android:f2228f67707a7f705a5094" />
+                  <option name="projectId" value="theinstau-3b0cc" />
+                  <option name="projectNumber" value="399708034813" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

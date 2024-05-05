@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "399708034813",
+    "project_id": "theinstau-3b0cc",
+    "storage_bucket": "theinstau-3b0cc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:399708034813:android:f2228f67707a7f705a5094",
+        "android_client_info": {
+          "package_name": "ayush.ggv.instau"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkUDbL2wFPcCY08QFrCutYTVCHgtgyqMI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
