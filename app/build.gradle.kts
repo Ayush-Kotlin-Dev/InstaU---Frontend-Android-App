@@ -112,7 +112,7 @@ dependencies {
     // Paging 3.0
     implementation("androidx.paging:paging-compose:1.0.0-alpha14")
 
-
+    implementation("com.exyte:animated-navigation-bar:1.0.0")
 
 
 }
