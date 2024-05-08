@@ -121,6 +121,7 @@ fun SocialApp(
                                 .noRippleClickable {
                                     selectedIndex = item.ordinal
                                     when(item) {
+                                        NavigationBarItems.HOME -> navHostController.navigate(HomeDestination.route)
                                         NavigationBarItems.ADD -> {
                                             navHostController.navigate(AddPostDestination(userId = userId!! , token).route)
                                         }

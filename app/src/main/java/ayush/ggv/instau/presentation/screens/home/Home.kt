@@ -14,6 +14,8 @@ fun Home(
     navigator: DestinationsNavigator
 ) {
     val viewModel: HomeScreenViewModel = koinViewModel()
+    val currentUserId = viewModel.currentUserId
+    val token = viewModel.token
 
     HomeScreen(
         onBoardingUiState = viewModel.onBoardingUiState,
@@ -24,8 +26,7 @@ fun Home(
 
         },
         onProfileClick = { userId ->
-            navigator.navigate(ProfileDestination(userId))
-
+            navigator.navigate(ProfileDestination(userId , currentUserId.value    , token.value))
         },
         onLikeClick = { postId ->
 

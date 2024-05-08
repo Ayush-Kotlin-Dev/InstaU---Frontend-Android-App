@@ -21,14 +21,12 @@ import org.koin.androidx.compose.koinViewModel
 @Destination
 fun Profile(
     userId : Long ,
-
+    currentUserId : Long,
+    token : String,
     navigator: DestinationsNavigator,
 ) {
     val viewModel : ProfileScreenViewModel = koinViewModel()
     // Initialize currentUserId and token with default values
-    var currentUserId = viewModel.currentUserId1
-    var token = viewModel.token1
-
 
     ProfileScreen(
         userInfoUiState = viewModel.userInfoUiState,
@@ -39,8 +37,8 @@ fun Profile(
         onPostClick = { },
         onLikeClick = { },
         onCommentClick = { },
-        fetchData = {viewModel.fetchProfile(userId , currentUserId.value , token.value)},
-        currentUserId = currentUserId.value,
-        token = token.value,
+        fetchData = {viewModel.fetchProfile(userId , currentUserId , token)},
+        currentUserId = currentUserId,
+        token = token,
     )
 }

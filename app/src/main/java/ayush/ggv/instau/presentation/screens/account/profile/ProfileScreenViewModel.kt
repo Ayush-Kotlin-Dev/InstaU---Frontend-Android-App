@@ -23,14 +23,9 @@ import org.koin.androidx.compose.koinViewModel
 
 class ProfileScreenViewModel(
     private val profileUseCase: ProfileUseCase,
-    private val dataStore: DataStore<UserSettings>
 
 
 ) :ViewModel() {
-
-
-    val  currentUserId1 = mutableStateOf(-0L)
-    val token1 = mutableStateOf("")
 
     var userInfoUiState by mutableStateOf(UserInfoUiState())
         private set
@@ -42,8 +37,9 @@ class ProfileScreenViewModel(
         )
 
         viewModelScope.launch {
+
             try {
-                val result = profileUseCase(userId, currentUserId1.value, token1.value)
+                val result = profileUseCase(userId, currentUserId, token)
                 when (result) {
                     is Result.Success -> {
                         userInfoUiState = userInfoUiState.copy(

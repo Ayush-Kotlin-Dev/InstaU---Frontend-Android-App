@@ -65,18 +65,8 @@ fun ProfileScreen(
             contentAlignment = Alignment.Center
         ){
             CircularProgressIndicator()
-           Column {
-               Text(text = "Token $token")
-               Text(text =  currentUserId.toString())
-           }
-
         }
     } else {
-        Column {
-            Text(text = "Token $token")
-            Text(text =  currentUserId.toString())
-        }
-
         LazyColumn(
             modifier = modifier
                 .fillMaxSize()
