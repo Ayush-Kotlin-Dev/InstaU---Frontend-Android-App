@@ -23,8 +23,6 @@ import org.koin.androidx.compose.koinViewModel
 
 class ProfileScreenViewModel(
     private val profileUseCase: ProfileUseCase,
-
-
 ) :ViewModel() {
 
     var userInfoUiState by mutableStateOf(UserInfoUiState())

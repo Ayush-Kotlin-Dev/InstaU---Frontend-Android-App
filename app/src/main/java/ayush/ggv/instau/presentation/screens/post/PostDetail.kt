@@ -10,7 +10,9 @@ import org.koin.androidx.compose.koinViewModel
 @Destination
 fun PostDetail(
     navigator: DestinationsNavigator,
-    postId: String
+    postId: Long,
+    currentUserId : Long ,
+    token : String
 ) {
     val viewModel: PostDetailScreenViewModel = koinViewModel()
 
@@ -22,7 +24,7 @@ fun PostDetail(
         onProfileClick = {},
         onAddCommentClick = {},
         fetchData = {
-            viewModel.fetchData(postId)
+            viewModel.fetchData(postId ,currentUserId , token)
 
         }
     )

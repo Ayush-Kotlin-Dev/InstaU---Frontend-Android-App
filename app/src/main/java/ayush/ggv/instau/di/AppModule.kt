@@ -17,6 +17,7 @@ import ayush.ggv.instau.data.profile.data.ProfileRepositoryImpl
 import ayush.ggv.instau.data.profile.data.ProfileService
 import ayush.ggv.instau.data.profile.domain.repository.ProfileRepository
 import ayush.ggv.instau.domain.usecases.postsusecase.AddPostUseCase
+import ayush.ggv.instau.domain.usecases.postsusecase.GetPostByIdUseCase
 import ayush.ggv.instau.domain.usecases.postusecase.PostUseCase
 import ayush.ggv.instau.domain.usecases.profileusecase.ProfileUseCase
 import ayush.ggv.instau.domain.usecases.signinusecase.SignInuseCase
@@ -44,13 +45,15 @@ val appModule = module {
     factory { SignInuseCase() }
     factory { PostUseCase() }
     factory {  AddPostUseCase()}
+    factory { GetPostByIdUseCase() }
     factory {  ProfileService()}
     factory { ProfileUseCase() }
+
     viewModel { SignUpViewModel(get() , get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
     viewModel { LoginViewModel(get() , get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
     viewModel { MainActivityViewModel(get()) }
     viewModel{ HomeScreenViewModel(get(),get ()) }
-    viewModel { PostDetailScreenViewModel() }
+    viewModel { PostDetailScreenViewModel(get()) }
     viewModel{ ProfileScreenViewModel( get()) }
     viewModel { EditProfileViewModel() }
     viewModel{ FollowsViewModel() }

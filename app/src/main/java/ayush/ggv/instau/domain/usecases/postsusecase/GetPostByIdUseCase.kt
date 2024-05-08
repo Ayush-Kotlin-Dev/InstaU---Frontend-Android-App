@@ -1,0 +1,20 @@
+package ayush.ggv.instau.domain.usecases.postsusecase
+
+
+import ayush.ggv.instau.data.posts.domain.repository.PostRepository
+import ayush.ggv.instau.model.PostResponse
+import ayush.ggv.instau.util.Result
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
+
+class GetPostByIdUseCase :KoinComponent{
+    private val repository: PostRepository by inject()
+
+    suspend operator fun invoke(
+        postId: Long,
+        currentUserId: Long?,
+        token: String)
+    : Result<PostResponse> {
+        return repository.getPost(postId, currentUserId, token)
+    }
+}

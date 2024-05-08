@@ -1,5 +1,6 @@
 package ayush.ggv.instau.data.posts.data
 
+import ayush.ggv.instau.data.posts.domain.model.PostResultData
 import ayush.ggv.instau.data.posts.domain.repository.PostRepository
 import ayush.ggv.instau.model.PostResponse
 import ayush.ggv.instau.model.PostTextParams
@@ -27,6 +28,19 @@ class PostsRepositoryImpl(
     override suspend fun createPost(postTextParams: PostTextParams, token: String): Result<PostResponse> {
         return try {
             val response = postService.createPost(postTextParams, token)
+            if (response.success == true) {
+                Result.Success(response)
+            } else {
+                Result.Error(Exception("Error: ${response.message}").toString())
+            }
+        } catch (e: Exception) {
+            Result.Error(e.toString())
+        }
+    }
+    // In PostsRepositoryImpl.kt
+    override suspend fun getPost(postId: Long, currentUserId: Long? , token: String): Result<PostResponse> {
+        return try {
+            val response = postService.getPost(postId, currentUserId , token)
             if (response.success == true) {
                 Result.Success(response)
             } else {

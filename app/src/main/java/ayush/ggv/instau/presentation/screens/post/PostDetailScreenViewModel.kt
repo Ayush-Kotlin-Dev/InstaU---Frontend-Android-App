@@ -8,27 +8,41 @@ import androidx.lifecycle.viewModelScope
 import ayush.ggv.instau.common.fakedata.Comment
 import ayush.ggv.instau.common.fakedata.sampleComments
 import ayush.ggv.instau.common.fakedata.samplePosts
+import ayush.ggv.instau.domain.usecases.postsusecase.GetPostByIdUseCase
 import ayush.ggv.instau.model.Post
+import ayush.ggv.instau.util.Result
 import kotlinx.coroutines.launch
 
-class PostDetailScreenViewModel :ViewModel() {
+class PostDetailScreenViewModel(
+    private val getUserByIdUseCase: GetPostByIdUseCase
+) :ViewModel() {
 
     var postUiState by mutableStateOf(PostDetailUiState())
 
     var commentsUiState by mutableStateOf(CommentsUiState())
 
-    fun fetchData(postId : String){
+    fun fetchData(postId : Long , currentUserId : Long , token : String){
         viewModelScope.launch {
             postUiState = postUiState.copy(isLoading = true)
             commentsUiState = commentsUiState.copy(isLoading = true)
 
-            //Simulating network delay
-            Thread.sleep(500)
+            val postResult = getUserByIdUseCase(postId, currentUserId, token)
+            when(postResult){
+                is Result.Success -> {
+                    postUiState = postUiState.copy(
+                        isLoading = false,
+                        post = postResult.data?.post
+                    )
+                }
+                is Result.Error -> {
+                    postUiState = postUiState.copy(
+                        isLoading = false,
+                        errorMessage = postResult.message
+                    )
+                }
 
-//            postUiState = postUiState.copy(
-//                isLoading = false,
-//                post = samplePosts.find { it.id == postId }
-//            )
+                is Result.Loading -> TODO()
+            }
 
             commentsUiState = commentsUiState.copy(
                 isLoading = false,

@@ -45,4 +45,19 @@ class PostService : KtorApi() {
         return response.body<PostResponse>()
 
     }
+
+    suspend fun getPost(
+        postId: Long,
+        currentUserId: Long?,
+        token: String
+    ): PostResponse {
+        val response = client.get {
+            endPoint(path = "/post/$postId")
+            currentUserId?.let { parameter("currentUserId", it) }
+            headers {
+                append("Authorization", "Bearer $token")
+            }
+        }
+        return response.body<PostResponse>()
+    }
 }
