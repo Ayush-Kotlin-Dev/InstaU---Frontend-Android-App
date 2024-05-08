@@ -6,9 +6,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ayush.ggv.instau.common.fakedata.Comment
-import ayush.ggv.instau.common.fakedata.Post
 import ayush.ggv.instau.common.fakedata.sampleComments
 import ayush.ggv.instau.common.fakedata.samplePosts
+import ayush.ggv.instau.model.Post
 import kotlinx.coroutines.launch
 
 class PostDetailScreenViewModel :ViewModel() {
@@ -25,10 +25,10 @@ class PostDetailScreenViewModel :ViewModel() {
             //Simulating network delay
             Thread.sleep(500)
 
-            postUiState = postUiState.copy(
-                isLoading = false,
-                post = samplePosts.find { it.id == postId }
-            )
+//            postUiState = postUiState.copy(
+//                isLoading = false,
+//                post = samplePosts.find { it.id == postId }
+//            )
 
             commentsUiState = commentsUiState.copy(
                 isLoading = false,

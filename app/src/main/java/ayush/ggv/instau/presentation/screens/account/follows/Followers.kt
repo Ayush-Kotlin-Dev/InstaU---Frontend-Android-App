@@ -10,13 +10,15 @@ import org.koin.androidx.compose.koinViewModel
 @Destination
 fun Followers (
     navigator: DestinationsNavigator,
-    userId: Int
+    userId: Long
 ){
     val viewModel: FollowsViewModel = koinViewModel()
 
+    val currentUserid = 0L
+    val token = ""
     FollowsScreen(
         uiState = viewModel.uiState,
         fetchFollows = { viewModel.fetchFollows(userId , 1)  },
-        onItemClick = { navigator.navigate(ProfileDestination(it))  }
+        onItemClick = { navigator.navigate(ProfileDestination( userId  ))  }
     )
 }

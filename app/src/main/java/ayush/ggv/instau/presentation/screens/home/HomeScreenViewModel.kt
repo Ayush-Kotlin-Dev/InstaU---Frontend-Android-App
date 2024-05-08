@@ -8,11 +8,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ayush.ggv.instau.common.datastore.UserSettings
 import ayush.ggv.instau.common.datastore.toAuthResultData
-import ayush.ggv.instau.common.fakedata.Post
-import ayush.ggv.instau.common.fakedata.samplePosts
 import ayush.ggv.instau.common.fakedata.sampleUsers
 import ayush.ggv.instau.domain.usecases.postusecase.PostUseCase
-import ayush.ggv.instau.domain.usecases.signinusecase.SignInuseCase
+import ayush.ggv.instau.model.Post
 import ayush.ggv.instau.presentation.screens.home.onboarding.OnBoardingUiState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.map
@@ -52,7 +50,7 @@ class HomeScreenViewModel(
         }
 
         viewModelScope.launch {
-            delay(1000)
+            delay(500)
 
             // Fetch posts
             val result = postUseCase(currentUserId.value, page , limit, token.value)
@@ -61,15 +59,15 @@ class HomeScreenViewModel(
                 is Result.Success -> {
                     val convertedPosts = result.data?.posts?.map { modelPost ->
                         Post(
-                            id = modelPost.postId.toString(),
-                            text = modelPost.caption,
+                            postId = modelPost.postId,
+                            caption = modelPost.caption,
                             imageUrl = modelPost.imageUrl,
                             createdAt = modelPost.createdAt,
                             likesCount = modelPost.likesCount,
-                            commentCount = modelPost.commentsCount,
-                            authorId = modelPost.userId.toInt(),
-                            authorName = modelPost.userName,
-                            authorImage = modelPost.userImageUrl?:"",
+                            commentsCount = modelPost.commentsCount,
+                            userId = modelPost.userId,
+                            userName = modelPost.userName,
+                            userImageUrl = modelPost.userImageUrl ?: "",
                             isLiked = modelPost.isLiked,
                             isOwnPost = modelPost.isOwnPost
                         )

@@ -36,8 +36,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ayush.ggv.instau.R
-import ayush.ggv.instau.common.fakedata.Post
 import ayush.ggv.instau.common.fakedata.samplePosts
+import ayush.ggv.instau.model.Post
 import ayush.ggv.instau.ui.theme.DarkGray
 import ayush.ggv.instau.ui.theme.ExtraLargeSpacing
 import ayush.ggv.instau.ui.theme.LargeSpacing
@@ -54,9 +54,9 @@ fun PostListItem(
     modifier: Modifier = Modifier,
     post: Post,
     onPostClick: (Post) -> Unit,
-    onProfileClick: (Int) -> Unit,
-    onLikeClick: (String) -> Unit,
-    onCommentClick: (String) -> Unit,
+    onProfileClick: (Long) -> Unit,
+    onLikeClick: (Long) -> Unit,
+    onCommentClick: (Long) -> Unit,
     isDetailScreen: Boolean = false
 
 
@@ -79,11 +79,11 @@ fun PostListItem(
             )
     ) {
         PostItemHeader(
-            name = post.authorName,
-            profileUrl = post.authorImage,
+            name = post.userName,
+            profileUrl = post.userImageUrl?:"",
             date = timeAgo,
             onProfileClick = {
-                onProfileClick(post.authorId)
+                onProfileClick(post.userId)
             }
         )
         AsyncImage(
@@ -100,13 +100,13 @@ fun PostListItem(
             }
         )
         PostLikeRow(
-            onLikeClick = { onLikeClick(post.id) },
-            onCommentClick = { onCommentClick(post.id) },
-            likesCount = post.commentCount,
-            commentsCount = post.commentCount
+            onLikeClick = { onLikeClick(post.postId) },
+            onCommentClick = { onCommentClick(post.postId) },
+            likesCount = post.likesCount,
+            commentsCount = post.commentsCount
         )
         Text(
-            text = post.text,
+            text = post.caption,
             style = MaterialTheme.typography.body2,
             modifier = modifier
                 .padding(horizontal = LargeSpacing),
@@ -248,28 +248,28 @@ fun PostLikeRow(
     }
 }
 
-@Preview(showBackground = false , uiMode = UI_MODE_NIGHT_YES  )
-@Composable
-fun PostListItemPreview() {
-    SocialAppTheme {
-        Surface(
-            color = MaterialTheme.colors.surface
-        ) {
-            val context = LocalContext.current
-            PostListItem(
-                post = samplePosts.first(),
-                onPostClick = { Toast.makeText(context, "onPostClick", Toast.LENGTH_SHORT).show() },
-                onProfileClick = {
-                    Toast.makeText(context, "onProfile", Toast.LENGTH_SHORT).show()
-                },
-                onLikeClick = { Toast.makeText(context, "onPostClick", Toast.LENGTH_SHORT).show() },
-                onCommentClick = {
-                    Toast.makeText(context, "onPostClick", Toast.LENGTH_SHORT).show()
-                }
-            )
-        }
-    }
-}
+//@Preview(showBackground = false , uiMode = UI_MODE_NIGHT_YES  )
+//@Composable
+//fun PostListItemPreview() {
+//    SocialAppTheme {
+//        Surface(
+//            color = MaterialTheme.colors.surface
+//        ) {
+//            val context = LocalContext.current
+//            PostListItem(
+//                post = samplePosts.first(),
+//                onPostClick = { Toast.makeText(context, "onPostClick", Toast.LENGTH_SHORT).show() },
+//                onProfileClick = {
+//                    Toast.makeText(context, "onProfile", Toast.LENGTH_SHORT).show()
+//                },
+//                onLikeClick = { Toast.makeText(context, "onPostClick", Toast.LENGTH_SHORT).show() },
+//                onCommentClick = {
+//                    Toast.makeText(context, "onPostClick", Toast.LENGTH_SHORT).show()
+//                }
+//            )
+//        }
+//    }
+//}
 
 fun formatTimeAgo(dateTime: LocalDateTime): String {
     val duration = Duration.between(dateTime, LocalDateTime.now())

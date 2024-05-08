@@ -1,24 +1,15 @@
 package ayush.ggv.instau.presentation.screens.add_post
 
-import android.view.View
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ayush.ggv.instau.common.datastore.UserSettings
-import ayush.ggv.instau.common.datastore.toAuthResultData
 import ayush.ggv.instau.domain.usecases.postsusecase.AddPostUseCase
-import ayush.ggv.instau.domain.usecases.postusecase.PostUseCase
 import ayush.ggv.instau.model.PostTextParams
-import ayush.ggv.instau.presentation.screens.account.edit.EditProfileUiState
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 import ayush.ggv.instau.util.Result
+import kotlinx.coroutines.launch
 
 class AddPostViewModel(
     private val addPostUseCase: AddPostUseCase,

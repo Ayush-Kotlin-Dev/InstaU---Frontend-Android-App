@@ -34,10 +34,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ayush.ggv.instau.R
+import ayush.ggv.instau.model.Post
 import ayush.ggv.instau.presentation.components.CircleImage
 import ayush.ggv.instau.presentation.components.FollowsButton
 import ayush.ggv.instau.presentation.components.PostListItem
-import ayush.ggv.instau.common.fakedata.Post
 import ayush.ggv.instau.ui.theme.LargeSpacing
 import ayush.ggv.instau.ui.theme.MediumSpacing
 import ayush.ggv.instau.ui.theme.SmallSpacing
@@ -53,18 +53,30 @@ fun ProfileScreen(
     onFollowersClick: () -> Unit,
     onFollowingClick: () -> Unit,
     onPostClick: (Post) -> Unit,
-    onLikeClick: (String) -> Unit,
-    onCommentClick: (String) -> Unit,
-    fetchData: () -> Unit
+    onLikeClick: (Long) -> Unit,
+    onCommentClick: (Long) -> Unit,
+    fetchData: () -> Unit,
+    token : String,
+    currentUserId : Long
 ) {
-    if(userInfoUiState.isLoading && profilePostsUiState.isLoading){
+    if(userInfoUiState.isLoading ){ //|| profilePostsUiState.isLoading
         Box(
             modifier = modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ){
             CircularProgressIndicator()
+           Column {
+               Text(text = "Token $token")
+               Text(text =  currentUserId.toString())
+           }
+
         }
     } else {
+        Column {
+            Text(text = "Token $token")
+            Text(text =  currentUserId.toString())
+        }
+
         LazyColumn(
             modifier = modifier
                 .fillMaxSize()
@@ -72,7 +84,7 @@ fun ProfileScreen(
         ) {
             item(key = "header_section"){
                 ProfileHeaderSection(
-                    imageUrl = userInfoUiState.profile?.profileUrl?: "",
+                    imageUrl = userInfoUiState.profile?.imageUrl?: "",
                     name = userInfoUiState.profile?.name ?: "",
                     bio = userInfoUiState.profile?.bio ?: "ayush",
                     followersCount = userInfoUiState.profile?.followersCount ?: 0,
@@ -86,16 +98,17 @@ fun ProfileScreen(
 
             items(
                 items = profilePostsUiState.posts,
-                key = { post -> post.id }
+                key = { post -> post.postId }
             ){ post ->
                 PostListItem(
                     post = post,
                     onPostClick = onPostClick,
                     onProfileClick = {},
-                    onLikeClick = onLikeClick,
+                    onLikeClick =  onLikeClick,
                     onCommentClick = onCommentClick
                 )
             }
+
         }
     }
     LaunchedEffect (key1 = Unit){

@@ -14,11 +14,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import ayush.ggv.instau.presentation.components.PostListItem
 import ayush.ggv.instau.common.fakedata.FollowsUser
-import ayush.ggv.instau.common.fakedata.Post
 import ayush.ggv.instau.common.fakedata.samplePosts
 import ayush.ggv.instau.common.fakedata.sampleUsers
+import ayush.ggv.instau.model.Post
+import ayush.ggv.instau.presentation.components.PostListItem
 import ayush.ggv.instau.presentation.screens.home.onboarding.OnBoardingSection
 import ayush.ggv.instau.presentation.screens.home.onboarding.OnBoardingUiState
 import com.ramcosta.composedestinations.annotation.Destination
@@ -32,7 +32,7 @@ fun HomeScreen(
     onBoardingUiState: OnBoardingUiState,
     postsUiState: PostsUiState,
     onPostClick: (Post) -> Unit,
-    onProfileClick: (Int) -> Unit,
+    onProfileClick: (Long) -> Unit,
     onLikeClick: (String) -> Unit,
     onCommentClick: (String) -> Unit,
 
@@ -70,13 +70,13 @@ fun HomeScreen(
             }
 
 
-            items(postsUiState.posts, key = { post -> post.id }) { post ->
+            items(postsUiState.posts, key = { post -> post.postId }) { post ->
                 PostListItem(
                     post = post,
                     onPostClick = onPostClick,
                     onProfileClick = onProfileClick,
-                    onLikeClick = { onLikeClick(post.id) },
-                    onCommentClick = { onCommentClick(post.id) }
+                    onLikeClick = { onLikeClick(post.postId.toString()) },
+                    onCommentClick = { onCommentClick(post.postId.toString()) }
                 )
             }
         }
@@ -90,26 +90,26 @@ fun HomeScreen(
 }
 
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
-@Composable
-fun PreviewHomeScreen() {
-    HomeScreen(
-        onBoardingUiState = OnBoardingUiState(
-            users = sampleUsers,
-            shouldShowOnBoarding = true,
-        ),
-        postsUiState = PostsUiState(
-            posts = samplePosts
-        ),
-        onPostClick = {},
-        onProfileClick = {},
-        onLikeClick = {},
-        onCommentClick = {},
-        onBoardingFinish = {},
-        onUserClick = {},
-        onFollowClick = { _, _ -> },
-        fetchData = {}
-
-    )
-}
-
+//@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
+//@Composable
+//fun PreviewHomeScreen() {
+//    HomeScreen(
+//        onBoardingUiState = OnBoardingUiState(
+//            users = sampleUsers,
+//            shouldShowOnBoarding = true,
+//        ),
+//        postsUiState = PostsUiState(
+//            posts = samplePosts
+//        ),
+//        onPostClick = {},
+//        onProfileClick = {},
+//        onLikeClick = {},
+//        onCommentClick = {},
+//        onBoardingFinish = {},
+//        onUserClick = {},
+//        onFollowClick = { _, _ -> },
+//        fetchData = {}
+//
+//    )
+//}
+//

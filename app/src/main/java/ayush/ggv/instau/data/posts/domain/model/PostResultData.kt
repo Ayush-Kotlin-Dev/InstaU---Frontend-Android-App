@@ -2,7 +2,7 @@ package ayush.ggv.instau.data.posts.domain.model
 
 import kotlinx.serialization.Serializable
 
-@Serializable()
+@Serializable
 data class PostResultData(
     val id: Long,
     val userId: Long,

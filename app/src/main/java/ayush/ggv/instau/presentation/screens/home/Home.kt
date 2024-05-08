@@ -20,7 +20,7 @@ fun Home(
         postsUiState = viewModel.postsUiState,
 
         onPostClick = {
-            navigator.navigate(PostDetailDestination(it.id))
+            //navigator.navigate(PostDetailDestination(navigator , it.postId.toString()))
 
         },
         onProfileClick = { userId ->

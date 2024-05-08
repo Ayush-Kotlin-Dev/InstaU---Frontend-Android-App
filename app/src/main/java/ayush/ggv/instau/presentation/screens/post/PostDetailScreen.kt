@@ -26,10 +26,8 @@ import ayush.ggv.instau.R
 import ayush.ggv.instau.presentation.components.CommentListItem
 import ayush.ggv.instau.presentation.components.PostListItem
 import ayush.ggv.instau.common.fakedata.Comment
-import ayush.ggv.instau.common.fakedata.Post
 import ayush.ggv.instau.common.fakedata.sampleComments
 import ayush.ggv.instau.common.fakedata.samplePosts
-import ayush.ggv.instau.presentation.screens.home.PostsUiState
 import ayush.ggv.instau.ui.theme.LargeSpacing
 import ayush.ggv.instau.ui.theme.SocialAppTheme
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -40,7 +38,7 @@ fun PostDetailScreen(
     postUiState: PostDetailUiState,
     commentsUiState: CommentsUiState,
     onCommentMoreIconClick: (Comment) -> Unit,
-    onProfileClick: (Int) -> Unit,
+    onProfileClick: (Long) -> Unit,
     onAddCommentClick: () -> Unit,
     fetchData: () -> Unit
 ) {
@@ -139,25 +137,25 @@ fun CommentSectionHeader(
     }
 }
 
-@Preview
-@Composable
-fun PreviewPostDetailScreen() {
-    SocialAppTheme {
-        Surface {
-            PostDetailScreen(
-                postUiState = PostDetailUiState(
-                    isLoading = false,
-                    post = samplePosts.first()
-                ),
-                commentsUiState = CommentsUiState(
-                    isLoading = false,
-                    comments = sampleComments
-                ),
-                onCommentMoreIconClick = {},
-                onProfileClick = {},
-                onAddCommentClick = {},
-                fetchData = {}
-            )
-        }
-    }
-}
+//@Preview
+//@Composable
+//fun PreviewPostDetailScreen() {
+//    SocialAppTheme {
+//        Surface {
+//            PostDetailScreen(
+//                postUiState = PostDetailUiState(
+//                    isLoading = false,
+//                    post = samplePosts.first()
+//                ),
+//                commentsUiState = CommentsUiState(
+//                    isLoading = false,
+//                    comments = sampleComments
+//                ),
+//                onCommentMoreIconClick = {},
+//                onProfileClick = {},
+//                onAddCommentClick = {},
+//                fetchData = {}
+//            )
+//        }
+//    }
+//}
