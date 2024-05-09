@@ -60,7 +60,7 @@ val appModule = module {
     viewModel{ HomeScreenViewModel(get(),get ()) }
     viewModel { PostDetailScreenViewModel(get()) }
     viewModel{ ProfileScreenViewModel( get() , get()) }
-    viewModel { EditProfileViewModel(g) }
+    viewModel { EditProfileViewModel(get() ,get()) }
     viewModel{ FollowsViewModel() }
     viewModel { AddPostViewModel( get()) }
 

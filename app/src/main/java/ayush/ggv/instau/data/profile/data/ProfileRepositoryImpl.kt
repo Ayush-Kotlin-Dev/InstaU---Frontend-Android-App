@@ -36,7 +36,7 @@ class ProfileRepositoryImpl(
         return try {
             val response = profileService.updateUserProfile(updateUserParams, token)
 
-            if (response.success ==  true) {
+            if (response.success) {
                 Result.Success(response)
             } else {
                 Result.Error(Exception("Error: ${response.message}").toString())

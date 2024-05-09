@@ -38,10 +38,12 @@ import ayush.ggv.instau.model.Post
 import ayush.ggv.instau.presentation.components.CircleImage
 import ayush.ggv.instau.presentation.components.FollowsButton
 import ayush.ggv.instau.presentation.components.PostListItem
+import ayush.ggv.instau.presentation.screens.destinations.EditProfileDestination
 import ayush.ggv.instau.ui.theme.LargeSpacing
 import ayush.ggv.instau.ui.theme.MediumSpacing
 import ayush.ggv.instau.ui.theme.SmallSpacing
 import ayush.ggv.instau.ui.theme.SocialAppTheme
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 
 @Composable
@@ -56,6 +58,8 @@ fun ProfileScreen(
     onLikeClick: (Long) -> Unit,
     onCommentClick: (Long) -> Unit,
     fetchData: () -> Unit,
+    navigator: DestinationsNavigator,
+    token : String
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize()
@@ -75,7 +79,13 @@ fun ProfileScreen(
                     bio = userInfoUiState.profile?.bio ?: "Stay Tuned... ",
                     followersCount = userInfoUiState.profile?.followersCount ?: 0,
                     followingCount = userInfoUiState.profile?.followingCount ?: 0,
-                    onButtonClick = onButtonClick,
+                    onButtonClick = {
+                        if (userInfoUiState.profile?.isOwnProfile == true) {
+                            navigator.navigate(EditProfileDestination(userInfoUiState.profile.id , token )) // Navigate to EditProfileDestination if the profile belongs to the current user
+                        } else {
+                            onButtonClick() // Perform the follow/unfollow task if the profile does not belong to the current user
+                        }
+                    },
                     onFollowersClick = onFollowersClick,
                     onFollowingClick = onFollowingClick,
                     isCurrentUser = userInfoUiState.profile?.isOwnProfile ?: false,
@@ -179,14 +189,25 @@ fun ProfileHeaderSection(
                     onClick = onFollowingClick
                 )
             }
-            FollowsButton(
-                text = if(isCurrentUser) R.string.editProfileLabel else if(isFollowing) R.string.unfollow_button_label else R.string.follow_button_label ,
-                onFollowButtonClick = onButtonClick,
-                modifier = modifier
-                    .height(30.dp)
-                    .widthIn(min = 100.dp),
-                isOutline = isCurrentUser || isFollowing
-            )
+            if (isCurrentUser) {
+                FollowsButton(
+                    text = R.string.editProfileLabel,
+                    onFollowButtonClick = onButtonClick,
+                    modifier = modifier
+                        .height(30.dp)
+                        .widthIn(min = 100.dp),
+                    isOutline = true
+                )
+            } else {
+                FollowsButton(
+                    text = if(isFollowing) R.string.unfollow_button_label else R.string.follow_button_label,
+                    onFollowButtonClick = onButtonClick,
+                    modifier = modifier
+                        .height(30.dp)
+                        .widthIn(min = 100.dp),
+                    isOutline = isFollowing
+                )
+            }
         }
     }
 

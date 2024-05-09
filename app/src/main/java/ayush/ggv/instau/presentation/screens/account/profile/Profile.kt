@@ -31,12 +31,15 @@ fun Profile(
     ProfileScreen(
         userInfoUiState = viewModel.userInfoUiState,
         profilePostsUiState = viewModel.profilePostUiState,
-        onButtonClick = { }, // navigator.navigate(EditProfileDestination(userId))
+        onButtonClick = {  }, // navigator.navigate(EditProfileDestination(userId))
         onFollowersClick = { }, //navigator.navigate(FollowersDestination(userId))
         onFollowingClick = { }, //navigator.navigate(FollowingDestination(userId))
         onPostClick = { },
         onLikeClick = { },
         onCommentClick = { },
         fetchData = {viewModel.fetchProfile(userId , currentUserId , token)},
+        navigator = navigator,
+        token = token
+
     )
 }

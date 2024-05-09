@@ -8,9 +8,11 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 @Destination
 fun EditProfile(
+    userId: Long,
+    token : String,
     navigator: DestinationsNavigator,
-    userId: Int
-) {
+
+    ) {
     val viewModel: EditProfileViewModel = koinViewModel()
 
     EditProfileScreen(
@@ -18,10 +20,10 @@ fun EditProfile(
         onNameChange = viewModel::onNameChange,
         bioTextFieldValue = viewModel.bioTextFieldValue,
         onBioChange = viewModel::onBioChange,
-        onUploadButtonClick = { viewModel.updateProfile()},
+        onUploadButtonClick = { viewModel.updateProfile( token)},
         onUploadSuccess = { navigator.navigateUp()},
         fetchProfile = {
-            viewModel.fetchProfile(userId)
+            viewModel.fetchProfile( userId , userId ,token )
         }
     )
 }
