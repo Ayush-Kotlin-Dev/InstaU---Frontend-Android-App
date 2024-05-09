@@ -13,6 +13,8 @@
     <string name="sign_up">SignUp</string>
     <string name="label_password">password\n</string>
     <string name="follow_button_label">Follow</string>
+    <string name="unfollow_button_label">Unfollow</string>
+    <string name="editProfileLabel">Edit Profile</string>
     <string name="on_boarding_title">Users to Follow</string>
     <string name="oboarding_guidance_subtitle">Posts from people you follow will appear here. Follow some people to get started.</string>
     <string name="onboarding_button_text">Done</string>

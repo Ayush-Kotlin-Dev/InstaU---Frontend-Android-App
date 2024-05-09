@@ -1,65 +1,60 @@
 package ayush.ggv.instau.common.fakedata
 
-data class Post(
-    val id: String,
-    val text: String,
-    val imageUrl: String,
-    val createdAt: String,
-    val likesCount: Int,
-    val commentCount: Int,
-    val authorId: Int,
-    val authorName: String,
-    val authorImage: String,
-    val isLiked: Boolean = false,
-    val isOwnPost: Boolean = false
-)
+import ayush.ggv.instau.model.Post
 
 
-//Dummy Posts
 //Dummy Posts
 val samplePosts = listOf(
     Post(
-        id = "11",
-        text = "This is a beautiful day! Enjoying the sunshine and the great weather.",
+        postId = 11L,
+        caption = "This is a beautiful day! Enjoying the sunshine and the great weather.",
         imageUrl = "https://picsum.photos/408",
         createdAt = "20 min",
         likesCount = 12,
-        commentCount = 3,
-        authorId = 1,
-        authorName = "Ayush",
-        authorImage = "https://picsum.photos/201"
+        commentsCount = 3,
+        userId = 1L,
+        userName = "Ayush",
+        userImageUrl = "https://picsum.photos/201",
+        isLiked = false,
+        isOwnPost = true
     ),
     Post(
-        id = "12",
-        text = "Just finished a great book. Highly recommend 'The Great Gatsby' to anyone who loves classic literature.",
+        postId = 12L,
+        caption = "Just finished a great book. Highly recommend 'The Great Gatsby' to anyone who loves classic literature.",
         imageUrl = "https://picsum.photos/401",
         createdAt = "May 03, 2023",
         likesCount = 121,
-        commentCount = 23,
-        authorId = 2,
-        authorName = "Vaibhav",
-        authorImage = "https://picsum.photos/202"
+        commentsCount = 23,
+        userId = 2L,
+        userName = "Vaibhav",
+        userImageUrl = "https://picsum.photos/202",
+        isLiked = false,
+        isOwnPost = true
     ),
     Post(
-        id = "13",
-        text = "Spent the day hiking in the mountains. The view from the top was breathtaking!",
+        postId = 13L,
+        caption = "Spent the day hiking in the mountains. The view from the top was breathtaking!",
         imageUrl = "https://picsum.photos/400",
         createdAt = "Apr 12, 2023",
         likesCount = 221,
-        commentCount = 41,
-        authorId = 3,
-        authorName = "Paras",
-        authorImage = "https://picsum.photos/203"
+        commentsCount = 41,
+        userId = 3L,
+        userName = "Paras",
+        userImageUrl = "https://picsum.photos/203",
+        isLiked = false,
+        isOwnPost = true
     ),
     Post(
-        id = "14",
-        text = "Had a great time at the concert last night. The band was amazing!",
+        postId = 14L,
+        caption = "Had a great time at the concert last night. The band was amazing!",
         imageUrl = "https://picsum.photos/399",
         createdAt = "Mar 31, 2023",
         likesCount = 90,
-        commentCount = 13,
-        authorId = 4,
-        authorName = "Omkar",
-        authorImage = "https://picsum.photos/204"
+        commentsCount = 13,
+        userId = 4L,
+        userName = "Omkar",
+        userImageUrl = "https://picsum.photos/204",
+        isLiked = false,
+        isOwnPost = true
     ),
 )

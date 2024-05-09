@@ -56,40 +56,48 @@ fun ProfileScreen(
     onLikeClick: (Long) -> Unit,
     onCommentClick: (Long) -> Unit,
     fetchData: () -> Unit,
-    token : String,
-    currentUserId : Long
 ) {
-    if(userInfoUiState.isLoading ){ //|| profilePostsUiState.isLoading
-        Box(
-            modifier = modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ){
-            CircularProgressIndicator()
-        }
-    } else {
-        LazyColumn(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(all = MediumSpacing)
-        ) {
-            item(key = "header_section"){
+    LazyColumn(
+        modifier = modifier.fillMaxSize()
+    ) {
+        item {
+            if(userInfoUiState.isLoading) {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            } else {
                 ProfileHeaderSection(
-                    imageUrl = userInfoUiState.profile?.imageUrl?: "",
+                    imageUrl = userInfoUiState.profile?.imageUrl ?: "",
                     name = userInfoUiState.profile?.name ?: "",
-                    bio = userInfoUiState.profile?.bio ?: "ayush",
+                    bio = userInfoUiState.profile?.bio ?: "Stay Tuned... ",
                     followersCount = userInfoUiState.profile?.followersCount ?: 0,
                     followingCount = userInfoUiState.profile?.followingCount ?: 0,
                     onButtonClick = onButtonClick,
                     onFollowersClick = onFollowersClick,
-                    onFollowingClick = onFollowingClick
-
+                    onFollowingClick = onFollowingClick,
+                    isCurrentUser = userInfoUiState.profile?.isOwnProfile ?: false,
+                    isFollowing = userInfoUiState.profile?.isFollowing ?: false
                 )
             }
+        }
 
+        if(profilePostsUiState.isLoading && userInfoUiState.profile != null) {
+            item {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
+        } else {
             items(
                 items = profilePostsUiState.posts,
                 key = { post -> post.postId }
-            ){ post ->
+            ) { post ->
                 PostListItem(
                     post = post,
                     onPostClick = onPostClick,
@@ -98,13 +106,12 @@ fun ProfileScreen(
                     onCommentClick = onCommentClick
                 )
             }
-
         }
     }
+
     LaunchedEffect (key1 = Unit){
         fetchData()
     }
-
 }
 
 @Composable
@@ -173,7 +180,7 @@ fun ProfileHeaderSection(
                 )
             }
             FollowsButton(
-                text = R.string.follow_button_label,
+                text = if(isCurrentUser) R.string.editProfileLabel else if(isFollowing) R.string.unfollow_button_label else R.string.follow_button_label ,
                 onFollowButtonClick = onButtonClick,
                 modifier = modifier
                     .height(30.dp)

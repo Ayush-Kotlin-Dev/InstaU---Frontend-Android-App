@@ -18,8 +18,10 @@ import ayush.ggv.instau.data.profile.data.ProfileService
 import ayush.ggv.instau.data.profile.domain.repository.ProfileRepository
 import ayush.ggv.instau.domain.usecases.postsusecase.AddPostUseCase
 import ayush.ggv.instau.domain.usecases.postsusecase.GetPostByIdUseCase
+import ayush.ggv.instau.domain.usecases.postsusecase.getPostsByuserIdUseCase
 import ayush.ggv.instau.domain.usecases.postusecase.PostUseCase
 import ayush.ggv.instau.domain.usecases.profileusecase.ProfileUseCase
+import ayush.ggv.instau.domain.usecases.profileusecase.UpdateProfileUseCase
 import ayush.ggv.instau.domain.usecases.signinusecase.SignInuseCase
 import ayush.ggv.instau.domain.usecases.signupusecases.SignUpUseCase
 import ayush.ggv.instau.presentation.screens.account.edit.EditProfileViewModel
@@ -48,14 +50,17 @@ val appModule = module {
     factory { GetPostByIdUseCase() }
     factory {  ProfileService()}
     factory { ProfileUseCase() }
+    factory { getPostsByuserIdUseCase() }
+    factory { UpdateProfileUseCase() }
+
 
     viewModel { SignUpViewModel(get() , get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
     viewModel { LoginViewModel(get() , get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
     viewModel { MainActivityViewModel(get()) }
     viewModel{ HomeScreenViewModel(get(),get ()) }
     viewModel { PostDetailScreenViewModel(get()) }
-    viewModel{ ProfileScreenViewModel( get()) }
-    viewModel { EditProfileViewModel() }
+    viewModel{ ProfileScreenViewModel( get() , get()) }
+    viewModel { EditProfileViewModel(g) }
     viewModel{ FollowsViewModel() }
     viewModel { AddPostViewModel( get()) }
 

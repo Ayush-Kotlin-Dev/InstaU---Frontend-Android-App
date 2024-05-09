@@ -7,7 +7,7 @@ data class Comment(
     val authorName: String,
     val authorImageUrl: String,
     val authorId: Int,
-    val postId: String
+    val postId: Long
 )
 
 val sampleComments = listOf(
@@ -18,7 +18,7 @@ val sampleComments = listOf(
         authorName = sampleUsers[0].name,
         authorImageUrl = sampleUsers[0].profileUrl,
         authorId = sampleUsers[0].id,
-        postId = samplePosts[0].id
+        postId = samplePosts[0].postId
     ),
     Comment(
         id = "comment2",
@@ -27,7 +27,7 @@ val sampleComments = listOf(
         authorName = sampleUsers[1].name,
         authorImageUrl = sampleUsers[1].profileUrl,
         authorId = sampleUsers[1].id,
-        postId = samplePosts[0].id
+        postId = samplePosts[0].postId
     ),
     Comment(
         id = "comment3",
@@ -36,7 +36,7 @@ val sampleComments = listOf(
         authorName = sampleUsers[2].name,
         authorImageUrl = sampleUsers[2].profileUrl,
         authorId = sampleUsers[2].id,
-        postId = samplePosts[0].id
+        postId = samplePosts[0].postId
     ),
     Comment(
         id = "comment4",
@@ -45,6 +45,6 @@ val sampleComments = listOf(
         authorName = sampleUsers[3].name,
         authorImageUrl = sampleUsers[3].profileUrl,
         authorId = sampleUsers[3].id,
-        postId = samplePosts[0].id
+        postId = samplePosts[0].postId
     )
 )

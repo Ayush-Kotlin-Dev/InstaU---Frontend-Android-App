@@ -38,7 +38,5 @@ fun Profile(
         onLikeClick = { },
         onCommentClick = { },
         fetchData = {viewModel.fetchProfile(userId , currentUserId , token)},
-        currentUserId = currentUserId,
-        token = token,
     )
 }

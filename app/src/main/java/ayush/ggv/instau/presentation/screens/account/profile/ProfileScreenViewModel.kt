@@ -12,6 +12,8 @@ import ayush.ggv.instau.common.datastore.toAuthResultData
 import ayush.ggv.instau.common.fakedata.samplePosts
 import ayush.ggv.instau.common.fakedata.sampleProfiles
 import ayush.ggv.instau.data.profile.domain.model.Profile
+import ayush.ggv.instau.domain.usecases.postsusecase.GetPostByIdUseCase
+import ayush.ggv.instau.domain.usecases.postsusecase.getPostsByuserIdUseCase
 import ayush.ggv.instau.domain.usecases.profileusecase.ProfileUseCase
 import ayush.ggv.instau.model.Post
 import ayush.ggv.instau.presentation.screens.home.HomeScreenViewModel
@@ -23,6 +25,7 @@ import org.koin.androidx.compose.koinViewModel
 
 class ProfileScreenViewModel(
     private val profileUseCase: ProfileUseCase,
+    private val getPostsbyUserIdUseCase: getPostsByuserIdUseCase
 ) :ViewModel() {
 
     var userInfoUiState by mutableStateOf(UserInfoUiState())
@@ -37,33 +40,59 @@ class ProfileScreenViewModel(
         viewModelScope.launch {
 
             try {
-                val result = profileUseCase(userId, currentUserId, token)
-                when (result) {
+                val Profileresult = profileUseCase(userId, currentUserId, token)
+                val postResult = getPostsbyUserIdUseCase(userId, currentUserId, 1, 10, token)
+                when (Profileresult) {
                     is Result.Success -> {
                         userInfoUiState = userInfoUiState.copy(
-                            profile = result.data?.profile,
+                            profile = Profileresult.data?.profile,
                             isLoading = false
                         )
                     }
 
                     is Result.Error -> {
                         userInfoUiState = userInfoUiState.copy(
-                            errorMessage = result.message,
+                            errorMessage = Profileresult.message,
                             isLoading = false
                         )
                     }
 
                     is Result.Loading ->  {}
                 }
+
+                when (postResult) {
+                    is Result.Success -> {
+                        profilePostUiState = profilePostUiState.copy(
+                            posts = postResult.data?.posts ?: listOf(),
+                            isLoading = false
+                        )
+                    }
+
+                    is Result.Error -> {
+                        profilePostUiState = profilePostUiState.copy(
+                            errorMessage = postResult.message,
+                            isLoading = false
+                        )
+                    }
+
+                    is Result.Loading -> {
+                        profilePostUiState = profilePostUiState.copy(isLoading = true)
+                    }
+                }
             } catch (e: Exception) {
                 userInfoUiState = userInfoUiState.copy(
+                    errorMessage = e.message,
+                )
+                profilePostUiState = profilePostUiState.copy(
                     errorMessage = e.message,
                 )
             } finally {
                 userInfoUiState = userInfoUiState.copy(
                     isLoading = false
                 )
-
+                profilePostUiState = profilePostUiState.copy(
+                    isLoading = false
+                )
             }
         }
     }

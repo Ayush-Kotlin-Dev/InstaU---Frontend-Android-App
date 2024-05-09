@@ -9,10 +9,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ayush.ggv.instau.common.fakedata.Profile
 import ayush.ggv.instau.common.fakedata.sampleProfiles
+import ayush.ggv.instau.domain.usecases.profileusecase.ProfileUseCase
+import ayush.ggv.instau.domain.usecases.profileusecase.UpdateProfileUseCase
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class EditProfileViewModel(
+    updateProfileUseCase: UpdateProfileUseCase,
+    profileUseCase: ProfileUseCase
 
 ) :ViewModel() {
 
@@ -24,6 +28,7 @@ class EditProfileViewModel(
 
     fun fetchProfile(userId : Int){
         viewModelScope.launch {
+
             uiState = uiState.copy(
                 isLoading = true
             )

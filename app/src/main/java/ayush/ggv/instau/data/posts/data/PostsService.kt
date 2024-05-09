@@ -60,4 +60,25 @@ class PostService : KtorApi() {
         }
         return response.body<PostResponse>()
     }
+
+    suspend fun getPostsByUser(
+        userId: Long,
+        currentUserId: Long,
+        pageNumber: Int,
+        pageSize: Int,
+        token : String
+    ):PostsResponse{
+        val response = client.get {
+            endPoint(path = "/posts/$userId")
+            parameter("currentUserId", currentUserId)
+            parameter("pageNumber", pageNumber)
+            parameter("pageSize", pageSize)
+            headers {
+                append("Authorization", "Bearer $token")
+            }
+        }
+        return response.body<PostsResponse>()
+
+
+    }
 }

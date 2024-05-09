@@ -12,4 +12,10 @@ interface PostRepository {
     suspend fun createPost(postTextParams: PostTextParams, token: String) : Result<PostResponse>
     // In PostRepository.kt
     suspend fun getPost(postId: Long, currentUserId: Long? , token : String): Result<PostResponse>
+    suspend fun getPostByUser(
+        userId: Long, currentUserId: Long, pageNumber: Int, pageSize: Int , token : String
+    ): Result<PostsResponse>
+
+
+
 }
