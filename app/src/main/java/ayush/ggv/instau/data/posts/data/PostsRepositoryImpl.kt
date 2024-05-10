@@ -70,8 +70,19 @@ class PostsRepositoryImpl(
             Result.Error(e.toString())
         }
 
+    }
 
-        
+    override suspend fun deletePost(postId: Long, token: String): Result<PostResponse> {
+        return try {
+            val response = postService.deletePost(postId, token)
+            if (response.success) {
+                Result.Success(response)
+            } else {
+                Result.Error(Exception("Error: ${response.message}").toString())
+            }
+        } catch (e: Exception) {
+            Result.Error(e.toString())
+        }
     }
 
 

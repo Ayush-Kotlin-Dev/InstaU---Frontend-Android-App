@@ -1,27 +1,16 @@
 package ayush.ggv.instau.presentation.screens.account.profile
 
-import android.media.session.MediaSession.Token
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ayush.ggv.instau.common.datastore.UserSettings
-import ayush.ggv.instau.common.datastore.toAuthResultData
-import ayush.ggv.instau.common.fakedata.samplePosts
-import ayush.ggv.instau.common.fakedata.sampleProfiles
 import ayush.ggv.instau.data.profile.domain.model.Profile
-import ayush.ggv.instau.domain.usecases.postsusecase.GetPostByIdUseCase
 import ayush.ggv.instau.domain.usecases.postsusecase.getPostsByuserIdUseCase
 import ayush.ggv.instau.domain.usecases.profileusecase.ProfileUseCase
 import ayush.ggv.instau.model.Post
-import ayush.ggv.instau.presentation.screens.home.HomeScreenViewModel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import ayush.ggv.instau.util.Result
-import kotlinx.coroutines.flow.map
-import org.koin.androidx.compose.koinViewModel
+import kotlinx.coroutines.launch
 
 class ProfileScreenViewModel(
     private val profileUseCase: ProfileUseCase,

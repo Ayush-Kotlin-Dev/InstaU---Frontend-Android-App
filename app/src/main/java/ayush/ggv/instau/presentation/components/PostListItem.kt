@@ -2,7 +2,6 @@ package ayush.ggv.instau.presentation.components
 
 import android.app.DownloadManager
 import android.content.Context
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.net.Uri
 import android.os.Environment
 import android.widget.Toast
@@ -26,7 +25,6 @@ import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -42,19 +40,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ayush.ggv.instau.R
-import ayush.ggv.instau.common.fakedata.samplePosts
 import ayush.ggv.instau.model.Post
 import ayush.ggv.instau.ui.theme.DarkGray
 import ayush.ggv.instau.ui.theme.ExtraLargeSpacing
 import ayush.ggv.instau.ui.theme.LargeSpacing
 import ayush.ggv.instau.ui.theme.LightGray
 import ayush.ggv.instau.ui.theme.MediumSpacing
-import ayush.ggv.instau.ui.theme.SocialAppTheme
 import coil.compose.AsyncImage
+import org.koin.androidx.compose.koinViewModel
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -69,6 +65,8 @@ fun PostListItem(
     onCommentClick: (Long) -> Unit,
     isDetailScreen: Boolean = false
 ) {
+    val viewModel: PostListItemViewModel = koinViewModel()
+
 
     // Parse the date string into a LocalDateTime object
     val dateTime = LocalDateTime.parse(post.createdAt, DateTimeFormatter.ISO_DATE_TIME)
@@ -94,7 +92,8 @@ fun PostListItem(
                 onProfileClick(post.userId)
             },
             isOwnPost = post.isOwnPost,
-            postImage = post.imageUrl
+            postImage = post.imageUrl,
+            onDelete = { viewModel.deletePost(post.postId) }
         )
         AsyncImage(
             model = post.imageUrl,
@@ -137,7 +136,8 @@ fun PostItemHeader(
     postImage : String,
     date: String,
     onProfileClick: () -> Unit,
-    isOwnPost : Boolean? =  false
+    isOwnPost : Boolean? =  false,
+    onDelete : () -> Unit
 ) {
     val context = LocalContext.current
     val (showMenu, setShowMenu) = remember { mutableStateOf(false) }
@@ -213,6 +213,7 @@ fun PostItemHeader(
                 Column {
                     Row(verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.clickable {
+                            onDelete()
                             Toast.makeText(context, "post Deleted ", Toast.LENGTH_SHORT).show()
                         }) {
                         if(isOwnPost == true){

@@ -6,6 +6,7 @@ import ayush.ggv.instau.model.PostResponse
 import ayush.ggv.instau.model.PostTextParams
 import ayush.ggv.instau.model.PostsResponse
 import io.ktor.client.call.body
+import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.headers
 import io.ktor.client.request.parameter
@@ -78,7 +79,18 @@ class PostService : KtorApi() {
             }
         }
         return response.body<PostsResponse>()
-
-
     }
+    suspend fun deletePost(
+        postId: Long,
+        token: String
+    ): PostResponse {
+        val response = client.delete{
+            endPoint(path = "/post/$postId")
+            headers {
+                append("Authorization", "Bearer $token")
+            }
+        }
+        return response.body<PostResponse>()
+    }
+
 }

@@ -26,7 +26,6 @@ fun Profile(
     navigator: DestinationsNavigator,
 ) {
     val viewModel : ProfileScreenViewModel = koinViewModel()
-    // Initialize currentUserId and token with default values
 
     ProfileScreen(
         userInfoUiState = viewModel.userInfoUiState,
