@@ -1,6 +1,10 @@
 package ayush.ggv.instau.presentation.components
 
+import android.app.DownloadManager
+import android.content.Context
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.net.Uri
+import android.os.Environment
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,19 +21,25 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Divider
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -58,8 +68,6 @@ fun PostListItem(
     onLikeClick: (Long) -> Unit,
     onCommentClick: (Long) -> Unit,
     isDetailScreen: Boolean = false
-
-
 ) {
 
     // Parse the date string into a LocalDateTime object
@@ -84,7 +92,9 @@ fun PostListItem(
             date = timeAgo,
             onProfileClick = {
                 onProfileClick(post.userId)
-            }
+            },
+            isOwnPost = post.isOwnPost,
+            postImage = post.imageUrl
         )
         AsyncImage(
             model = post.imageUrl,
@@ -124,9 +134,14 @@ fun PostItemHeader(
     modifier: Modifier = Modifier,
     name: String,
     profileUrl: String,
+    postImage : String,
     date: String,
-    onProfileClick: () -> Unit
+    onProfileClick: () -> Unit,
+    isOwnPost : Boolean? =  false
 ) {
+    val context = LocalContext.current
+    val (showMenu, setShowMenu) = remember { mutableStateOf(false) }
+    val clipboardManager = LocalClipboardManager.current
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -176,15 +191,113 @@ fun PostItemHeader(
             modifier = modifier.weight(1f)
         )
 
-        Icon(
-            painter = painterResource(id = R.drawable.round_more_horiz_24),
-            contentDescription = null,
-            tint = if (MaterialTheme.colors.isLight) {
-                LightGray
-            } else {
-                DarkGray
+        IconButton(onClick = { setShowMenu(true) }) {
+            Icon(
+                painter = painterResource(id = R.drawable.round_more_horiz_24),
+                contentDescription = null,
+                tint = if (MaterialTheme.colors.isLight) {
+                    LightGray
+                } else {
+                    DarkGray
+                },
+            )
+        }
+        // Add this DropdownMenu
+        DropdownMenu(
+            expanded = showMenu,
+            onDismissRequest = { setShowMenu(false) }
+        ) {
+            DropdownMenuItem(onClick = {
+                setShowMenu(false)
+            }) {
+                Column {
+                    Row(verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.clickable {
+                            Toast.makeText(context, "post Deleted ", Toast.LENGTH_SHORT).show()
+                        }) {
+                        if(isOwnPost == true){
+                            Text(
+                                text = "Delete a post",
+                                style = MaterialTheme.typography.body2,
+                                color = if (MaterialTheme.colors.isLight) {
+                                    Color.Red
+                                } else {
+                                    Color.Red
+                                },
+                                modifier = Modifier.weight(1f) // Add this line
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Divider(
+                        color = Color.Gray ,
+                        thickness =1.dp,
+                        modifier = Modifier
+                            .padding(start = 6.dp ,end = 6.dp)
+
+                    )
+                    Row(verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.clickable {
+                        // Copy the image URL to the clipboard
+                        clipboardManager.setText(AnnotatedString(profileUrl))
+                            Toast.makeText(context, "image url copied ", Toast.LENGTH_SHORT).show()
+
+
+                        }) {
+                        Text(
+                            text = "Copy Image URL",
+                            style = MaterialTheme.typography.body2,
+
+                            modifier = Modifier.weight(1f) // Add this line
+                        )
+                        Spacer(modifier = Modifier.width(30.dp)) // Add some spacing between the icon and the text
+
+                        Icon(
+                            painter = painterResource(id = R.drawable.paper_clip_svgrepo_com), // Replace with your actual clip icon resource
+                            contentDescription = "Copy Icon",
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Divider(
+                        color = Color.Gray ,
+                        thickness =1.dp,
+                        modifier = Modifier
+                            .padding(start = 6.dp ,end = 6.dp)
+                    )
+                    Row(verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.clickable {
+                            // Download the image to the device
+                            val request = DownloadManager.Request(Uri.parse(postImage))
+                                .setTitle("Download")
+                                .setDescription("Downloading")
+                                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                                .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "${System.currentTimeMillis()}")
+                                .setAllowedOverMetered(true)
+                                .setAllowedOverRoaming(true)
+
+                            val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+                            downloadManager.enqueue(request)
+                            Toast.makeText(context, "Post Downloaded", Toast.LENGTH_SHORT).show()
+                        }) {
+                        Text(
+                            text = "Download Image",
+                            style = MaterialTheme.typography.body2,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Spacer(modifier = Modifier.width(30.dp)) // Add some spacing between the icon and the text
+                        Icon(
+                            painter = painterResource(id = R.drawable.download_svgrepo_com), // Replace with your actual clip icon resource
+                            contentDescription = "Copy Icon",
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+
+                }
             }
-        )
+            // Add more items here if needed
+        }
     }
 }
 

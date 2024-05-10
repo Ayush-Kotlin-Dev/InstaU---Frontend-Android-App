@@ -8,7 +8,7 @@
     <string name="login_destination_title">Login</string>
     <string name="signup_destination_title">SignUp</string>
     <string name="no_destination_title" />
-    <string name="home_destination_title">Social App</string>
+    <string name="home_destination_title">InstaU</string>
     <string name="dont_have_account">Don\'t have an account ?</string>
     <string name="sign_up">SignUp</string>
     <string name="label_password">password\n</string>
