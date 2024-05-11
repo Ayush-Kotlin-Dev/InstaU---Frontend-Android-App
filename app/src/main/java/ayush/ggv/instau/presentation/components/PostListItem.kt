@@ -93,7 +93,7 @@ fun PostListItem(
             },
             isOwnPost = post.isOwnPost,
             postImage = post.imageUrl,
-            onDelete = { viewModel.deletePost(post.postId) }
+            onDelete = { viewModel.deletePost(post.postId , post.imageUrl) }
         )
         AsyncImage(
             model = post.imageUrl,

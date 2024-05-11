@@ -39,6 +39,5 @@ fun Profile(
         fetchData = {viewModel.fetchProfile(userId , currentUserId , token)},
         navigator = navigator,
         token = token
-
     )
 }
