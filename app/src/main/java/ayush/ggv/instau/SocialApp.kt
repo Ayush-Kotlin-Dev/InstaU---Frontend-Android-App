@@ -47,6 +47,7 @@ import com.exyte.animatednavbar.animation.indendshape.shapeCornerRadius
 import com.exyte.animatednavbar.utils.noRippleClickable
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ramcosta.composedestinations.DestinationsNavHost
+import com.ramcosta.composedestinations.navigation.navigate
 import com.ramcosta.composedestinations.utils.currentDestinationAsState
 import kotlinx.coroutines.flow.MutableSharedFlow
 
@@ -125,7 +126,7 @@ fun SocialApp(
                                         NavigationBarItems.ADD -> {
                                             navHostController.navigate(AddPostDestination(userId = userId!! , token).route)
                                         }
-                                        NavigationBarItems.PROFILE -> navHostController.navigate(ProfileDestination.route)
+                                        NavigationBarItems.PROFILE -> navHostController.navigate(ProfileDestination(userId!! , userId  , token!!))
                                         else -> {}
                                     }}
                                 .fillMaxSize(),

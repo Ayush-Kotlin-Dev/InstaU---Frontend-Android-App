@@ -42,14 +42,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.rememberNavController
 import ayush.ggv.instau.R
 import ayush.ggv.instau.model.Post
+import ayush.ggv.instau.presentation.screens.account.profile.ProfileScreenViewModel
+import ayush.ggv.instau.presentation.screens.destinations.HomeDestination
+import ayush.ggv.instau.presentation.screens.destinations.PostDetailDestination
+import ayush.ggv.instau.presentation.screens.destinations.ProfileDestination
+import ayush.ggv.instau.presentation.screens.home.HomeScreenViewModel
 import ayush.ggv.instau.ui.theme.DarkGray
 import ayush.ggv.instau.ui.theme.ExtraLargeSpacing
 import ayush.ggv.instau.ui.theme.LargeSpacing
 import ayush.ggv.instau.ui.theme.LightGray
 import ayush.ggv.instau.ui.theme.MediumSpacing
 import coil.compose.AsyncImage
+import com.ramcosta.composedestinations.utils.currentDestinationAsState
 import org.koin.androidx.compose.koinViewModel
 import java.time.Duration
 import java.time.LocalDateTime
@@ -66,6 +73,10 @@ fun PostListItem(
     isDetailScreen: Boolean = false
 ) {
     val viewModel: PostListItemViewModel = koinViewModel()
+    val homeScreenViewModel: HomeScreenViewModel = koinViewModel()
+    val profileScreenViewModel: ProfileScreenViewModel = koinViewModel()
+    val navHostController = rememberNavController()
+    val currentDestination = navHostController.currentDestinationAsState().value
 
 
     // Parse the date string into a LocalDateTime object
@@ -86,14 +97,27 @@ fun PostListItem(
     ) {
         PostItemHeader(
             name = post.userName,
-            profileUrl = post.userImageUrl?:"",
+            profileUrl = post.userImageUrl ?: "",
             date = timeAgo,
             onProfileClick = {
                 onProfileClick(post.userId)
             },
             isOwnPost = post.isOwnPost,
             postImage = post.imageUrl,
-            onDelete = { viewModel.deletePost(post.postId , post.imageUrl) }
+            onDelete = {
+                viewModel.deletePost(post.postId, post.imageUrl)
+                if (currentDestination?.route == HomeDestination.route) {
+                    homeScreenViewModel.fetchData()
+                } else if (currentDestination?.route == PostDetailDestination.route) {
+                    navHostController.navigateUp()
+                } else {
+                    profileScreenViewModel.fetchProfile(
+                        post.userId,
+                        homeScreenViewModel.currentUserId.value,
+                        homeScreenViewModel.token.value
+                    )
+                }
+            }
         )
         AsyncImage(
             model = post.imageUrl,
@@ -124,7 +148,6 @@ fun PostListItem(
         )
 
 
-
     }
 }
 
@@ -133,11 +156,11 @@ fun PostItemHeader(
     modifier: Modifier = Modifier,
     name: String,
     profileUrl: String,
-    postImage : String,
+    postImage: String,
     date: String,
     onProfileClick: () -> Unit,
-    isOwnPost : Boolean? =  false,
-    onDelete : () -> Unit
+    isOwnPost: Boolean? = false,
+    onDelete: () -> Unit
 ) {
     val context = LocalContext.current
     val (showMenu, setShowMenu) = remember { mutableStateOf(false) }
@@ -155,7 +178,8 @@ fun PostItemHeader(
 
         CircleImage(
             imageUrl = profileUrl,
-            modifier = modifier.size(30.dp))
+            modifier = modifier.size(30.dp)
+        )
         {
             onProfileClick()
         }
@@ -216,7 +240,7 @@ fun PostItemHeader(
                             onDelete()
                             Toast.makeText(context, "post Deleted ", Toast.LENGTH_SHORT).show()
                         }) {
-                        if(isOwnPost == true){
+                        if (isOwnPost == true) {
                             Text(
                                 text = "Delete a post",
                                 style = MaterialTheme.typography.body2,
@@ -232,16 +256,16 @@ fun PostItemHeader(
 
                     Spacer(modifier = Modifier.height(12.dp))
                     Divider(
-                        color = Color.Gray ,
-                        thickness =1.dp,
+                        color = Color.Gray,
+                        thickness = 1.dp,
                         modifier = Modifier
-                            .padding(start = 6.dp ,end = 6.dp)
+                            .padding(start = 6.dp, end = 6.dp)
 
                     )
                     Row(verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.clickable {
-                        // Copy the image URL to the clipboard
-                        clipboardManager.setText(AnnotatedString(profileUrl))
+                            // Copy the image URL to the clipboard
+                            clipboardManager.setText(AnnotatedString(profileUrl))
                             Toast.makeText(context, "image url copied ", Toast.LENGTH_SHORT).show()
 
 
@@ -262,10 +286,10 @@ fun PostItemHeader(
                     }
                     Spacer(modifier = Modifier.height(12.dp))
                     Divider(
-                        color = Color.Gray ,
-                        thickness =1.dp,
+                        color = Color.Gray,
+                        thickness = 1.dp,
                         modifier = Modifier
-                            .padding(start = 6.dp ,end = 6.dp)
+                            .padding(start = 6.dp, end = 6.dp)
                     )
                     Row(verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.clickable {
@@ -274,11 +298,15 @@ fun PostItemHeader(
                                 .setTitle("Download")
                                 .setDescription("Downloading")
                                 .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                                .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "${System.currentTimeMillis()}")
+                                .setDestinationInExternalPublicDir(
+                                    Environment.DIRECTORY_DOWNLOADS,
+                                    "${System.currentTimeMillis()}"
+                                )
                                 .setAllowedOverMetered(true)
                                 .setAllowedOverRoaming(true)
 
-                            val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+                            val downloadManager =
+                                context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
                             downloadManager.enqueue(request)
                             Toast.makeText(context, "Post Downloaded", Toast.LENGTH_SHORT).show()
                         }) {

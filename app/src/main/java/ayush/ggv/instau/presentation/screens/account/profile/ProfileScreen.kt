@@ -1,6 +1,7 @@
 package ayush.ggv.instau.presentation.screens.account.profile
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -16,14 +17,21 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -33,6 +41,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import ayush.ggv.instau.R
 import ayush.ggv.instau.model.Post
 import ayush.ggv.instau.presentation.components.CircleImage
@@ -43,6 +53,7 @@ import ayush.ggv.instau.ui.theme.LargeSpacing
 import ayush.ggv.instau.ui.theme.MediumSpacing
 import ayush.ggv.instau.ui.theme.SmallSpacing
 import ayush.ggv.instau.ui.theme.SocialAppTheme
+import coil.compose.rememberAsyncImagePainter
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 
@@ -61,6 +72,7 @@ fun ProfileScreen(
     navigator: DestinationsNavigator,
     token : String
 ) {
+    var isFollowing by remember { mutableStateOf(userInfoUiState.profile?.isFollowing ?: false) }
     LazyColumn(
         modifier = modifier.fillMaxSize()
     ) {
@@ -83,13 +95,14 @@ fun ProfileScreen(
                         if (userInfoUiState.profile?.isOwnProfile == true) {
                             navigator.navigate(EditProfileDestination(userInfoUiState.profile.id , token )) // Navigate to EditProfileDestination if the profile belongs to the current user
                         } else {
-                            onButtonClick() // Perform the follow/unfollow task if the profile does not belong to the current user
+                            onButtonClick()
+                            isFollowing = !isFollowing
                         }
                     },
                     onFollowersClick = onFollowersClick,
                     onFollowingClick = onFollowingClick,
                     isCurrentUser = userInfoUiState.profile?.isOwnProfile ?: false,
-                    isFollowing = userInfoUiState.profile?.isFollowing ?: false
+                    isFollowing = isFollowing
                 )
             }
         }
@@ -139,6 +152,7 @@ fun ProfileHeaderSection(
     onFollowingClick: () -> Unit
 
 ) {
+    var showDialog by remember { mutableStateOf(false) }
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -151,7 +165,7 @@ fun ProfileHeaderSection(
         CircleImage(
             modifier = Modifier.size(90.dp),
             imageUrl = imageUrl,
-            onClick = {}
+            onClick = { showDialog = true}
         )
         Spacer(modifier = modifier.height(SmallSpacing))
         Text(
@@ -185,7 +199,7 @@ fun ProfileHeaderSection(
                 Spacer(modifier = modifier.width(MediumSpacing))
                 FollowText(
                     count = followingCount,
-                    text = R.string.followers_text,
+                    text = R.string.following_text,
                     onClick = onFollowingClick
                 )
             }
@@ -200,12 +214,32 @@ fun ProfileHeaderSection(
                 )
             } else {
                 FollowsButton(
-                    text = if(isFollowing) R.string.unfollow_button_label else R.string.follow_button_label,
+                    text = if (isFollowing) R.string.unfollow_button_label else R.string.follow_button_label,
                     onFollowButtonClick = onButtonClick,
                     modifier = modifier
                         .height(30.dp)
                         .widthIn(min = 100.dp),
                     isOutline = isFollowing
+                )
+            }
+        }
+    }
+    if (showDialog) {
+        Dialog(
+            onDismissRequest = { showDialog = false },
+            properties = DialogProperties(dismissOnClickOutside = true)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(300.dp)
+                    .padding(10.dp)
+                    .clip(RoundedCornerShape(16.dp)) // Change the shape of the dialog box
+            ) {
+                Image(
+                    painter = rememberAsyncImagePainter(model = imageUrl),
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
                 )
             }
         }

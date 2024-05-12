@@ -10,12 +10,15 @@ import ayush.ggv.instau.data.auth.data.AuthRepositoryImpl
 import ayush.ggv.instau.data.auth.data.AuthService
 import ayush.ggv.instau.data.KtorApi
 import ayush.ggv.instau.data.auth.domain.repository.AuthRepository
+import ayush.ggv.instau.data.followunfollow.data.FollowRepositoryImpl
+import ayush.ggv.instau.data.followunfollow.domain.FollowRepository
 import ayush.ggv.instau.data.posts.data.PostService
 import ayush.ggv.instau.data.posts.data.PostsRepositoryImpl
 import ayush.ggv.instau.data.posts.domain.repository.PostRepository
 import ayush.ggv.instau.data.profile.data.ProfileRepositoryImpl
 import ayush.ggv.instau.data.profile.data.ProfileService
 import ayush.ggv.instau.data.profile.domain.repository.ProfileRepository
+import ayush.ggv.instau.domain.usecases.followsusecase.FollowsUseCase
 import ayush.ggv.instau.domain.usecases.postsusecase.AddPostUseCase
 import ayush.ggv.instau.domain.usecases.postsusecase.DeletePostUseCase
 import ayush.ggv.instau.domain.usecases.postsusecase.GetPostByIdUseCase
@@ -42,6 +45,7 @@ val appModule = module {
     single<AuthRepository> { AuthRepositoryImpl(get()) }
     single <PostRepository> { PostsRepositoryImpl(get()) }
     single  <ProfileRepository>{ProfileRepositoryImpl(get()) }
+    single <FollowRepository>{ FollowRepositoryImpl(get()) }
     single { SignUpUseCase() }
     factory { AuthService() }
     factory { PostService() }
@@ -55,6 +59,7 @@ val appModule = module {
     factory { getPostsByuserIdUseCase() }
     factory { UpdateProfileUseCase() }
     factory { DeletePostUseCase() }
+    factory { FollowsUseCase() }
 
 
     viewModel { SignUpViewModel(get() , get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
@@ -62,7 +67,7 @@ val appModule = module {
     viewModel { MainActivityViewModel(get()) }
     viewModel{ HomeScreenViewModel(get(),get () ) }
     viewModel { PostDetailScreenViewModel(get() ) }
-    viewModel{ ProfileScreenViewModel( get() , get() ) }
+    viewModel{ ProfileScreenViewModel( get() , get()  , get()) }
     viewModel { EditProfileViewModel(get() ,get()) }
     viewModel{ FollowsViewModel() }
     viewModel { AddPostViewModel( get()) }

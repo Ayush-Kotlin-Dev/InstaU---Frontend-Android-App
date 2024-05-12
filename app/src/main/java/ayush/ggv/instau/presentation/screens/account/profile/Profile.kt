@@ -14,6 +14,7 @@ import ayush.ggv.instau.presentation.screens.home.HomeScreenViewModel
 import ayush.ggv.instau.util.Utils
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import instaU.ayush.com.model.FollowsParams
 import org.koin.androidx.compose.koinViewModel
 
 
@@ -30,7 +31,16 @@ fun Profile(
     ProfileScreen(
         userInfoUiState = viewModel.userInfoUiState,
         profilePostsUiState = viewModel.profilePostUiState,
-        onButtonClick = {  }, // navigator.navigate(EditProfileDestination(userId))
+        onButtonClick = {
+            viewModel.followUnfollowUser(
+                FollowsParams(
+                    follower = currentUserId,
+                    following = userId,
+                    isFollowing = viewModel.userInfoUiState.profile?.isFollowing!!
+                ),
+                token
+            )
+        }, // navigator.navigate(EditProfileDestination(userId))
         onFollowersClick = { }, //navigator.navigate(FollowersDestination(userId))
         onFollowingClick = { }, //navigator.navigate(FollowingDestination(userId))
         onPostClick = { },

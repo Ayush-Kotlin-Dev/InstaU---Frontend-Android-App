@@ -6,6 +6,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import ayush.ggv.instau.presentation.screens.account.edit.EditProfileScreen
 import ayush.ggv.instau.presentation.screens.account.edit.EditProfileViewModel
+import ayush.ggv.instau.presentation.screens.destinations.HomeDestination
 import ayush.ggv.instau.presentation.screens.home.HomeScreenViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -29,9 +30,8 @@ fun AddPost(
         initialSelectedImageUri = viewModel.uiState.AddPost?.imageUrl,
         onUploadSuccess = {
             homeScreenViewModel.fetchData()
-            navigator.navigateUp()
-
-                          },
+            navigator.navigate(HomeDestination)
+ },
         token = token!!
     )
 }
