@@ -1,5 +1,6 @@
 package ayush.ggv.instau.presentation.screens.account.profile
 
+import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -32,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -70,9 +72,9 @@ fun ProfileScreen(
     onCommentClick: (Long) -> Unit,
     fetchData: () -> Unit,
     navigator: DestinationsNavigator,
-    token : String
+    token : String,
+    isFollowing : Boolean
 ) {
-    var isFollowing by remember { mutableStateOf(userInfoUiState.profile?.isFollowing ?: false) }
     LazyColumn(
         modifier = modifier.fillMaxSize()
     ) {
@@ -96,7 +98,7 @@ fun ProfileScreen(
                             navigator.navigate(EditProfileDestination(userInfoUiState.profile.id , token )) // Navigate to EditProfileDestination if the profile belongs to the current user
                         } else {
                             onButtonClick()
-                            isFollowing = !isFollowing
+//                            isFollowing = !isFollowing
                         }
                     },
                     onFollowersClick = onFollowersClick,
@@ -152,6 +154,7 @@ fun ProfileHeaderSection(
     onFollowingClick: () -> Unit
 
 ) {
+    val context = LocalContext.current
     var showDialog by remember { mutableStateOf(false) }
     Column(
         modifier = modifier
@@ -160,8 +163,6 @@ fun ProfileHeaderSection(
             .background(color = MaterialTheme.colors.surface)
             .padding(all = LargeSpacing)
     ) {
-
-
         CircleImage(
             modifier = Modifier.size(90.dp),
             imageUrl = imageUrl,
@@ -215,7 +216,8 @@ fun ProfileHeaderSection(
             } else {
                 FollowsButton(
                     text = if (isFollowing) R.string.unfollow_button_label else R.string.follow_button_label,
-                    onFollowButtonClick = onButtonClick,
+                    onFollowButtonClick = { onButtonClick()
+                        Toast.makeText(context,  if (isFollowing)"Unfollowed" else "Followed", Toast.LENGTH_SHORT).show()},
                     modifier = modifier
                         .height(30.dp)
                         .widthIn(min = 100.dp),

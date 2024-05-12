@@ -18,13 +18,15 @@ class ProfileScreenViewModel(
     private val profileUseCase: ProfileUseCase,
     private val getPostsbyUserIdUseCase: getPostsByuserIdUseCase,
     private val followsUseCase: FollowsUseCase
-) :ViewModel() {
+) : ViewModel() {
 
+    var isFollowing by mutableStateOf(false)
     var userInfoUiState by mutableStateOf(UserInfoUiState())
         private set
     var profilePostUiState by mutableStateOf(ProfilePostUiState())
         private set
-    fun fetchProfile(userId: Long , currentUserId : Long , token: String ) {
+
+    fun fetchProfile(userId: Long, currentUserId: Long, token: String) {
         userInfoUiState = userInfoUiState.copy(
             isLoading = true
         )
@@ -41,6 +43,7 @@ class ProfileScreenViewModel(
                             profile = Profileresult.data?.profile,
                             isLoading = false
                         )
+                        isFollowing = Profileresult.data?.profile?.isFollowing ?: false
                     }
 
                     is Result.Error -> {
@@ -50,7 +53,7 @@ class ProfileScreenViewModel(
                         )
                     }
 
-                    is Result.Loading ->  {}
+                    is Result.Loading -> {}
                 }
 
                 when (postResult) {
@@ -89,15 +92,23 @@ class ProfileScreenViewModel(
             }
         }
     }
-    fun followUnfollowUser(followsParams: FollowsParams,token: String) {
+    fun followUnfollowUser(followsParams: FollowsParams, token: String) {
         viewModelScope.launch {
             try {
-                val followResult = followsUseCase(followsParams ,token)
+                val followResult = followsUseCase(followsParams, token)
                 when (followResult) {
                     is Result.Success -> {
                         userInfoUiState = userInfoUiState.copy(
                             isLoading = false
                         )
+                        isFollowing = !followsParams.isFollowing
+
+                        userInfoUiState.profile?.let { profile ->
+                            val updatedFollowersCount = if (isFollowing) profile.followersCount + 1 else profile.followersCount - 1
+                            val updatedProfile = profile.copy(followersCount = updatedFollowersCount)
+                            userInfoUiState = userInfoUiState.copy(profile = updatedProfile)
+                        }
+
                     }
 
                     is Result.Error -> {
@@ -113,7 +124,6 @@ class ProfileScreenViewModel(
                 }
             } catch (e: Exception) {
                 userInfoUiState = userInfoUiState.copy(
-                    errorMessage = e.message,
                 )
             } finally {
                 userInfoUiState = userInfoUiState.copy(

@@ -11,6 +11,7 @@ import ayush.ggv.instau.data.auth.data.AuthService
 import ayush.ggv.instau.data.KtorApi
 import ayush.ggv.instau.data.auth.domain.repository.AuthRepository
 import ayush.ggv.instau.data.followunfollow.data.FollowRepositoryImpl
+import ayush.ggv.instau.data.followunfollow.data.FollowService
 import ayush.ggv.instau.data.followunfollow.domain.FollowRepository
 import ayush.ggv.instau.data.posts.data.PostService
 import ayush.ggv.instau.data.posts.data.PostsRepositoryImpl
@@ -45,10 +46,12 @@ val appModule = module {
     single<AuthRepository> { AuthRepositoryImpl(get()) }
     single <PostRepository> { PostsRepositoryImpl(get()) }
     single  <ProfileRepository>{ProfileRepositoryImpl(get()) }
+    single { FollowsUseCase() }
     single <FollowRepository>{ FollowRepositoryImpl(get()) }
     single { SignUpUseCase() }
     factory { AuthService() }
     factory { PostService() }
+    factory { FollowService() }
     factory { SignUpUseCase() }
     factory { SignInuseCase() }
     factory { PostUseCase() }

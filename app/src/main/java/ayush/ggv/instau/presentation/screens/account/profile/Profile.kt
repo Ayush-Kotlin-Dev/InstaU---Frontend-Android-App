@@ -36,7 +36,7 @@ fun Profile(
                 FollowsParams(
                     follower = currentUserId,
                     following = userId,
-                    isFollowing = viewModel.userInfoUiState.profile?.isFollowing!!
+                    isFollowing = viewModel.isFollowing
                 ),
                 token
             )
@@ -48,6 +48,7 @@ fun Profile(
         onCommentClick = { },
         fetchData = {viewModel.fetchProfile(userId , currentUserId , token)},
         navigator = navigator,
-        token = token
+        token = token,
+        isFollowing = viewModel.isFollowing
     )
 }
