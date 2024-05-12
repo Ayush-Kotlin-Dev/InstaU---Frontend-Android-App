@@ -13,11 +13,12 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-@Destination()
+@Destination
 fun AddPost(
     navigator: DestinationsNavigator,
     userId: Long?,
-    token : String?
+    token : String?,
+    updateSelectedIndex: (Int) -> Unit
 ) {
     val viewModel: AddPostViewModel = koinViewModel()
     val homeScreenViewModel: HomeScreenViewModel = koinViewModel()
@@ -31,7 +32,8 @@ fun AddPost(
         onUploadSuccess = {
             homeScreenViewModel.fetchData()
             navigator.navigate(HomeDestination)
- },
+            updateSelectedIndex(0)
+        },
         token = token!!
     )
 }

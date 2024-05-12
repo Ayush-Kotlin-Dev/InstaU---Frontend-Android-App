@@ -19,7 +19,9 @@ class EditProfileViewModel(
     private val updateProfileUseCase: UpdateProfileUseCase,
     private val profileUseCase: ProfileUseCase
 ) :ViewModel() {
-
+    fun setLoadingState(isLoading: Boolean) {
+        uiState = uiState.copy(isLoading = isLoading)
+    }
     var uiState by mutableStateOf(EditProfileUiState())
         private set
 

@@ -2,6 +2,9 @@ package ayush.ggv.instau.presentation.screens.account.edit
 
 import android.net.Uri
 import android.widget.Toast
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -33,6 +36,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,6 +56,8 @@ import ayush.ggv.instau.ui.theme.ButtonHeight
 import ayush.ggv.instau.ui.theme.ExtraLargeSpacing
 import ayush.ggv.instau.ui.theme.LargeSpacing
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import org.koin.androidx.compose.koinViewModel
 import java.time.format.TextStyle
 
@@ -72,6 +78,7 @@ fun EditProfileScreen(
 
     val context = LocalContext.current
     val storage = FirebaseStorage.getInstance()
+    val coroutineScope = rememberCoroutineScope()
 
     // State variable to hold the selected image URI
     var selectedImageUri by remember { mutableStateOf("") }
@@ -152,17 +159,34 @@ fun EditProfileScreen(
                         value = bioTextFieldValue,
                         onValueChange = onBioChange
                     )
+
                     Button(
                         onClick = {
+                            viewModel.setLoadingState(true)
                             val imageUri = Uri.parse(selectedImageUri)
                             val storageRef =
                                 storage.reference.child("Profile_Images/${editProfileUiState.profile.name}_${imageUri.lastPathSegment}")
-                            val uploadTask = storageRef.putFile(imageUri)
-                            uploadTask.addOnSuccessListener {
-                                storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
-                                    viewModel.updateImageUrl(downloadUri.toString()) // Call the function on the ViewModel instance
-                                    onUploadButtonClick()
+                            val oldImageRef = storage.getReferenceFromUrl(editProfileUiState.profile.imageUrl ?: "")
+
+                            // Start a new coroutine scope
+                            coroutineScope.launch {
+                                // Launch the deletion task in a separate coroutine
+                                val deletionJob = launch {
+                                    oldImageRef.delete().await()
                                 }
+                                // Launch the upload task in a separate coroutine
+                                val uploadJob = launch {
+                                    val uploadTask = storageRef.putFile(imageUri).await()
+                                    val downloadUri = uploadTask.storage.downloadUrl.await()
+                                    viewModel.updateImageUrl(downloadUri.toString()) // Call the function on the ViewModel instance
+                                }
+
+                                // Wait for both tasks to complete
+                                deletionJob.join()
+                                uploadJob.join()
+
+                                // Call the onUploadButtonClick function after both tasks have completed
+                                onUploadButtonClick()
                             }
                         },
                         modifier = modifier
@@ -217,7 +241,18 @@ fun EditProfileScreen(
             }
         }
         if (editProfileUiState.isLoading) {
-            CircularProgressIndicator()
+            Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Column {
+                    CircularProgressIndicator()
+                    Spacer(modifier = modifier.height(LargeSpacing))
+                    Text(
+                        text = "Loading...",
+                        style = MaterialTheme.typography.caption.copy(
+                            textAlign = TextAlign.Center
+                        ),
+                    )
+                }
+            }
         }
     }
     LaunchedEffect(
@@ -240,8 +275,6 @@ fun EditProfileScreen(
             }
         }
     )
-
-
 
 
 }

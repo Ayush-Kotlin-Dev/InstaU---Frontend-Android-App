@@ -177,7 +177,7 @@ fun AddPostScreen(
                 coroutineScope.launch {
                     val imageUri = Uri.parse(selectedImageUri)
                     val storageRef =
-                        storage.reference.child("images/${userId}_${imageUri.lastPathSegment}")
+                        storage.reference.child("posts_images/${userId}_${imageUri.lastPathSegment}")
                     val uploadTask = storageRef.putFile(imageUri)
                     isLoading = true
                     try {
