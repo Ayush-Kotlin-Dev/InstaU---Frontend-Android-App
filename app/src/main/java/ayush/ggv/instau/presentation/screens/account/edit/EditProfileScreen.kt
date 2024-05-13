@@ -120,7 +120,8 @@ fun EditProfileScreen(
                         // Profile Image
                         CircleImage(
                             modifier = modifier.size(100.dp),
-                            imageUrl = if (selectedImageUri.isNotEmpty()) selectedImageUri else editProfileUiState.profile.imageUrl ?: "",
+                            imageUrl = if (selectedImageUri.isNotEmpty()) selectedImageUri else editProfileUiState.profile.imageUrl
+                                ?: "",
                             onClick = {}
                         )
                         IconButton(
@@ -166,14 +167,18 @@ fun EditProfileScreen(
                             val imageUri = Uri.parse(selectedImageUri)
                             val storageRef =
                                 storage.reference.child("Profile_Images/${editProfileUiState.profile.name}_${imageUri.lastPathSegment}")
-                            val oldImageRef = storage.getReferenceFromUrl(editProfileUiState.profile.imageUrl ?: "")
+                            val oldImageUrl = editProfileUiState.profile.imageUrl
 
                             // Start a new coroutine scope
                             coroutineScope.launch {
-                                // Launch the deletion task in a separate coroutine
-                                val deletionJob = launch {
-                                    oldImageRef.delete().await()
-                                }
+                                // Launch the deletion task in a separate coroutine only if oldImageUrl is not null or empty
+                                val deletionJob = if (!oldImageUrl.isNullOrEmpty()) {
+                                    val oldImageRef = storage.getReferenceFromUrl(oldImageUrl)
+                                    launch {
+                                        oldImageRef.delete().await()
+                                    }
+                                } else null
+
                                 // Launch the upload task in a separate coroutine
                                 val uploadJob = launch {
                                     val uploadTask = storageRef.putFile(imageUri).await()
@@ -182,7 +187,7 @@ fun EditProfileScreen(
                                 }
 
                                 // Wait for both tasks to complete
-                                deletionJob.join()
+                                deletionJob?.join()
                                 uploadJob.join()
 
                                 // Call the onUploadButtonClick function after both tasks have completed

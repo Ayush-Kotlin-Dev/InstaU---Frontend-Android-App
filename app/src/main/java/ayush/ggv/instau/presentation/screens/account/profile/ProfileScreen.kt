@@ -20,9 +20,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -50,6 +54,7 @@ import ayush.ggv.instau.model.Post
 import ayush.ggv.instau.presentation.components.CircleImage
 import ayush.ggv.instau.presentation.components.FollowsButton
 import ayush.ggv.instau.presentation.components.PostListItem
+import ayush.ggv.instau.presentation.components.ShimmerProfileScreenPlaceholder
 import ayush.ggv.instau.presentation.screens.destinations.EditProfileDestination
 import ayush.ggv.instau.ui.theme.LargeSpacing
 import ayush.ggv.instau.ui.theme.MediumSpacing
@@ -59,6 +64,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ProfileScreen(
     modifier: Modifier = Modifier,
@@ -72,69 +78,82 @@ fun ProfileScreen(
     onCommentClick: (Long) -> Unit,
     fetchData: () -> Unit,
     navigator: DestinationsNavigator,
-    token : String,
-    isFollowing : Boolean
+    token: String,
+    isFollowing: Boolean
 ) {
-    LazyColumn(
-        modifier = modifier.fillMaxSize()
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = userInfoUiState.isLoading && profilePostsUiState.isLoading,
+        onRefresh = { fetchData() })
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .pullRefresh(state = pullRefreshState)
     ) {
-        item {
-            if(userInfoUiState.isLoading) {
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
+        LazyColumn(
+            modifier = modifier.fillMaxSize()
+        ) {
+            item {
+                if (userInfoUiState.isLoading) {
+                    ShimmerProfileScreenPlaceholder()
+                } else {
+                    ProfileHeaderSection(
+                        imageUrl = userInfoUiState.profile?.imageUrl ?: "",
+                        name = userInfoUiState.profile?.name ?: "",
+                        bio = userInfoUiState.profile?.bio ?: "Stay Tuned... ",
+                        followersCount = userInfoUiState.profile?.followersCount ?: 0,
+                        followingCount = userInfoUiState.profile?.followingCount ?: 0,
+                        onButtonClick = {
+                            if (userInfoUiState.profile?.isOwnProfile == true) {
+                                navigator.navigate(
+                                    EditProfileDestination(
+                                        userInfoUiState.profile.id,
+                                        token
+                                    )
+                                ) // Navigate to EditProfileDestination if the profile belongs to the current user
+                            } else {
+                                onButtonClick()
+//                            isFollowing = !isFollowing
+                            }
+                        },
+                        onFollowersClick = onFollowersClick,
+                        onFollowingClick = onFollowingClick,
+                        isCurrentUser = userInfoUiState.profile?.isOwnProfile ?: false,
+                        isFollowing = isFollowing
+                    )
+                }
+            }
+
+            if (profilePostsUiState.isLoading && userInfoUiState.profile != null) {
+                item {
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
                 }
             } else {
-                ProfileHeaderSection(
-                    imageUrl = userInfoUiState.profile?.imageUrl ?: "",
-                    name = userInfoUiState.profile?.name ?: "",
-                    bio = userInfoUiState.profile?.bio ?: "Stay Tuned... ",
-                    followersCount = userInfoUiState.profile?.followersCount ?: 0,
-                    followingCount = userInfoUiState.profile?.followingCount ?: 0,
-                    onButtonClick = {
-                        if (userInfoUiState.profile?.isOwnProfile == true) {
-                            navigator.navigate(EditProfileDestination(userInfoUiState.profile.id , token )) // Navigate to EditProfileDestination if the profile belongs to the current user
-                        } else {
-                            onButtonClick()
-//                            isFollowing = !isFollowing
-                        }
-                    },
-                    onFollowersClick = onFollowersClick,
-                    onFollowingClick = onFollowingClick,
-                    isCurrentUser = userInfoUiState.profile?.isOwnProfile ?: false,
-                    isFollowing = isFollowing
-                )
-            }
-        }
-
-        if(profilePostsUiState.isLoading && userInfoUiState.profile != null) {
-            item {
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
+                items(
+                    items = profilePostsUiState.posts,
+                    key = { post -> post.postId }
+                ) { post ->
+                    PostListItem(
+                        post = post,
+                        onPostClick = onPostClick,
+                        onProfileClick = {},
+                        onLikeClick = onLikeClick,
+                        onCommentClick = onCommentClick
+                    )
                 }
             }
-        } else {
-            items(
-                items = profilePostsUiState.posts,
-                key = { post -> post.postId }
-            ) { post ->
-                PostListItem(
-                    post = post,
-                    onPostClick = onPostClick,
-                    onProfileClick = {},
-                    onLikeClick =  onLikeClick,
-                    onCommentClick = onCommentClick
-                )
-            }
         }
+        PullRefreshIndicator(
+            refreshing = userInfoUiState.isLoading && profilePostsUiState.isLoading,
+            state = pullRefreshState,
+            modifier = modifier.align(Alignment.TopCenter)
+        )
     }
-
-    LaunchedEffect (key1 = Unit){
+    LaunchedEffect(key1 = Unit) {
         fetchData()
     }
 }
@@ -166,7 +185,7 @@ fun ProfileHeaderSection(
         CircleImage(
             modifier = Modifier.size(90.dp),
             imageUrl = imageUrl,
-            onClick = { showDialog = true}
+            onClick = { showDialog = true }
         )
         Spacer(modifier = modifier.height(SmallSpacing))
         Text(
@@ -216,8 +235,14 @@ fun ProfileHeaderSection(
             } else {
                 FollowsButton(
                     text = if (isFollowing) R.string.unfollow_button_label else R.string.follow_button_label,
-                    onFollowButtonClick = { onButtonClick()
-                        Toast.makeText(context,  if (isFollowing)"Unfollowed" else "Followed", Toast.LENGTH_SHORT).show()},
+                    onFollowButtonClick = {
+                        onButtonClick()
+                        Toast.makeText(
+                            context,
+                            if (isFollowing) "Unfollowed" else "Followed",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    },
                     modifier = modifier
                         .height(30.dp)
                         .widthIn(min = 100.dp),

@@ -113,8 +113,4 @@ dependencies {
     implementation("androidx.paging:paging-compose:1.0.0-alpha14")
 
     implementation("com.exyte:animated-navigation-bar:1.0.0")
-
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
-
-
 }

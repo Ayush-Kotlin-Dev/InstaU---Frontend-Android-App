@@ -71,7 +71,7 @@ fun SocialApp(
     }
 
     val currentDestination by navHostController.currentDestinationAsState()
-    val navigationBarItems = remember { NavigationBarItems.values()}
+    val navigationBarItems = remember { NavigationBarItems.entries.toTypedArray() }
     var selectedIndex by remember {
         mutableStateOf(0)
     }
@@ -105,7 +105,7 @@ fun SocialApp(
             )
         },
         bottomBar =  {
-            if(currentDestination?.route == HomeDestination.route) {
+            if(currentDestination?.route == HomeDestination.route || currentDestination?.route == AddPostDestination.route || currentDestination?.route == ProfileDestination.route) {
                 Box(modifier = Modifier.padding( top = 10.dp))  {
                 AnimatedNavigationBar(
                     modifier = Modifier.height(64.dp),

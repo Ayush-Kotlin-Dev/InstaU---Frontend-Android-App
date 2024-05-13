@@ -17,8 +17,7 @@ import org.koin.androidx.compose.koinViewModel
 fun AddPost(
     navigator: DestinationsNavigator,
     userId: Long?,
-    token : String?,
-    updateSelectedIndex: (Int) -> Unit
+    token : String?
 ) {
     val viewModel: AddPostViewModel = koinViewModel()
     val homeScreenViewModel: HomeScreenViewModel = koinViewModel()
@@ -32,7 +31,6 @@ fun AddPost(
         onUploadSuccess = {
             homeScreenViewModel.fetchData()
             navigator.navigate(HomeDestination)
-            updateSelectedIndex(0)
         },
         token = token!!
     )

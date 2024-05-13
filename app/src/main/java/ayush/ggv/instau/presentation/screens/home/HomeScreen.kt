@@ -19,6 +19,7 @@ import ayush.ggv.instau.common.fakedata.samplePosts
 import ayush.ggv.instau.common.fakedata.sampleUsers
 import ayush.ggv.instau.model.Post
 import ayush.ggv.instau.presentation.components.PostListItem
+import ayush.ggv.instau.presentation.components.ShimmerPostListItemPlaceholder
 import ayush.ggv.instau.presentation.screens.home.onboarding.OnBoardingSection
 import ayush.ggv.instau.presentation.screens.home.onboarding.OnBoardingUiState
 import com.ramcosta.composedestinations.annotation.Destination
@@ -70,14 +71,21 @@ fun HomeScreen(
             }
 
 
-            items(postsUiState.posts, key = { post -> post.postId }) { post ->
-                PostListItem(
-                    post = post,
-                    onPostClick = onPostClick,
-                    onProfileClick = onProfileClick,
-                    onLikeClick = { onLikeClick(post.postId.toString()) },
-                    onCommentClick = { onCommentClick(post.postId.toString()) }
-                )
+            if (postsUiState.isLoading) {
+                // Display a list of shimmer placeholders when loading
+                items(5) { // Replace 5 with the number of placeholders you want to show
+                    ShimmerPostListItemPlaceholder()
+                }
+            } else {
+                items(postsUiState.posts, key = { post -> post.postId }) { post ->
+                    PostListItem(
+                        post = post,
+                        onPostClick = onPostClick,
+                        onProfileClick = onProfileClick,
+                        onLikeClick = { onLikeClick(post.postId.toString()) },
+                        onCommentClick = { onCommentClick(post.postId.toString()) }
+                    )
+                }
             }
         }
         PullRefreshIndicator(
