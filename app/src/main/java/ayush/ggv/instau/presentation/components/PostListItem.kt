@@ -78,7 +78,6 @@ fun PostListItem(
     val navHostController = rememberNavController()
     val currentDestination = navHostController.currentDestinationAsState().value
 
-
     // Parse the date string into a LocalDateTime object
     val dateTime = LocalDateTime.parse(post.createdAt, DateTimeFormatter.ISO_DATE_TIME)
 

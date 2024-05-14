@@ -42,6 +42,5 @@ class PostListItemViewModel(
                  // Failed to delete the image
              }
          }
-
     }
 }
