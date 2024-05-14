@@ -74,7 +74,7 @@ fun ProfileScreen(
     onFollowersClick: () -> Unit,
     onFollowingClick: () -> Unit,
     onPostClick: (Post) -> Unit,
-    onLikeClick: (Long) -> Unit,
+    onLikeClick: () -> Unit,
     onCommentClick: (Long) -> Unit,
     fetchData: () -> Unit,
     navigator: DestinationsNavigator,

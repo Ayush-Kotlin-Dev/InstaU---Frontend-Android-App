@@ -27,6 +27,8 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -57,6 +59,7 @@ import ayush.ggv.instau.ui.theme.LightGray
 import ayush.ggv.instau.ui.theme.MediumSpacing
 import coil.compose.AsyncImage
 import com.ramcosta.composedestinations.utils.currentDestinationAsState
+import instaU.ayush.com.model.LikeParams
 import org.koin.androidx.compose.koinViewModel
 import java.time.Duration
 import java.time.LocalDateTime
@@ -68,7 +71,7 @@ fun PostListItem(
     post: Post,
     onPostClick: (Post) -> Unit,
     onProfileClick: (Long) -> Unit,
-    onLikeClick: (Long) -> Unit,
+    onLikeClick: () -> Unit,
     onCommentClick: (Long) -> Unit,
     isDetailScreen: Boolean = false
 ) {
@@ -77,6 +80,12 @@ fun PostListItem(
     val profileScreenViewModel: ProfileScreenViewModel = koinViewModel()
     val navHostController = rememberNavController()
     val currentDestination = navHostController.currentDestinationAsState().value
+
+    val likeResult by viewModel.likeResult.observeAsState()
+    val isPostLiked by viewModel.isPostLiked.observeAsState(initial = post.isLiked)
+    val likesCount by viewModel.likesCount.observeAsState(initial = post.likesCount)
+
+
 
     // Parse the date string into a LocalDateTime object
     val dateTime = LocalDateTime.parse(post.createdAt, DateTimeFormatter.ISO_DATE_TIME)
@@ -132,10 +141,17 @@ fun PostListItem(
             }
         )
         PostLikeRow(
-            onLikeClick = { onLikeClick(post.postId) },
+            onLikeClick = {
+                viewModel.likePost(
+                likeParams = LikeParams(
+                    postId = post.postId ,
+                    userId = homeScreenViewModel.currentUserId.value
+                ), token = homeScreenViewModel.token.value
+            )},
             onCommentClick = { onCommentClick(post.postId) },
-            likesCount = post.likesCount,
-            commentsCount = post.commentsCount
+            likesCount = likesCount,
+            commentsCount = post.commentsCount,
+            isPostLiked = isPostLiked,
         )
         Text(
             text = post.caption,
@@ -336,7 +352,8 @@ fun PostLikeRow(
     onLikeClick: () -> Unit,
     onCommentClick: () -> Unit,
     likesCount: Int,
-    commentsCount: Int
+    commentsCount: Int,
+    isPostLiked: Boolean // Add this line
 ) {
     Row(
         modifier = Modifier
@@ -351,14 +368,8 @@ fun PostLikeRow(
             onClick = { onLikeClick() }
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.like_icon_outlined),
+                painter = painterResource(id = if (isPostLiked) R.drawable.baseline_whatshot_24 else R.drawable.like_icon_outlined),
                 contentDescription = null,
-                tint = if (MaterialTheme.colors.isLight) {
-                    LightGray
-                } else {
-                    DarkGray
-
-                }
             )
         }
         Text(

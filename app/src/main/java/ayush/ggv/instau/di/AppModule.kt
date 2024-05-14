@@ -13,6 +13,9 @@ import ayush.ggv.instau.data.auth.domain.repository.AuthRepository
 import ayush.ggv.instau.data.followunfollow.data.FollowRepositoryImpl
 import ayush.ggv.instau.data.followunfollow.data.FollowService
 import ayush.ggv.instau.data.followunfollow.domain.FollowRepository
+import ayush.ggv.instau.data.postlike.data.PostLikeService
+import ayush.ggv.instau.data.postlike.data.PostLikesRepositoryImpl
+import ayush.ggv.instau.data.postlike.domain.repository.PostLikesRepository
 import ayush.ggv.instau.data.posts.data.PostService
 import ayush.ggv.instau.data.posts.data.PostsRepositoryImpl
 import ayush.ggv.instau.data.posts.domain.repository.PostRepository
@@ -20,6 +23,7 @@ import ayush.ggv.instau.data.profile.data.ProfileRepositoryImpl
 import ayush.ggv.instau.data.profile.data.ProfileService
 import ayush.ggv.instau.data.profile.domain.repository.ProfileRepository
 import ayush.ggv.instau.domain.usecases.followsusecase.FollowsUseCase
+import ayush.ggv.instau.domain.usecases.postlikeusecase.PostLikeUseCase
 import ayush.ggv.instau.domain.usecases.postsusecase.AddPostUseCase
 import ayush.ggv.instau.domain.usecases.postsusecase.DeletePostUseCase
 import ayush.ggv.instau.domain.usecases.postsusecase.GetPostByIdUseCase
@@ -48,10 +52,12 @@ val appModule = module {
     single  <ProfileRepository>{ProfileRepositoryImpl(get()) }
     single { FollowsUseCase() }
     single <FollowRepository>{ FollowRepositoryImpl(get()) }
+    single <PostLikesRepository>{PostLikesRepositoryImpl(get())  }
     single { SignUpUseCase() }
     factory { AuthService() }
     factory { PostService() }
     factory { FollowService() }
+    factory { PostLikeService() }
     factory { SignUpUseCase() }
     factory { SignInuseCase() }
     factory { PostUseCase() }
@@ -63,6 +69,7 @@ val appModule = module {
     factory { UpdateProfileUseCase() }
     factory { DeletePostUseCase() }
     factory { FollowsUseCase() }
+    factory { PostLikeUseCase() }
 
 
     viewModel { SignUpViewModel(get() , get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
@@ -74,7 +81,7 @@ val appModule = module {
     viewModel { EditProfileViewModel(get() ,get()) }
     viewModel{ FollowsViewModel() }
     viewModel { AddPostViewModel( get()) }
-    viewModel{PostListItemViewModel(get() , get()) }
+    viewModel{PostListItemViewModel(get() , get() , get())  }
 
     single{
         DataStoreFactory.create(
