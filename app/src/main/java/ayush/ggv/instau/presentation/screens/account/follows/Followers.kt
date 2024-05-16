@@ -1,5 +1,6 @@
 package ayush.ggv.instau.presentation.screens.account.follows
 
+import android.util.Log
 import ayush.ggv.instau.presentation.screens.destinations.ProfileDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -10,15 +11,17 @@ import org.koin.androidx.compose.koinViewModel
 @Destination
 fun Followers (
     navigator: DestinationsNavigator,
-    userId: Long
+    userId: Long,
+    currentUserid: Long,
+    token : String
 ){
     val viewModel: FollowsViewModel = koinViewModel()
+    Log.d("follow" , "FollowsScreen: ${userId},, ${currentUserid},, ${token}")
 
-    val currentUserid = 0L
-    val token = ""
     FollowsScreen(
         uiState = viewModel.uiState,
-        fetchFollows = { viewModel.fetchFollows(userId , 1)  },
-        onItemClick = { navigator.navigate(ProfileDestination( userId , currentUserid, token ))  }
+        fetchFollows = { viewModel.fetchFollows(userId , 1, 10 , token)  },
+        onItemClick = { selectedUserId -> navigator.navigate(ProfileDestination( selectedUserId , currentUserid, token ))  },
+        isFollowers = true
     )
 }

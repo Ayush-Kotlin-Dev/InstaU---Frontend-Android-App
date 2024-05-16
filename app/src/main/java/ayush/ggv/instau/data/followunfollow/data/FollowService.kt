@@ -5,6 +5,7 @@ import ayush.ggv.instau.data.profile.domain.model.ProfileResponse
 import ayush.ggv.instau.data.profile.domain.model.UpdateUserParams
 import instaU.ayush.com.model.FollowsAndUnfollowsResponse
 import instaU.ayush.com.model.FollowsParams
+import instaU.ayush.com.model.GetFollowsResponse
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.headers
@@ -24,5 +25,37 @@ class FollowService : KtorApi() {
         }
         setBody(followsParams)
     }.body()
+
+    suspend fun getFollowers(
+        userId: Long,
+        pageNumber: Int,
+        pageSize: Int,
+        token: String
+    ): GetFollowsResponse = client.get {
+        endPoint(path = "/follow/followers")
+        headers {
+            append("Authorization", "Bearer $token")
+        }
+        parameter("userId", userId)
+        parameter("pageNumber", pageNumber)
+        parameter("pageSize", pageSize)
+    }.body()
+
+    suspend fun getFollowing(
+        userId: Long,
+        pageNumber: Int,
+        pageSize: Int,
+        token: String
+    ): GetFollowsResponse = client.get {
+        endPoint(path = "/follow/following")
+        headers {
+            append("Authorization", "Bearer $token")
+        }
+        parameter("userId", userId)
+        parameter("pageNumber", pageNumber)
+        parameter("pageSize", pageSize)
+    }.body()
+
+
 
 }

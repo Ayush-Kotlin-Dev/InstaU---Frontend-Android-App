@@ -23,6 +23,8 @@ import ayush.ggv.instau.data.profile.data.ProfileRepositoryImpl
 import ayush.ggv.instau.data.profile.data.ProfileService
 import ayush.ggv.instau.data.profile.domain.repository.ProfileRepository
 import ayush.ggv.instau.domain.usecases.followsusecase.FollowsUseCase
+import ayush.ggv.instau.domain.usecases.followsusecase.GetFollowersUseCase
+import ayush.ggv.instau.domain.usecases.followsusecase.GetFollowingUseCase
 import ayush.ggv.instau.domain.usecases.postlikeusecase.PostLikeUseCase
 import ayush.ggv.instau.domain.usecases.postsusecase.AddPostUseCase
 import ayush.ggv.instau.domain.usecases.postsusecase.DeletePostUseCase
@@ -51,6 +53,8 @@ val appModule = module {
     single <PostRepository> { PostsRepositoryImpl(get()) }
     single  <ProfileRepository>{ProfileRepositoryImpl(get()) }
     single { FollowsUseCase() }
+    single { GetFollowersUseCase() }
+    single { GetFollowingUseCase() }
     single <FollowRepository>{ FollowRepositoryImpl(get()) }
     single <PostLikesRepository>{PostLikesRepositoryImpl(get())  }
     single { SignUpUseCase() }
@@ -79,7 +83,7 @@ val appModule = module {
     viewModel { PostDetailScreenViewModel(get() ) }
     viewModel{ ProfileScreenViewModel( get() , get()  , get()) }
     viewModel { EditProfileViewModel(get() ,get()) }
-    viewModel{ FollowsViewModel() }
+    viewModel{ FollowsViewModel(get() , get()) }
     viewModel { AddPostViewModel( get()) }
     viewModel{PostListItemViewModel(get() , get() , get())  }
 

@@ -1,5 +1,6 @@
 package ayush.ggv.instau.presentation.screens.account.follows
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,6 +22,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import ayush.ggv.instau.presentation.components.ShimmerFollowsListItemPlaceholder
+import ayush.ggv.instau.presentation.components.ShimmerPostListItemPlaceholder
 import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 
@@ -29,43 +32,50 @@ fun FollowsScreen(
     modifier : Modifier = Modifier,
     uiState: FollowsUiState,
     fetchFollows  : () -> Unit,
-    onItemClick : (Int) -> Unit
+    onItemClick : (Long) -> Unit,
+    isFollowers : Boolean
 
 ) {
     //Open Image in dialog
     var showDialog by remember { mutableStateOf(false) }
     var imageUrl by remember { mutableStateOf("") }
     //
-
     Box(
         modifier = modifier
             .fillMaxSize(),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.TopCenter
 
     ){
-        LazyColumn (
-            modifier = modifier
-                .fillMaxSize()
-        ){
-            items(
-                items = uiState.followUsers,
-                key = { user -> user.id }
-            ){ user ->
-                FollowsListItem(
-                    name = user.name,
-                    bio = user.bio,
-                    imageUrl = user.profileUrl,
-                    onItemClick = { onItemClick(user.id) },
-                    onImageClick = {
-                        imageUrl = user.profileUrl
-                        showDialog = true
-                    }
-                )
-            }
 
-        }
         if(uiState.isLoading && uiState.followUsers.isEmpty()){
-            CircularProgressIndicator()
+            LazyColumn {
+                items(5){
+                    ShimmerFollowsListItemPlaceholder()
+                }
+            }
+        }else{
+            LazyColumn (
+                modifier = modifier
+                    .fillMaxSize()
+            ){
+                items(
+                    items = if (isFollowers) uiState.followUsers else uiState.followingUsers,
+                    key = { user -> user.id }
+                ){ user ->
+                    FollowsListItem(
+                        name = user.name,
+                        bio = user.bio,
+                        imageUrl = user.imageUrl!!,
+                        onItemClick = { onItemClick(user.id) },
+                        onImageClick = {
+                            imageUrl = user.imageUrl
+                            showDialog = true
+                        }
+                    )
+
+                }
+
+            }
         }
     }
     LaunchedEffect(

@@ -40,9 +40,9 @@ fun Profile(
                 ),
                 token
             )
-        }, // navigator.navigate(EditProfileDestination(userId))
-        onFollowersClick = { }, //navigator.navigate(FollowersDestination(userId))
-        onFollowingClick = { }, //navigator.navigate(FollowingDestination(userId))
+        },
+        onFollowersClick = {navigator.navigate(FollowersDestination(userId , currentUserId , token)) },
+        onFollowingClick = {navigator.navigate(FollowingDestination(userId , currentUserId ,token)) },
         onPostClick = { },
         onLikeClick = { },
         onCommentClick = { },

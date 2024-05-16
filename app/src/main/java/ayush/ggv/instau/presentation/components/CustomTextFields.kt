@@ -108,7 +108,6 @@ fun CustomTextFields(
 
 @Composable
 fun PasswordEyeIcon(
-    modifier: Modifier = Modifier,
     isPasswordVisible: Boolean,
     onPasswordToggleClick: () -> Unit
 ) {

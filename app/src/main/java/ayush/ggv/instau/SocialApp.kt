@@ -127,7 +127,6 @@ fun SocialApp(
                                             navHostController.navigate(AddPostDestination(userId = userId!! , token).route)
                                         }
                                         NavigationBarItems.PROFILE -> navHostController.navigate(ProfileDestination(userId!! , userId  , token!!))
-                                        else -> {}
                                     }}
                                 .fillMaxSize(),
 
