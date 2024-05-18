@@ -12,10 +12,10 @@ import ayush.ggv.instau.domain.usecases.followsusecase.SuggestionsUseCase
 import ayush.ggv.instau.domain.usecases.postusecase.PostUseCase
 import ayush.ggv.instau.model.Post
 import ayush.ggv.instau.presentation.screens.home.onboarding.OnBoardingUiState
+import ayush.ggv.instau.util.Result
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import ayush.ggv.instau.util.Result
 
 class HomeScreenViewModel(
     private val postUseCase: PostUseCase,

@@ -1,6 +1,6 @@
 package ayush.ggv.instau.presentation.screens.home.onboarding
 
-import android.content.res.Configuration
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,37 +10,36 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import ayush.ggv.instau.R
 import ayush.ggv.instau.presentation.components.CircleImage
 import ayush.ggv.instau.presentation.components.FollowsButton
 import ayush.ggv.instau.ui.theme.MediumSpacing
-import ayush.ggv.instau.R
 import ayush.ggv.instau.ui.theme.SmallSpacing
-import ayush.ggv.instau.ui.theme.SocialAppTheme
 import instaU.ayush.com.model.FollowUserData
-import instaU.ayush.com.model.GetFollowsResponse
 
 @Composable
 fun OnBoardingUserItem(
     modifier: Modifier = Modifier,
     followsUser: FollowUserData,
     onUserClick: (Long) -> Unit,
-    isFollowing: Boolean = false,
-    onFollowButtonClick: (Boolean , Long) -> Unit
+    onFollowButtonClick: () -> Unit
 ) {
+    // Create a mutable state for the following status
+    val isFollowing = remember { mutableStateOf(followsUser.isFollowing) }
+    val context = LocalContext.current
     Card(
         modifier = modifier
             .size(height = 140.dp, width = 130.dp)
@@ -58,8 +57,7 @@ fun OnBoardingUserItem(
         ) {
             CircleImage(
                 modifier = modifier.size(50.dp),
-                imageUrl = followsUser.imageUrl?:"",
-                onClick = {}
+                imageUrl = followsUser.imageUrl ?: "",
             )
 
             Spacer(modifier = modifier.height(SmallSpacing))
@@ -72,14 +70,21 @@ fun OnBoardingUserItem(
             )
 
             Spacer(modifier = modifier.height(MediumSpacing))
-
             FollowsButton(
-                text = R.string.follow_button_label,
-                onFollowButtonClick = { onFollowButtonClick(!isFollowing, followsUser.id) },
+                text = if (isFollowing.value) R.string.unfollow_button_label else R.string.follow_button_label,
+                onFollowButtonClick = {
+                    isFollowing.value = !isFollowing.value
+                    onFollowButtonClick()
+                    Toast.makeText(
+                        context,
+                        if (isFollowing.value) "Unfollowed" else "Followed",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                },
                 modifier = modifier
-                    .heightIn(30.dp)
-                    .widthIn(100.dp),
-                isOutline = isFollowing
+                    .height(30.dp)
+                    .widthIn(min = 100.dp),
+                isOutline = isFollowing.value
             )
         }
     }

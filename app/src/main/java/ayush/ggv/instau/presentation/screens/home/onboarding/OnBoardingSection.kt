@@ -14,25 +14,33 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import ayush.ggv.instau.R
+import ayush.ggv.instau.presentation.screens.account.profile.ProfileScreenViewModel
 import ayush.ggv.instau.ui.theme.LargeSpacing
 import ayush.ggv.instau.ui.theme.MediumSpacing
 import instaU.ayush.com.model.FollowUserData
+import instaU.ayush.com.model.FollowsParams
 
 @Composable
 fun OnBoardingSection(
     modifier: Modifier = Modifier,
     users: List<FollowUserData>,
     onUserClick: (Long) -> Unit,
-    onFollowButtonClick: (Boolean, Long) -> Unit,
-    onBoardingFinish: () -> Unit
+    onFollowButtonClick: () -> Unit,
+    onBoardingFinish: () -> Unit,
+    profileScreenViewModel: ProfileScreenViewModel,
+    currentUserId: Long,
+    token : String
 ) {
+
+
     Column(
         modifier = modifier.fillMaxWidth(),
     ) {
@@ -58,7 +66,15 @@ fun OnBoardingSection(
         UsersRow(
             users = users,
             onUserClick = onUserClick ,
-            onFollowButtonClick = onFollowButtonClick
+            onFollowButtonClick = {
+                profileScreenViewModel.followUnfollowUser(
+                FollowsParams(
+                    follower = currentUserId,
+                    following =  it,
+                    isFollowing = profileScreenViewModel.isFollowing
+                ),
+                token
+            ) }
         )
         OutlinedButton(
             onClick = { onBoardingFinish() },
@@ -79,7 +95,7 @@ fun UsersRow(
     modifier: Modifier = Modifier,
     users: List< FollowUserData>,
     onUserClick: (Long) -> Unit,
-    onFollowButtonClick: (Boolean, Long ) -> Unit
+    onFollowButtonClick: (Long ) -> Unit
 
 ) {
     LazyRow(
@@ -91,8 +107,7 @@ fun UsersRow(
             OnBoardingUserItem(
                 followsUser = index,
                 onUserClick = onUserClick,
-                onFollowButtonClick = {  isFollowing, id ->
-                    onFollowButtonClick(isFollowing, id)
+                onFollowButtonClick = {  onFollowButtonClick(index.id)
                 }
             )
         }

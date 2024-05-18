@@ -21,7 +21,7 @@ fun  Following (
     FollowsScreen(
         uiState = viewModel.uiState,
         fetchFollows = { viewModel.fetchFollows(userId , 1 , 10, token)  },
-        onItemClick = { navigator.navigate(ProfileDestination(userId , currentUserid, token)) } ,
+        onItemClick = {selectedUserId -> navigator.navigate(ProfileDestination( selectedUserId , currentUserid, token )) } ,
         isFollowers = false
     )
 }

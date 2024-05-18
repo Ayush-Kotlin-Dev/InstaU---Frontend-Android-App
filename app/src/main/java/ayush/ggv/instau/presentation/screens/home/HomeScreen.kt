@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import ayush.ggv.instau.model.Post
 import ayush.ggv.instau.presentation.components.PostListItem
 import ayush.ggv.instau.presentation.components.ShimmerPostListItemPlaceholder
+import ayush.ggv.instau.presentation.screens.account.profile.ProfileScreenViewModel
 import ayush.ggv.instau.presentation.screens.home.onboarding.OnBoardingSection
 import ayush.ggv.instau.presentation.screens.home.onboarding.OnBoardingUiState
 import com.ramcosta.composedestinations.annotation.Destination
@@ -37,9 +38,12 @@ fun HomeScreen(
     //onboarding
     onBoardingFinish: () -> Unit,
     onUserClick: (Long) -> Unit,
-    onFollowClick: (Boolean, Long) -> Unit,
+    onFollowClick: (Long) -> Unit,
 
-    fetchData: () -> Unit
+    fetchData: () -> Unit,
+    profileScreenViewModel: ProfileScreenViewModel,
+    currentUserId: Long,
+    token : String
 ) {
 
     val pullRefreshState = rememberPullRefreshState(
@@ -61,7 +65,10 @@ fun HomeScreen(
                         users = onBoardingUiState.users,
                         onBoardingFinish = onBoardingFinish,
                         onUserClick = onUserClick,
-                        onFollowButtonClick = onFollowClick,
+                        onFollowButtonClick = {},
+                        profileScreenViewModel = profileScreenViewModel,
+                        currentUserId = currentUserId,
+                        token = token
                     )
                 }
 

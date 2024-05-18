@@ -2,6 +2,7 @@ package ayush.ggv.instau.presentation.screens.post
 
 import androidx.compose.runtime.Composable
 import ayush.ggv.instau.model.NewCommentParams
+import ayush.ggv.instau.model.RemoveCommentParams
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
@@ -32,7 +33,16 @@ fun PostDetail(
         },
         fetchData = {
             viewModel.fetchData(postId, currentUserId, token)
-
+        },
+        onDeleteClick = {
+            viewModel.deleteComment(
+                RemoveCommentParams(
+                    postId = postId,
+                    commentId = it,
+                    userId = currentUserId
+                ),
+                token
+            )
         }
     )
 

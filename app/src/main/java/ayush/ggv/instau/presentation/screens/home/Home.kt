@@ -1,10 +1,12 @@
 package ayush.ggv.instau.presentation.screens.home
 
 import androidx.compose.runtime.Composable
+import ayush.ggv.instau.presentation.screens.account.profile.ProfileScreenViewModel
 import ayush.ggv.instau.presentation.screens.destinations.PostDetailDestination
 import ayush.ggv.instau.presentation.screens.destinations.ProfileDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import instaU.ayush.com.model.FollowsParams
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -16,6 +18,8 @@ fun Home(
     val viewModel: HomeScreenViewModel = koinViewModel()
     val currentUserId = viewModel.currentUserId
     val token = viewModel.token
+
+    val profileScreenViewModel: ProfileScreenViewModel = koinViewModel()
 
     HomeScreen(
         onBoardingUiState = viewModel.onBoardingUiState,
@@ -37,14 +41,18 @@ fun Home(
         onBoardingFinish = {
 
         },
-        onUserClick = { user ->
-
+        onUserClick = { userId ->
+            navigator.navigate(ProfileDestination(userId , currentUserId.value    , token.value))
         },
-        onFollowClick = { isFollowing, user ->
 
+        onFollowClick = {
+            currentUserId.value
         },
         fetchData = {
             viewModel.fetchData()
-        }
+        },
+        profileScreenViewModel = profileScreenViewModel,
+        currentUserId = currentUserId.value,
+        token = token.value
     )
 }

@@ -47,9 +47,9 @@ import java.time.temporal.ChronoUnit
 fun CommentListItem(
     modifier: Modifier = Modifier,
     comment: PostComment,
-    onProfileClick: (Long) -> Unit
+    onProfileClick: (Long) -> Unit,
+    onDeleteClick: () -> Unit
 ) {
-    Log.d("CommentListItem", "CommentCreatedAt: ${comment.createdAt}")
     fun formatTimeAgo(time: String): String {
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
         val dateTime = LocalDateTime.parse(time, formatter)
@@ -70,7 +70,6 @@ fun CommentListItem(
 
     // Format the LocalDateTime object into a "time ago" string
     val timeAgo = formatTimeAgo(comment.createdAt)
-    Log.d("CommentListItem", "timeAgo: ${timeAgo}")
 
     var expanded by remember { mutableStateOf(false) }
     Row(
@@ -135,7 +134,7 @@ fun CommentListItem(
                 expanded = expanded,
                 onDismissRequest = { expanded = false }
             ) {
-                DropdownMenuItem(onClick = { }) {
+                DropdownMenuItem(onClick = { onDeleteClick()}) {
                     Text("Delete")
                 }
                 DropdownMenuItem(onClick = { }) {
@@ -169,7 +168,8 @@ fun PreviewCommentListItem() {
                     createdAt = "2 hours ago"
 
                 ),
-                onProfileClick = {}
+                onProfileClick = {},
+                onDeleteClick = {}
             )
         }
     }

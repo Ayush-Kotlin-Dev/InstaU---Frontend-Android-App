@@ -42,7 +42,6 @@ class FollowsViewModel(
                         isLoading = false,
                         errorMessage = followers.message
                     )
-                    Log.d("error" , "Token : $token")
                 }
 
                 is Result.Loading -> TODO()

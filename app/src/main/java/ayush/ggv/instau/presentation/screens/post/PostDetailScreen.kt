@@ -39,7 +39,8 @@ fun PostDetailScreen(
     commentsUiState: CommentsUiState,
     onProfileClick: (Long) -> Unit,
     onAddCommentClick: (String) -> Unit,
-    fetchData: () -> Unit
+    fetchData: () -> Unit,
+    onDeleteClick: (Long) -> Unit
 ) {
 
     if (postUiState.isLoading && commentsUiState.isLoading) {
@@ -77,7 +78,8 @@ fun PostDetailScreen(
                 Divider()
                 CommentListItem(
                     comment = it,
-                    onProfileClick = onProfileClick
+                    onProfileClick = onProfileClick,
+                    onDeleteClick = { onDeleteClick(it.commentId) }
                 )
             }
 
