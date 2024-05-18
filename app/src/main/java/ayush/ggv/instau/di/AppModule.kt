@@ -28,6 +28,7 @@ import ayush.ggv.instau.data.profile.domain.repository.ProfileRepository
 import ayush.ggv.instau.domain.usecases.followsusecase.FollowsUseCase
 import ayush.ggv.instau.domain.usecases.followsusecase.GetFollowersUseCase
 import ayush.ggv.instau.domain.usecases.followsusecase.GetFollowingUseCase
+import ayush.ggv.instau.domain.usecases.followsusecase.SuggestionsUseCase
 import ayush.ggv.instau.domain.usecases.postcommentusecase.CommentUseCase
 import ayush.ggv.instau.domain.usecases.postcommentusecase.DeleteCommentUseCase
 import ayush.ggv.instau.domain.usecases.postcommentusecase.GetCommentsUseCase
@@ -86,12 +87,12 @@ val appModule = module {
     factory {CommentUseCase() }
     factory { GetCommentsUseCase() }
     factory { DeleteCommentUseCase() }
-
+    factory { SuggestionsUseCase() }
 
     viewModel { SignUpViewModel(get() , get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
     viewModel { LoginViewModel(get() , get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
     viewModel { MainActivityViewModel(get()) }
-    viewModel{ HomeScreenViewModel(get(),get () ) }
+    viewModel{ HomeScreenViewModel(get(),get () , get() ) }
     viewModel { PostDetailScreenViewModel(get(), get(), get(), get()  ) }
     viewModel{ ProfileScreenViewModel( get() , get()  , get()) }
     viewModel { EditProfileViewModel(get() ,get()) }

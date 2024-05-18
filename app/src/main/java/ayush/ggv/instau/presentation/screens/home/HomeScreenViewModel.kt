@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ayush.ggv.instau.common.datastore.UserSettings
 import ayush.ggv.instau.common.datastore.toAuthResultData
-import ayush.ggv.instau.common.fakedata.sampleUsers
+import ayush.ggv.instau.domain.usecases.followsusecase.SuggestionsUseCase
 import ayush.ggv.instau.domain.usecases.postusecase.PostUseCase
 import ayush.ggv.instau.model.Post
 import ayush.ggv.instau.presentation.screens.home.onboarding.OnBoardingUiState
@@ -19,7 +19,8 @@ import ayush.ggv.instau.util.Result
 
 class HomeScreenViewModel(
     private val postUseCase: PostUseCase,
-    private val dataStore: DataStore<UserSettings>
+    private val dataStore: DataStore<UserSettings>,
+    private val suggestionsUseCase: SuggestionsUseCase
 ) : ViewModel(
 
 ) {
@@ -36,7 +37,6 @@ class HomeScreenViewModel(
         fetchData()
     }
 
-    //fetchPosts()
     fun fetchData() {
         onBoardingUiState = onBoardingUiState.copy(isLoading = true)
         postsUiState = postsUiState.copy(isLoading = true)
@@ -54,6 +54,8 @@ class HomeScreenViewModel(
 
             // Fetch posts
             val result = postUseCase(currentUserId.value, page , limit, token.value)
+            val resultSuggestions = suggestionsUseCase(currentUserId.value, token.value)
+
 
             when (result) {
                 is Result.Success -> {
@@ -89,12 +91,26 @@ class HomeScreenViewModel(
                     postsUiState = postsUiState.copy(isLoading = true)
                 }
             }
+            when (resultSuggestions) {
+                is Result.Success -> {
+                    onBoardingUiState = onBoardingUiState.copy(
+                        users = resultSuggestions.data?.follows ?: listOf(),
+                        isLoading = false,
+                        shouldShowOnBoarding = resultSuggestions.data?.follows?.isNotEmpty() ?: false
+                    )
+                }
 
-            onBoardingUiState = onBoardingUiState.copy(
-                users = sampleUsers,
-                isLoading = false,
-                shouldShowOnBoarding = true
-            )
+                is Result.Error -> {
+                    onBoardingUiState = onBoardingUiState.copy(
+                        error = resultSuggestions.message,
+                        isLoading = false
+                    )
+                }
+
+                is Result.Loading -> {
+                    onBoardingUiState = onBoardingUiState.copy(isLoading = true)
+                }
+            }
         }
 
     }

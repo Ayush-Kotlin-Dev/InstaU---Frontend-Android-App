@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -25,26 +26,26 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ayush.ggv.instau.presentation.components.CircleImage
 import ayush.ggv.instau.presentation.components.FollowsButton
-import ayush.ggv.instau.common.fakedata.FollowsUser
 import ayush.ggv.instau.ui.theme.MediumSpacing
 import ayush.ggv.instau.R
-import ayush.ggv.instau.common.fakedata.sampleUsers
 import ayush.ggv.instau.ui.theme.SmallSpacing
 import ayush.ggv.instau.ui.theme.SocialAppTheme
+import instaU.ayush.com.model.FollowUserData
+import instaU.ayush.com.model.GetFollowsResponse
 
 @Composable
 fun OnBoardingUserItem(
     modifier: Modifier = Modifier,
-    followsUser: FollowsUser,
-    onUserClick: (FollowsUser) -> Unit,
+    followsUser: FollowUserData,
+    onUserClick: (Long) -> Unit,
     isFollowing: Boolean = false,
-    onFollowButtonClick: (Boolean, FollowsUser) -> Unit
+    onFollowButtonClick: (Boolean , Long) -> Unit
 ) {
     Card(
         modifier = modifier
             .size(height = 140.dp, width = 130.dp)
             .clickable {
-                onUserClick(followsUser)
+                onUserClick(followsUser.id)
             },
         elevation = 0.dp
     ) {
@@ -57,7 +58,7 @@ fun OnBoardingUserItem(
         ) {
             CircleImage(
                 modifier = modifier.size(50.dp),
-                imageUrl = followsUser.profileUrl,
+                imageUrl = followsUser.imageUrl?:"",
                 onClick = {}
             )
 
@@ -74,7 +75,7 @@ fun OnBoardingUserItem(
 
             FollowsButton(
                 text = R.string.follow_button_label,
-                onFollowButtonClick = { onFollowButtonClick(!isFollowing, followsUser) },
+                onFollowButtonClick = { onFollowButtonClick(!isFollowing, followsUser.id) },
                 modifier = modifier
                     .heightIn(30.dp)
                     .widthIn(100.dp),
@@ -83,13 +84,14 @@ fun OnBoardingUserItem(
         }
     }
 }
-@Preview( uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-fun PreviewOnBoardingUserItem() {
-    SocialAppTheme {
-        OnBoardingUserItem(
-            followsUser = sampleUsers.first(),
-            onUserClick = {},
-            onFollowButtonClick = { _, _ -> })
-    }
-}
+//@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+//@Composable
+//fun PreviewOnBoardingUserItem() {
+//    SocialAppTheme {
+//        OnBoardingUserItem(
+//            followsUser = sampleUsers.first(),
+//            onUserClick = {},
+//            onFollowButtonClick = { _, _ -> },
+//        )
+//    }
+//}

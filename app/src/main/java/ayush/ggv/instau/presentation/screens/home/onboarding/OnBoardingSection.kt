@@ -21,17 +21,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import ayush.ggv.instau.R
-import ayush.ggv.instau.common.fakedata.FollowsUser
 import ayush.ggv.instau.ui.theme.LargeSpacing
 import ayush.ggv.instau.ui.theme.MediumSpacing
+import instaU.ayush.com.model.FollowUserData
 
 @Composable
 fun OnBoardingSection(
     modifier: Modifier = Modifier,
-    users : List<FollowsUser>,
-    onUserClick: (FollowsUser) -> Unit,
-    onFollowButtonClick: (Boolean, FollowsUser) -> Unit,
-    onBoardingFinish : () -> Unit
+    users: List<FollowUserData>,
+    onUserClick: (Long) -> Unit,
+    onFollowButtonClick: (Boolean, Long) -> Unit,
+    onBoardingFinish: () -> Unit
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -56,8 +56,8 @@ fun OnBoardingSection(
         Spacer(modifier = Modifier.height(LargeSpacing))
 
         UsersRow(
-            users =  users,
-            onUserClick = onUserClick,
+            users = users,
+            onUserClick = onUserClick ,
             onFollowButtonClick = onFollowButtonClick
         )
         OutlinedButton(
@@ -77,9 +77,9 @@ fun OnBoardingSection(
 @Composable
 fun UsersRow(
     modifier: Modifier = Modifier,
-    users: List<FollowsUser>,
-    onUserClick: (FollowsUser) -> Unit,
-    onFollowButtonClick: (Boolean, FollowsUser) -> Unit
+    users: List< FollowUserData>,
+    onUserClick: (Long) -> Unit,
+    onFollowButtonClick: (Boolean, Long ) -> Unit
 
 ) {
     LazyRow(
@@ -91,74 +91,73 @@ fun UsersRow(
             OnBoardingUserItem(
                 followsUser = index,
                 onUserClick = onUserClick,
-                onFollowButtonClick = onFollowButtonClick
+                onFollowButtonClick = {  isFollowing, id ->
+                    onFollowButtonClick(isFollowing, id)
+                }
             )
         }
-
     }
-
-
 }
 
-@Preview( showBackground = true, backgroundColor = 0xFFFFFFFF)
-@Composable
-fun PreviewOnBoardingSection() {
-    OnBoardingSection(
-        users = listOf(
-            FollowsUser(
-                id = 1,
-                name = "Ayush",
-                profileUrl = "https://picsum.photos/200"
-            ),
-            FollowsUser(
-                id = 2,
-                name = "Vaibhav",
-                profileUrl = "https://picsum.photos/200"
-            ),
-            FollowsUser(
-                id = 3,
-                name = "Paras",
-                profileUrl = "https://picsum.photos/200"
-            ),
-            FollowsUser(
-                id = 4,
-                name = "Omkar",
-                profileUrl = "https://picsum.photos/200"
-            )
-        ),
-        onUserClick = {},
-        onFollowButtonClick = { _, _ -> },
-        onBoardingFinish = {}
-    )
-}
-
-@Preview
-@Composable
-fun PreviewUsersRow() {
-    UsersRow(
-        users = listOf(
-            FollowsUser(
-                id = 1,
-                name = "Ayush",
-                profileUrl = "https://picsum.photos/200"
-            ),
-            FollowsUser(
-                id = 2,
-                name = "Vaibhav",
-                profileUrl = "https://picsum.photos/200"
-            ),
-            FollowsUser(
-                id = 3,
-                name = "Paras",
-                profileUrl = "https://picsum.photos/200"
-            ),
-            FollowsUser(
-                id = 4,
-                name = "Omkar",
-                profileUrl = "https://picsum.photos/200"
-            )
-        ),
-        onUserClick = {},
-        onFollowButtonClick = { _, _ -> }
-    )
-}
+//@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
+//@Composable
+//fun PreviewOnBoardingSection() {
+//    OnBoardingSection(
+//        users = listOf(
+//            FollowsUser(
+//                id = 1,
+//                name = "Ayush",
+//                profileUrl = "https://picsum.photos/200"
+//            ),
+//            FollowsUser(
+//                id = 2,
+//                name = "Vaibhav",
+//                profileUrl = "https://picsum.photos/200"
+//            ),
+//            FollowsUser(
+//                id = 3,
+//                name = "Paras",
+//                profileUrl = "https://picsum.photos/200"
+//            ),
+//            FollowsUser(
+//                id = 4,
+//                name = "Omkar",
+//                profileUrl = "https://picsum.photos/200"
+//            )
+//        ),
+//        onUserClick = {},
+//        onFollowButtonClick = { _, _ -> },
+//        onBoardingFinish = {}
+//    )
+//}
+//
+//@Preview
+//@Composable
+//fun PreviewUsersRow() {
+//    UsersRow(
+//        users = listOf(
+//            FollowsUser(
+//                id = 1,
+//                name = "Ayush",
+//                profileUrl = "https://picsum.photos/200"
+//            ),
+//            FollowsUser(
+//                id = 2,
+//                name = "Vaibhav",
+//                profileUrl = "https://picsum.photos/200"
+//            ),
+//            FollowsUser(
+//                id = 3,
+//                name = "Paras",
+//                profileUrl = "https://picsum.photos/200"
+//            ),
+//            FollowsUser(
+//                id = 4,
+//                name = "Omkar",
+//                profileUrl = "https://picsum.photos/200"
+//            )
+//        ),
+//        onUserClick = {},
+//        onFollowButtonClick = { _, _ -> }
+//    )
+//}

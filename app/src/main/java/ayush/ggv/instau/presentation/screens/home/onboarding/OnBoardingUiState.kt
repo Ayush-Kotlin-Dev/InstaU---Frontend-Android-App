@@ -1,10 +1,11 @@
 package ayush.ggv.instau.presentation.screens.home.onboarding
 
-import ayush.ggv.instau.common.fakedata.FollowsUser
+import instaU.ayush.com.model.FollowUserData
+
 
 data class OnBoardingUiState(
     val isLoading: Boolean = false,
-    val users : List<FollowsUser> = listOf(),
+    val users : List<FollowUserData> = listOf(),
     val error: String? = null,
     val shouldShowOnBoarding : Boolean = false
 )

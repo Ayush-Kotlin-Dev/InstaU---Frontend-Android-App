@@ -14,9 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import ayush.ggv.instau.common.fakedata.FollowsUser
-import ayush.ggv.instau.common.fakedata.samplePosts
-import ayush.ggv.instau.common.fakedata.sampleUsers
 import ayush.ggv.instau.model.Post
 import ayush.ggv.instau.presentation.components.PostListItem
 import ayush.ggv.instau.presentation.components.ShimmerPostListItemPlaceholder
@@ -39,8 +36,8 @@ fun HomeScreen(
 
     //onboarding
     onBoardingFinish: () -> Unit,
-    onUserClick: (FollowsUser) -> Unit,
-    onFollowClick: (Boolean, FollowsUser) -> Unit,
+    onUserClick: (Long) -> Unit,
+    onFollowClick: (Boolean, Long) -> Unit,
 
     fetchData: () -> Unit
 ) {
