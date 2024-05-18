@@ -6,6 +6,7 @@ import ayush.ggv.instau.model.GetCommentsResponse
 import ayush.ggv.instau.model.NewCommentParams
 import ayush.ggv.instau.model.RemoveCommentParams
 import io.ktor.client.call.body
+import io.ktor.client.request.get
 import io.ktor.client.request.headers
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
@@ -41,7 +42,7 @@ class PostCommentService : KtorApi() {
         page : Int,
         limit : Int,
         token: String
-    ): GetCommentsResponse = client.post {
+    ): GetCommentsResponse = client.get {
         endPoint(path = "/post/comments/$postId")
 
         headers {

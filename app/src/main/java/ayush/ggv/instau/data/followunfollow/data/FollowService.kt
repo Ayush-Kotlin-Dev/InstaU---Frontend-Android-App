@@ -55,7 +55,18 @@ class FollowService : KtorApi() {
         parameter("pageNumber", pageNumber)
         parameter("pageSize", pageSize)
     }.body()
+    //suggestions
 
+    suspend fun getSuggestions(
+        userId: Long,
+        token: String
+    ): GetFollowsResponse = client.get {
+        endPoint(path = "/follow/suggestions")
+        headers {
+            append("Authorization", "Bearer $token")
+        }
+        parameter("userId", userId)
+    }.body()
 
 
 }

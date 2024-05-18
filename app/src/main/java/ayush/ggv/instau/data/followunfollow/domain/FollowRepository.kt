@@ -27,5 +27,8 @@ interface FollowRepository {
         token : String
     ): Result<GetFollowsResponse>
 
-
+    suspend fun getSuggestions(
+        userId: Long,
+        token: String
+    ): Result<GetFollowsResponse>
 }

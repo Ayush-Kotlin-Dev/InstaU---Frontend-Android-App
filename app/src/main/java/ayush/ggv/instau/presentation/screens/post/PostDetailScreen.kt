@@ -10,36 +10,35 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import ayush.ggv.instau.R
 import ayush.ggv.instau.presentation.components.CommentListItem
 import ayush.ggv.instau.presentation.components.PostListItem
-import ayush.ggv.instau.common.fakedata.Comment
-import ayush.ggv.instau.common.fakedata.sampleComments
-import ayush.ggv.instau.common.fakedata.samplePosts
 import ayush.ggv.instau.ui.theme.LargeSpacing
-import ayush.ggv.instau.ui.theme.SocialAppTheme
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Composable
 fun PostDetailScreen(
     modifier: Modifier = Modifier,
     postUiState: PostDetailUiState,
     commentsUiState: CommentsUiState,
-    onCommentMoreIconClick: (Comment) -> Unit,
     onProfileClick: (Long) -> Unit,
-    onAddCommentClick: () -> Unit,
+    onAddCommentClick: (String) -> Unit,
     fetchData: () -> Unit
 ) {
 
@@ -72,16 +71,14 @@ fun PostDetailScreen(
                 )
             }
             items(
-                items = sampleComments,
-                key = { comment -> comment.id }
+                items = commentsUiState.comments,
+                key = { comment -> comment.commentId }
             ) {
                 Divider()
                 CommentListItem(
                     comment = it,
                     onProfileClick = onProfileClick
-                ) {
-                    onCommentMoreIconClick(it)
-                }
+                )
             }
 
 
@@ -118,8 +115,37 @@ fun PostDetailScreen(
 @Composable
 fun CommentSectionHeader(
     modifier: Modifier = Modifier,
-    onAddCommentsClick: () -> Unit
+    onAddCommentsClick: (String) -> Unit
 ) {
+    var isDialogOpen by remember { mutableStateOf(false) }
+    var newCommentText by remember { mutableStateOf("") }
+
+    // Add Comment dialog
+    if (isDialogOpen) {
+        AlertDialog(
+            onDismissRequest = { isDialogOpen = false },
+            title = { Text("Add a comment") },
+            text = {
+                TextField(
+                    value = newCommentText,
+                    onValueChange = { newCommentText = it },
+                    label = { Text("Comment") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
+            confirmButton = {
+                Button(onClick = { onAddCommentsClick(newCommentText); newCommentText = ""; isDialogOpen = false }) {
+                    Text("Add")
+                }
+            },
+            dismissButton = {
+                Button(onClick = { isDialogOpen = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -131,31 +157,8 @@ fun CommentSectionHeader(
             text = stringResource(id = R.string.comments_label),
             style = MaterialTheme.typography.subtitle1
         )
-        OutlinedButton(onClick = { onAddCommentsClick() }) {
+        OutlinedButton(onClick = { isDialogOpen = true }) {
             Text(text = stringResource(id = R.string.add_comment_button_label))
         }
     }
 }
-
-//@Preview
-//@Composable
-//fun PreviewPostDetailScreen() {
-//    SocialAppTheme {
-//        Surface {
-//            PostDetailScreen(
-//                postUiState = PostDetailUiState(
-//                    isLoading = false,
-//                    post = samplePosts.first()
-//                ),
-//                commentsUiState = CommentsUiState(
-//                    isLoading = false,
-//                    comments = sampleComments
-//                ),
-//                onCommentMoreIconClick = {},
-//                onProfileClick = {},
-//                onAddCommentClick = {},
-//                fetchData = {}
-//            )
-//        }
-//    }
-//}

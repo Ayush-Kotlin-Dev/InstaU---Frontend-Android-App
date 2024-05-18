@@ -1,6 +1,7 @@
 package ayush.ggv.instau.presentation.screens.post
 
 import androidx.compose.runtime.Composable
+import ayush.ggv.instau.model.NewCommentParams
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
@@ -10,20 +11,27 @@ import org.koin.androidx.compose.koinViewModel
 fun PostDetail(
     navigator: DestinationsNavigator,
     postId: Long,
-    currentUserId : Long ,
-    token : String
+    currentUserId: Long,
+    token: String
 ) {
     val viewModel: PostDetailScreenViewModel = koinViewModel()
 
     PostDetailScreen(
         postUiState = viewModel.postUiState,
         commentsUiState = viewModel.commentsUiState,
-        onCommentMoreIconClick = {},
-
         onProfileClick = {},
-        onAddCommentClick = {},
+        onAddCommentClick = {
+            viewModel.addComment(
+                newCommentParams = NewCommentParams(
+                    postId = postId,
+                    content = it,
+                    userId = currentUserId
+                ),
+                token
+            )
+        },
         fetchData = {
-            viewModel.fetchData(postId ,currentUserId , token)
+            viewModel.fetchData(postId, currentUserId, token)
 
         }
     )

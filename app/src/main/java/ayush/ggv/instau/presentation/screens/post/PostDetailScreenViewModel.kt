@@ -1,20 +1,28 @@
 package ayush.ggv.instau.presentation.screens.post
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ayush.ggv.instau.common.fakedata.Comment
-import ayush.ggv.instau.common.fakedata.sampleComments
-import ayush.ggv.instau.common.fakedata.samplePosts
+import ayush.ggv.instau.domain.usecases.postcommentusecase.CommentUseCase
+import ayush.ggv.instau.domain.usecases.postcommentusecase.DeleteCommentUseCase
+import ayush.ggv.instau.domain.usecases.postcommentusecase.GetCommentsUseCase
 import ayush.ggv.instau.domain.usecases.postsusecase.GetPostByIdUseCase
+import ayush.ggv.instau.model.NewCommentParams
 import ayush.ggv.instau.model.Post
+import ayush.ggv.instau.model.PostComment
+import ayush.ggv.instau.model.RemoveCommentParams
 import ayush.ggv.instau.util.Result
 import kotlinx.coroutines.launch
 
 class PostDetailScreenViewModel(
-    private val getUserByIdUseCase: GetPostByIdUseCase
+    private val getPostByIdUseCase: GetPostByIdUseCase,
+    private val commentUseCase: CommentUseCase,
+    private val deleteCommentUseCase: DeleteCommentUseCase,
+    private val getCommentsUseCase: GetCommentsUseCase
+
 ) :ViewModel() {
 
     var postUiState by mutableStateOf(PostDetailUiState())
@@ -26,7 +34,10 @@ class PostDetailScreenViewModel(
             postUiState = postUiState.copy(isLoading = true)
             commentsUiState = commentsUiState.copy(isLoading = true)
 
-            val postResult = getUserByIdUseCase(postId, currentUserId, token)
+
+            val postResult = getPostByIdUseCase(postId, currentUserId, token)
+            val comment = getCommentsUseCase(postId, 1 , 10, token)
+
             when(postResult){
                 is Result.Success -> {
                     postUiState = postUiState.copy(
@@ -44,12 +55,66 @@ class PostDetailScreenViewModel(
                 is Result.Loading -> TODO()
             }
 
-            commentsUiState = commentsUiState.copy(
-                isLoading = false,
-                comments = sampleComments
-            )
+            commentsUiState = when(comment){
+                is Result.Success -> {
+                    commentsUiState.copy(
+                        isLoading = false,
+                        comments = comment.data?.comments ?: listOf( )
+                    )
+                }
+
+                is Result.Error -> {
+                    commentsUiState.copy(
+                        isLoading = false,
+                        errorMessage = comment.message
+                    )
+                }
+
+                is Result.Loading -> TODO()
+            }
+
         }
 
+    }
+
+    fun addComment(newCommentParams: NewCommentParams, token : String){
+        viewModelScope.launch {
+            val result = commentUseCase(newCommentParams, token)
+            when(result){
+                is Result.Success -> {
+                    val newComment = result.data?.comment
+                    commentsUiState = commentsUiState.copy(
+                        comments = commentsUiState.comments + newComment!!
+                    )
+                }
+                is Result.Error -> {
+                    // Show error message
+                }
+                is Result.Loading -> {
+                    // Show loading
+                }
+            }
+        }
+    }
+
+    fun deleteComment(removeCommentParams: RemoveCommentParams,  token: String){
+        viewModelScope.launch {
+            val result = deleteCommentUseCase(removeCommentParams , token)
+            when(result){
+                is Result.Success -> {
+                    val deletedComment = result.data?.comment
+                    commentsUiState = commentsUiState.copy(
+                        comments = commentsUiState.comments.filter { it.commentId != deletedComment?.commentId }
+                    )
+                }
+                is Result.Error -> {
+                    // Show error message
+                }
+                is Result.Loading -> {
+                    // Show loading
+                }
+            }
+        }
     }
 
 }
@@ -62,6 +127,6 @@ data class PostDetailUiState(
 
 data class CommentsUiState(
     val isLoading : Boolean = false,
-    val comments : List<Comment> = listOf(),
+    val comments : List<PostComment> = listOf(),
     val errorMessage : String? = null
 )
