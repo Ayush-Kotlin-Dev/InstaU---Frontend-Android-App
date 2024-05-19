@@ -6,6 +6,7 @@ import ayush.ggv.instau.model.GetCommentsResponse
 import ayush.ggv.instau.model.NewCommentParams
 import ayush.ggv.instau.model.RemoveCommentParams
 import io.ktor.client.call.body
+import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.headers
 import io.ktor.client.request.parameter
@@ -28,7 +29,7 @@ class PostCommentService : KtorApi() {
     suspend fun removeComment(
         commentParams: RemoveCommentParams ,
         token: String
-    ): CommentResponse = client.post {
+    ): CommentResponse = client.delete {
         endPoint(path = "/post/comments/delete")
 
         headers {

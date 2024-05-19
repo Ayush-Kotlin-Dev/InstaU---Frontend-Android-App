@@ -63,7 +63,10 @@ import instaU.ayush.com.model.LikeParams
 import org.koin.androidx.compose.koinViewModel
 import java.time.Duration
 import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 @Composable
 fun PostListItem(
@@ -85,13 +88,27 @@ fun PostListItem(
     val isPostLiked by viewModel.isPostLiked.observeAsState(initial = post.isLiked)
     val likesCount by viewModel.likesCount.observeAsState(initial = post.likesCount)
 
+    fun formatTimeAgo(time: String): String {
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
+        val dateTime = LocalDateTime.parse(time, formatter)
+        val zonedDateTime = dateTime.atZone(ZoneId.systemDefault())
+        val now = ZonedDateTime.now()
 
+        val diff = ChronoUnit.SECONDS.between(zonedDateTime, now)
 
-    // Parse the date string into a LocalDateTime object
-    val dateTime = LocalDateTime.parse(post.createdAt, DateTimeFormatter.ISO_DATE_TIME)
+        return when {
+            diff < 60 -> "$diff seconds ago"
+            diff < 3600 -> "${diff / 60} minutes ago"
+            diff < 86400 -> "${diff / 3600} hours ago"
+            diff < 604800 -> "${diff / 86400} days ago"
+            else -> "${diff / 604800} weeks ago"
+        }
+    }
+
 
     // Format the LocalDateTime object into a "time ago" string
-    val timeAgo = formatTimeAgo(dateTime)
+    val timeAgo = formatTimeAgo(post.createdAt)
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -422,13 +439,3 @@ fun PostLikeRow(
 //        }
 //    }
 //}
-
-fun formatTimeAgo(dateTime: LocalDateTime): String {
-    val duration = Duration.between(dateTime, LocalDateTime.now())
-    return when {
-        duration.toDays() > 0 -> "${duration.toDays()} days ago"
-        duration.toHours() > 0 -> "${duration.toHours()} hours ago"
-        duration.toMinutes() > 0 -> "${duration.toMinutes()} minutes ago"
-        else -> "just now"
-    }
-}
