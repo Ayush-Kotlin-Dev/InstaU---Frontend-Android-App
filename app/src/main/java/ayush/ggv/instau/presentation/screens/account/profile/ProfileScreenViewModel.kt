@@ -1,10 +1,13 @@
 package ayush.ggv.instau.presentation.screens.account.profile
 
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import ayush.ggv.instau.common.datastore.UserSettings
 import ayush.ggv.instau.data.profile.domain.model.Profile
 import ayush.ggv.instau.domain.usecases.followsusecase.FollowsUseCase
 import ayush.ggv.instau.domain.usecases.postsusecase.getPostsByuserIdUseCase
@@ -12,12 +15,16 @@ import ayush.ggv.instau.domain.usecases.profileusecase.ProfileUseCase
 import ayush.ggv.instau.model.Post
 import ayush.ggv.instau.util.Result
 import instaU.ayush.com.model.FollowsParams
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class ProfileScreenViewModel(
     private val profileUseCase: ProfileUseCase,
     private val getPostsbyUserIdUseCase: getPostsByuserIdUseCase,
-    private val followsUseCase: FollowsUseCase
+    private val followsUseCase: FollowsUseCase,
+    private val userSettingsDataStore: DataStore<UserSettings> // Inject the DataStore instance
+
 ) : ViewModel() {
 
     var isFollowing by mutableStateOf(false)
@@ -26,6 +33,12 @@ class ProfileScreenViewModel(
     var profilePostUiState by mutableStateOf(ProfilePostUiState())
         private set
 
+    fun logout() {
+        viewModelScope.launch {
+            val newSettings = UserSettings() // Create a new instance with default values
+            userSettingsDataStore.updateData { newSettings }
+        }
+    }
     fun fetchProfile(userId: Long, currentUserId: Long, token: String) {
         userInfoUiState = userInfoUiState.copy(
             isLoading = true

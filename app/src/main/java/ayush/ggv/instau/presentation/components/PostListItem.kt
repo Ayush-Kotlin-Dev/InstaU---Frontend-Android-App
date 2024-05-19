@@ -84,7 +84,6 @@ fun PostListItem(
     val navHostController = rememberNavController()
     val currentDestination = navHostController.currentDestinationAsState().value
 
-    val likeResult by viewModel.likeResult.observeAsState()
     val isPostLiked by viewModel.isPostLiked.observeAsState(initial = post.isLiked)
     val likesCount by viewModel.likesCount.observeAsState(initial = post.likesCount)
 
@@ -385,7 +384,7 @@ fun PostLikeRow(
             onClick = { onLikeClick() }
         ) {
             Icon(
-                painter = painterResource(id = if (isPostLiked) R.drawable.baseline_whatshot_24 else R.drawable.like_icon_outlined),
+                painter = painterResource(id = if (isPostLiked) R.drawable.liked_heart_drawable else R.drawable.like_icon_outlined),
                 contentDescription = null,
             )
         }
