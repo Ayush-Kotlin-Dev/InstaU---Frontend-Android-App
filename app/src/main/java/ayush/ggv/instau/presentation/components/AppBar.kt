@@ -34,8 +34,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
+import ayush.ggv.instau.NavigationBarItems
 import ayush.ggv.instau.R
 import ayush.ggv.instau.presentation.screens.account.profile.ProfileScreenViewModel
+import ayush.ggv.instau.presentation.screens.destinations.AddPostDestination
 import ayush.ggv.instau.presentation.screens.destinations.EditProfileDestination
 import ayush.ggv.instau.presentation.screens.destinations.FollowersDestination
 import ayush.ggv.instau.presentation.screens.destinations.FollowingDestination
@@ -104,6 +106,8 @@ fun AppBar(
                     IconButton(
                         onClick = {
                             navHostController.navigateUp()
+                            //change the index of the bottom nav bar
+
                         }
                     ) {
                         Icon(
@@ -175,4 +179,13 @@ fun shouldShowNavigationIcon(currentDestinationRoute: String?): Boolean {
                     || currentDestinationRoute == LoginDestination.route
                     || currentDestinationRoute == SignUpNDestination.route
             )
+}
+
+fun getNavigationBarIndex(route: String?): Int {
+    return when (route) {
+        HomeDestination.route -> NavigationBarItems.HOME.ordinal
+        AddPostDestination.route -> NavigationBarItems.ADD.ordinal
+        ProfileDestination.route -> NavigationBarItems.PROFILE.ordinal
+        else -> NavigationBarItems.HOME.ordinal // default to HOME
+    }
 }

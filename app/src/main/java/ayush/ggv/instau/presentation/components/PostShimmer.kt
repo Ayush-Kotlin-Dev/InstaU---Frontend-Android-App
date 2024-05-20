@@ -7,6 +7,7 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,9 +21,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -39,6 +42,7 @@ import ayush.ggv.instau.ui.theme.DarkGray
 import ayush.ggv.instau.ui.theme.LargeSpacing
 import ayush.ggv.instau.ui.theme.LightGray
 import ayush.ggv.instau.ui.theme.MediumSpacing
+import ayush.ggv.instau.ui.theme.ShimmerLightGray
 
 private val ShimmerAnimationDefinition = infiniteRepeatable<Float>(
     animation = tween(
@@ -77,114 +81,124 @@ fun ShimmerAnimation(
 
 @Preview
 @Composable
-fun ShimmerPostListItemPlaceholder() {
-    val colors = listOf(Color.LightGray.copy(0.9f), Color.LightGray.copy(0.2f), Color.LightGray.copy(0.9f))
+fun ShimmerPostListItemPlaceholder() { // make it adapt for dark theme also
+    val isDarkTheme = isSystemInDarkTheme()
+    val colors = if (isDarkTheme) {
+        listOf(Color.DarkGray.copy(0.9f), Color.DarkGray.copy(0.2f), Color.DarkGray.copy(0.9f))
+    } else {
+        listOf(Color.LightGray.copy(0.9f), Color.LightGray.copy(0.2f), Color.LightGray.copy(0.9f))
+    }
+    val placeholderColor = if (isDarkTheme) Color.DarkGray else Color.LightGray
 
-    ShimmerAnimation(colors = colors) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            // Placeholder for the header
-            Row(
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth(),
+        color = if (isSystemInDarkTheme()) Color.Black else ShimmerLightGray,
+        shape = RoundedCornerShape(20.dp)
+    ) {
+        ShimmerAnimation(colors = colors) {
+
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(
-                        horizontal = LargeSpacing,
-                        vertical = MediumSpacing
-                    ),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    .padding(16.dp)
             ) {
-                // Placeholder for the profile image
+                // Placeholder for the header
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            horizontal = LargeSpacing,
+                            vertical = MediumSpacing
+                        ),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    // Placeholder for the profile image
+                    Box(
+                        modifier = Modifier
+                            .size(30.dp)
+                            .clip(CircleShape)
+                            .background(placeholderColor)
+                    )
+
+                    // Placeholder for the name
+                    Box(
+                        modifier = Modifier
+                            .width(120.dp)
+                            .height(20.dp)
+                            .background(placeholderColor)
+                    )
+
+                    Spacer(modifier = Modifier.width(100.dp))
+
+                    // Placeholder for the more options icon
+                    Icon(
+                        painter = painterResource(id = R.drawable.round_more_horiz_24),
+                        contentDescription = null,
+                        tint = placeholderColor,
+                    )
+                }
+
+                // Placeholder for the image
                 Box(
                     modifier = Modifier
-                        .size(30.dp)
-                        .clip(CircleShape)
-                        .background(Color.LightGray)
+                        .fillMaxWidth()
+                        .aspectRatio(1.0f)
+                        .background(placeholderColor)
                 )
 
-                // Placeholder for the name
+                // Placeholder for the like row
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            horizontal = 16.dp,
+                            vertical = 8.dp
+                        ),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    // Placeholder for the like icon
+                    Box(
+                        modifier = Modifier
+                            .size(24.dp)
+                            .background(placeholderColor)
+                    )
+
+                    // Placeholder for the likes count
+                    Box(
+                        modifier = Modifier
+                            .width(50.dp)
+                            .height(20.dp)
+                            .background(placeholderColor)
+                    )
+
+                    Spacer(modifier = Modifier.width(16.dp))
+
+                    // Placeholder for the comment icon
+                    Box(
+                        modifier = Modifier
+                            .size(24.dp)
+                            .background(placeholderColor)
+                    )
+
+                    // Placeholder for the comments count
+                    Box(
+                        modifier = Modifier
+                            .width(50.dp)
+                            .height(20.dp)
+                            .background(placeholderColor)
+                    )
+                }
+
+                // Placeholder for the caption
                 Box(
                     modifier = Modifier
-                        .width(120.dp)
-                        .height(20.dp)
-                        .background(Color.LightGray)
-                )
-
-                Spacer(modifier = Modifier.width(100.dp))
-
-                // Placeholder for the more options icon
-                Icon(
-                    painter = painterResource(id = R.drawable.round_more_horiz_24),
-                    contentDescription = null,
-                    tint = if (MaterialTheme.colors.isLight) {
-                        LightGray
-                    } else {
-                        DarkGray
-                    },
+                        .fillMaxWidth()
+                        .height(26.dp)
+                        .background(placeholderColor)
                 )
             }
-
-            // Placeholder for the image
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1.0f)
-                    .background(Color.LightGray)
-            )
-
-            // Placeholder for the like row
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        horizontal = 16.dp,
-                        vertical = 8.dp
-                    ),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                // Placeholder for the like icon
-                Box(
-                    modifier = Modifier
-                        .size(24.dp)
-                        .background(Color.LightGray)
-                )
-
-                // Placeholder for the likes count
-                Box(
-                    modifier = Modifier
-                        .width(50.dp)
-                        .height(20.dp)
-                        .background(Color.LightGray)
-                )
-
-                Spacer(modifier = Modifier.width(16.dp))
-
-                // Placeholder for the comment icon
-                Box(
-                    modifier = Modifier
-                        .size(24.dp)
-                        .background(Color.LightGray)
-                )
-
-                // Placeholder for the comments count
-                Box(
-                    modifier = Modifier
-                        .width(50.dp)
-                        .height(20.dp)
-                        .background(Color.LightGray)
-                )
-            }
-
-            // Placeholder for the caption
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(26.dp)
-                    .background(Color.LightGray)
-            )
         }
     }
 }

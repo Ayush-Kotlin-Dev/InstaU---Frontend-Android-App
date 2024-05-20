@@ -24,7 +24,9 @@ val LightGray = Color(0xFF8A8A8D)
 
 val White36 = Color(0xFFE5E5E5)
 val White76 = Color(0xFFF5F5F5)
-
+val ShimmerLightGray = Color(0xFFF1F1F1)
+val ShimmerMediumGray = Color(0xFFE3E3E3)
+val ShimmerDarkGray = Color(0xFF1D1D1D)
 internal val LightColors = lightColors(
     primary = Blue,
     primaryVariant = Blue,

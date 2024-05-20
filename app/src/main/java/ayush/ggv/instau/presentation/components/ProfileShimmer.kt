@@ -2,6 +2,7 @@ package ayush.ggv.instau.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,49 +28,59 @@ import androidx.compose.ui.unit.dp
 @Preview
 @Composable
 fun ShimmerProfileScreenPlaceholder() {
-    val colors = listOf(Color.LightGray.copy(0.9f), Color.LightGray.copy(0.2f), Color.LightGray.copy(0.9f))
+    val isDarkTheme = isSystemInDarkTheme()
+    val colors = if (isDarkTheme) {
+        listOf(Color.DarkGray.copy(0.9f), Color.DarkGray.copy(0.2f), Color.DarkGray.copy(0.9f))
+    } else {
+        listOf(Color.LightGray.copy(0.9f), Color.LightGray.copy(0.2f), Color.LightGray.copy(0.9f))
+    }
+    val placeholderColor = if (isDarkTheme) Color.DarkGray else Color.LightGray
 
     ShimmerAnimation(colors = colors) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
         ) {
             // Placeholder for the profile image
             Box(
                 modifier = Modifier
-                    .size(80.dp)
+                    .padding(16.dp)
+                    .size(90.dp)
                     .clip(CircleShape)
-                    .background(Color.LightGray)
+                    .background(placeholderColor)
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(4.dp))
 
             // Placeholder for the name
             Box(
                 modifier = Modifier
                     .width(120.dp)
+                    .padding(16.dp)
                     .height(20.dp)
-                    .background(Color.LightGray)
+                    .background(placeholderColor)
+                    .padding(horizontal = 16.dp)
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(4.dp))
 
             // Placeholder for the bio
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
                     .height(26.dp)
-                    .background(Color.LightGray)
+                    .background(placeholderColor)
+
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(4.dp))
 
             // Placeholder for the followers and following counts
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp),
+                    .padding(horizontal = 16.dp , vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 // Placeholder for the followers count
@@ -77,7 +88,7 @@ fun ShimmerProfileScreenPlaceholder() {
                     modifier = Modifier
                         .width(50.dp)
                         .height(20.dp)
-                        .background(Color.LightGray)
+                        .background(placeholderColor)
                 )
 
                 Spacer(modifier = Modifier.width(16.dp))
@@ -87,7 +98,7 @@ fun ShimmerProfileScreenPlaceholder() {
                     modifier = Modifier
                         .width(50.dp)
                         .height(20.dp)
-                        .background(Color.LightGray)
+                        .background(placeholderColor)
                 )
             }
 

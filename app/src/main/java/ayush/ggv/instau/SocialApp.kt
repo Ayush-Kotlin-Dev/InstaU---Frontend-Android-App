@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import ayush.ggv.instau.presentation.components.AppBar
+import ayush.ggv.instau.presentation.components.getNavigationBarIndex
 import ayush.ggv.instau.presentation.screens.NavGraphs
 import ayush.ggv.instau.presentation.screens.destinations.AddPostDestination
 import ayush.ggv.instau.presentation.screens.destinations.HomeDestination
@@ -65,11 +66,12 @@ fun SocialApp(
         MaterialTheme.colors.surface.copy(alpha = 0.95f)
     }
 
-    val currentDestination by navHostController.currentDestinationAsState()
     val navigationBarItems = remember { NavigationBarItems.entries.toTypedArray() }
     var selectedIndex by remember {
         mutableStateOf(0)
     }
+    val currentDestination by navHostController.currentDestinationAsState()
+    selectedIndex = getNavigationBarIndex(currentDestination?.route)
 
     @SuppressLint("ModifierFactoryUnreferencedReceiver")
     fun Modifier.noRippleClickable(onClick :() -> Unit ): Modifier = composed {

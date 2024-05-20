@@ -2,6 +2,7 @@ package ayush.ggv.instau.presentation.components
 
 import android.app.DownloadManager
 import android.content.Context
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.net.Uri
 import android.os.Environment
 import android.widget.Toast
@@ -19,12 +20,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -42,6 +46,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
@@ -57,6 +62,7 @@ import ayush.ggv.instau.ui.theme.ExtraLargeSpacing
 import ayush.ggv.instau.ui.theme.LargeSpacing
 import ayush.ggv.instau.ui.theme.LightGray
 import ayush.ggv.instau.ui.theme.MediumSpacing
+import ayush.ggv.instau.ui.theme.SocialAppTheme
 import coil.compose.AsyncImage
 import com.ramcosta.composedestinations.utils.currentDestinationAsState
 import instaU.ayush.com.model.LikeParams
@@ -118,6 +124,7 @@ fun PostListItem(
             .padding(
                 bottom = ExtraLargeSpacing
             )
+            .clip(shape = RoundedCornerShape(16.dp))
     ) {
         PostItemHeader(
             name = post.userName,
@@ -425,7 +432,19 @@ fun PostLikeRow(
 //        ) {
 //            val context = LocalContext.current
 //            PostListItem(
-//                post = samplePosts.first(),
+//                post = Post(
+//                    postId = 1,
+//                    userId = 1,
+//                    userName = "John Doe",
+//                    userImageUrl = "",
+//                    imageUrl = "",
+//                    caption = "This is a caption",
+//                    createdAt = "2021-09-01T10:15:30.000000",
+//                    likesCount = 10,
+//                    commentsCount = 5,
+//                    isLiked = false,
+//                    isOwnPost = true
+//                ),
 //                onPostClick = { Toast.makeText(context, "onPostClick", Toast.LENGTH_SHORT).show() },
 //                onProfileClick = {
 //                    Toast.makeText(context, "onProfile", Toast.LENGTH_SHORT).show()
