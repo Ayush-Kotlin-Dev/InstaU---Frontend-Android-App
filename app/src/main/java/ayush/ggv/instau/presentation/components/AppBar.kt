@@ -45,6 +45,7 @@ import ayush.ggv.instau.presentation.screens.destinations.HomeDestination
 import ayush.ggv.instau.presentation.screens.destinations.LoginDestination
 import ayush.ggv.instau.presentation.screens.destinations.PostDetailDestination
 import ayush.ggv.instau.presentation.screens.destinations.ProfileDestination
+import ayush.ggv.instau.presentation.screens.destinations.SearchDestination
 import ayush.ggv.instau.presentation.screens.destinations.SignUpNDestination
 import ayush.ggv.instau.ui.theme.SmallElevation
 import com.ramcosta.composedestinations.utils.currentDestinationAsState
@@ -64,6 +65,7 @@ fun AppBar(
         elevation = SmallElevation,
         modifier = modifier
     ) {
+
         TopAppBar(
             title = {
                 Text(
@@ -186,6 +188,7 @@ fun getNavigationBarIndex(route: String?): Int {
         HomeDestination.route -> NavigationBarItems.HOME.ordinal
         AddPostDestination.route -> NavigationBarItems.ADD.ordinal
         ProfileDestination.route -> NavigationBarItems.PROFILE.ordinal
+        SearchDestination.route-> NavigationBarItems.SEARCH.ordinal
         else -> NavigationBarItems.HOME.ordinal // default to HOME
     }
 }

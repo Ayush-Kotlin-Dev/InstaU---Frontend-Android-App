@@ -17,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.twotone.Search
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -38,6 +39,7 @@ import ayush.ggv.instau.presentation.screens.destinations.AddPostDestination
 import ayush.ggv.instau.presentation.screens.destinations.HomeDestination
 import ayush.ggv.instau.presentation.screens.destinations.LoginDestination
 import ayush.ggv.instau.presentation.screens.destinations.ProfileDestination
+import ayush.ggv.instau.presentation.screens.destinations.SearchDestination
 import com.exyte.animatednavbar.AnimatedNavigationBar
 import com.exyte.animatednavbar.animation.balltrajectory.Parabolic
 import com.exyte.animatednavbar.animation.indendshape.Height
@@ -92,17 +94,14 @@ fun SocialApp(
         scaffoldState = scaffoldState,
         backgroundColor = MaterialTheme.colors.background,
         topBar = {
-//            if(currentDestination?.route != LoginDestination.route && currentDestination?.route != SignUpNDestination.route) {
-//                AppBar(
-//                    navHostController = navHostController
-//                )
-//            }
-            AppBar(
-                navHostController = navHostController
-            )
+            if(currentDestination?.route != SearchDestination.route) {
+                AppBar(
+                    navHostController = navHostController
+                )
+            }
         },
         bottomBar =  {
-            if(currentDestination?.route == HomeDestination.route || currentDestination?.route == AddPostDestination.route || currentDestination?.route == ProfileDestination.route) {
+            if(currentDestination?.route == HomeDestination.route || currentDestination?.route == AddPostDestination.route || currentDestination?.route == ProfileDestination.route || currentDestination?.route == SearchDestination.route ){
                 Box(modifier = Modifier.padding( top = 10.dp))  {
                 AnimatedNavigationBar(
                     modifier = Modifier.height(64.dp),
@@ -120,6 +119,7 @@ fun SocialApp(
                                     selectedIndex = item.ordinal
                                     when(item) {
                                         NavigationBarItems.HOME -> navHostController.navigate(HomeDestination.route)
+                                        NavigationBarItems.SEARCH -> navHostController.navigate(SearchDestination(userId!!, token!!).route)
                                         NavigationBarItems.ADD -> {
                                             navHostController.navigate(AddPostDestination(userId = userId!! , token).route)
                                         }
@@ -169,6 +169,7 @@ fun SocialApp(
 }
 enum class NavigationBarItems (val icons : ImageVector){
     HOME(icons = Icons.Filled.Home),
+    SEARCH(icons = Icons.TwoTone.Search),
     ADD(icons = Icons.Filled.Add),
     PROFILE(icons = Icons.Filled.Person)
 }

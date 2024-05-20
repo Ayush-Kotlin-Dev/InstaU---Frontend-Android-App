@@ -39,6 +39,7 @@ import ayush.ggv.instau.domain.usecases.postsusecase.GetPostByIdUseCase
 import ayush.ggv.instau.domain.usecases.postsusecase.getPostsByuserIdUseCase
 import ayush.ggv.instau.domain.usecases.postusecase.PostUseCase
 import ayush.ggv.instau.domain.usecases.profileusecase.ProfileUseCase
+import ayush.ggv.instau.domain.usecases.profileusecase.SearchUserUseCase
 import ayush.ggv.instau.domain.usecases.profileusecase.UpdateProfileUseCase
 import ayush.ggv.instau.domain.usecases.signinusecase.SignInuseCase
 import ayush.ggv.instau.domain.usecases.signupusecases.SignUpUseCase
@@ -51,6 +52,7 @@ import ayush.ggv.instau.presentation.screens.add_post.AddPostScreen
 import ayush.ggv.instau.presentation.screens.add_post.AddPostViewModel
 import ayush.ggv.instau.presentation.screens.home.HomeScreenViewModel
 import ayush.ggv.instau.presentation.screens.post.PostDetailScreenViewModel
+import ayush.ggv.instau.presentation.screens.search.SearchViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -88,6 +90,7 @@ val appModule = module {
     factory { GetCommentsUseCase() }
     factory { DeleteCommentUseCase() }
     factory { SuggestionsUseCase() }
+    factory { SearchUserUseCase() }
 
     viewModel { SignUpViewModel(get() , get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
     viewModel { LoginViewModel(get() , get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
@@ -99,6 +102,7 @@ val appModule = module {
     viewModel{ FollowsViewModel(get() , get()) }
     viewModel { AddPostViewModel( get()) }
     viewModel{PostListItemViewModel(get() , get() , get())  }
+    viewModel{SearchViewModel(get())}
 
     single{
         DataStoreFactory.create(

@@ -5,6 +5,8 @@ import ayush.ggv.instau.data.profile.domain.model.ProfileResponse
 import ayush.ggv.instau.data.profile.domain.model.UpdateUserParams
 import ayush.ggv.instau.data.profile.domain.repository.ProfileRepository
 import ayush.ggv.instau.util.Result
+import instaU.ayush.com.model.FollowUserData
+import instaU.ayush.com.model.GetFollowsResponse
 
 class ProfileRepositoryImpl(
     private val profileService: ProfileService
@@ -45,5 +47,19 @@ class ProfileRepositoryImpl(
             Result.Error(e.toString())
         }
 
+    }
+
+    override suspend fun searchUsersByName(name: String, token: String): Result<GetFollowsResponse> {
+        return try {
+            val response = profileService.searchUsersByName(name, token)
+
+            if(response.success){
+                Result.Success(response)
+            }else{
+                Result.Error(Exception("Error: ${response.message}").toString())
+            }
+        } catch (e: Exception) {
+            Result.Error(e.toString())
+        }
     }
 }

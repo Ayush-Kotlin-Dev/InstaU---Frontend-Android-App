@@ -5,6 +5,8 @@ import ayush.ggv.instau.data.profile.domain.model.ProfileResponse
 import ayush.ggv.instau.data.profile.domain.model.UpdateUserParams
 import ayush.ggv.instau.model.AuthResponse
 import ayush.ggv.instau.model.SignInRequest
+import instaU.ayush.com.model.FollowUserData
+import instaU.ayush.com.model.GetFollowsResponse
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.headers
@@ -38,4 +40,16 @@ class ProfileService : KtorApi() {
         }
         setBody(updateUserParams)
     }.body()
+
+    suspend fun searchUsersByName(
+        name: String,
+        token: String
+    ): GetFollowsResponse = client.get {
+        endPoint(path = "/profile/search")
+        headers {
+            append("Authorization", "Bearer $token")
+        }
+        parameter("name", name)
+    }.body()
+
 }
