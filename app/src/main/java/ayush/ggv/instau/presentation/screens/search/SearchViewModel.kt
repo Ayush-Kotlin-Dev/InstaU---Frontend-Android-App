@@ -20,10 +20,13 @@ class SearchViewModel(
 ) : ViewModel() {
 
     private val _searchQuery = mutableStateOf("")
+
     val searchQuery = _searchQuery
 
-     var searchedHeroes by mutableStateOf(UsersUiState())
-         private set
+
+    var searchedHeroes by mutableStateOf(UsersUiState())
+        private set
+
     fun updateSearchQuery(query: String) {
         _searchQuery.value = query
     }
@@ -31,41 +34,42 @@ class SearchViewModel(
     fun searchHeroes(query: String, token: String) {
         viewModelScope.launch(Dispatchers.IO) {
             searchedHeroes = searchedHeroes.copy(isLoading = true)
-            try {
-                val result = useCase(query, token)
-                Log.d("result" , "${result.data}")
-                when (result){
-                    is Result.Success -> {
-                        val convertedUser = result.data?.follows?.map {
-                               FollowUserData(
-                                   id = it.id,
-                                   name = it.name,
-                                   bio = it.bio,
-                                   imageUrl = it.imageUrl,
-                                   isFollowing = it.isFollowing
-
-                               )
-                        }
-                        searchedHeroes = searchedHeroes.copy(
-                            users = convertedUser?: listOf(),
-                            isLoading = false
+            searchedHeroes = searchedHeroes.copy(error = null)
+            val result = useCase(query, token)
+            Log.d("result", "${result.message}")
+            when (result) {
+                is Result.Success -> {
+                    val convertedUser = result.data?.follows?.map {
+                        FollowUserData(
+                            id = it.id,
+                            name = it.name,
+                            bio = it.bio,
+                            imageUrl = it.imageUrl,
+                            isFollowing = it.isFollowing
                         )
-
                     }
-
-                    is Result.Error -> searchedHeroes = searchedHeroes.copy(
-                        error = result.message,
+                    searchedHeroes = searchedHeroes.copy(
+                        users = convertedUser ?: listOf(),
                         isLoading = false
                     )
-                    is Result.Loading -> TODO()
                 }
-            } catch (_: Exception) {
 
+                is Result.Error -> {
+                    val cleanedErrorMessage = result.message?.substringAfter("Error: ")
+                    searchedHeroes = searchedHeroes.copy(
+                        error = cleanedErrorMessage,
+                        isLoading = false
+                    )
+                }
 
+                is Result.Loading -> TODO()
             }
         }
+
+
     }
 }
+
 
 data class UsersUiState(
     val isLoading: Boolean = false,

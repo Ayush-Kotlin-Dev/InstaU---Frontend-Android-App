@@ -58,6 +58,7 @@ import instaU.ayush.com.model.FollowUserData
 @Composable
 fun ListContent(
     users: UsersUiState,
+    onItemClick : (Long) -> Unit ,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -66,14 +67,15 @@ fun ListContent(
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         items(users.users, key = { user -> user.id }) { user ->
-            HeroItem(user = user)
+            HeroItem(user = user , onItemClick)
         }
     }
 }
 
 @Composable
 fun HeroItem(
-    user: FollowUserData
+    user: FollowUserData,
+    onItemClick: (Long) -> Unit
 ) {
     val topBarContentColor = if (isSystemInDarkTheme()) Color.LightGray else Color.White
 
@@ -82,7 +84,7 @@ fun HeroItem(
             .height(HERO_ITEM_HEIGHT)
             .padding(SMALL_PADDING)
             .clickable {
-
+                onItemClick(user.id)
             },
         contentAlignment = Alignment.BottomStart
     ) {

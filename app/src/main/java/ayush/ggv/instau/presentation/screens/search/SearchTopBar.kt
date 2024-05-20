@@ -47,8 +47,8 @@ fun SearchWidget(
     onSearchClicked: () -> Unit,
     onCloseClicked: () -> Unit
 ) {
-    val topBarBackgroundColor = if (isSystemInDarkTheme()) Color.Black else Purple500
-    val topBarContentColor = if (isSystemInDarkTheme()) Color.LightGray else Color.White
+    val topBarBackgroundColor = if (isSystemInDarkTheme()) Color.Black else Color.White
+    val topBarContentColor = if (isSystemInDarkTheme()) Color.LightGray else Color.Black
 
     Surface(
         elevation = AppBarDefaults.TopAppBarElevation,
@@ -60,12 +60,12 @@ fun SearchWidget(
         TextField(
             modifier = Modifier.fillMaxWidth(),
             value = text,
-            onValueChange = { onTextChange(it) },
+            onValueChange = { onTextChange(it.lowercase()) },
             placeholder = {
                 Text(
                     modifier = Modifier.alpha(ContentAlpha.medium),
-                    text = "Search",
-                    color = Color.White
+                    text = "Search User",
+                    color = if(isSystemInDarkTheme()) Color.White else Color.Black,
                 )
             },
             textStyle = MaterialTheme.typography.body1.copy(color = topBarContentColor),

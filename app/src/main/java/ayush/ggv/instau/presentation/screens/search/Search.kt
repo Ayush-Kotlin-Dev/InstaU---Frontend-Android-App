@@ -22,8 +22,9 @@ fun Search(
     SearchScreen(
         heroes = heroesState,
         searchQuery = searchQuery,
-        onTextChange = {
-            searchViewModel.updateSearchQuery(it)
+        onTextChange = {newValue ->
+            searchViewModel.updateSearchQuery(newValue)
+            searchViewModel.searchHeroes(searchQuery, token)
         },
         onSearchClicked = {
             searchViewModel.searchHeroes(searchQuery, token)

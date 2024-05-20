@@ -52,12 +52,11 @@ import com.ramcosta.composedestinations.utils.currentDestinationAsState
 @Composable
 fun SocialApp(
     token: String? = null,
-    userId : Long? = null,
+    userId: Long? = null,
 ) {
 
 
     val navHostController = rememberNavController()
-
     val scaffoldState = rememberScaffoldState()
     val systemUiController = rememberSystemUiController()
 
@@ -73,10 +72,14 @@ fun SocialApp(
         mutableStateOf(0)
     }
     val currentDestination by navHostController.currentDestinationAsState()
-    selectedIndex = getNavigationBarIndex(currentDestination?.route)
+    val shouldUpdateBottomBar = currentDestination?.route != ProfileDestination.route
+
+    if (shouldUpdateBottomBar) {
+        selectedIndex = getNavigationBarIndex(currentDestination?.route)
+    }
 
     @SuppressLint("ModifierFactoryUnreferencedReceiver")
-    fun Modifier.noRippleClickable(onClick :() -> Unit ): Modifier = composed {
+    fun Modifier.noRippleClickable(onClick: () -> Unit): Modifier = composed {
         clickable(
             indication = null,
             interactionSource = remember { MutableInteractionSource() },
@@ -90,70 +93,67 @@ fun SocialApp(
             darkIcons = !isSystemInDark
         )
     }
+
     Scaffold(
         scaffoldState = scaffoldState,
         backgroundColor = MaterialTheme.colors.background,
         topBar = {
-            if(currentDestination?.route != SearchDestination.route) {
-                AppBar(
-                    navHostController = navHostController
-                )
+            if (currentDestination?.route != SearchDestination.route) {
+                AppBar(navHostController = navHostController)
             }
         },
-        bottomBar =  {
-            if(currentDestination?.route == HomeDestination.route || currentDestination?.route == AddPostDestination.route || currentDestination?.route == ProfileDestination.route || currentDestination?.route == SearchDestination.route ){
-                Box(modifier = Modifier.padding( top = 10.dp))  {
-                AnimatedNavigationBar(
-                    modifier = Modifier.height(64.dp),
-                    selectedIndex = selectedIndex,
-                    cornerRadius = shapeCornerRadius(34.dp),
-                    ballAnimation = Parabolic(tween(300)),
-                    indentAnimation = Height(tween(300)),
-                    ballColor = MaterialTheme.colors.primary,
-                    barColor = MaterialTheme.colors.surface,
+        bottomBar = {
+            if (currentDestination?.route in listOf(
+                    HomeDestination.route,
+                    AddPostDestination.route,
+                    ProfileDestination.route,
+                    SearchDestination.route
+                )) {
+                Box(modifier = Modifier.padding(top = 10.dp)) {
+                    AnimatedNavigationBar(
+                        modifier = Modifier.height(64.dp),
+                        selectedIndex = selectedIndex,
+                        cornerRadius = shapeCornerRadius(34.dp),
+                        ballAnimation = Parabolic(tween(300)),
+                        indentAnimation = Height(tween(300)),
+                        ballColor = MaterialTheme.colors.primary,
+                        barColor = MaterialTheme.colors.surface,
                     ) {
-                    navigationBarItems.forEach { item ->
-                        Box(
-                            modifier = Modifier
-                                .noRippleClickable {
-                                    selectedIndex = item.ordinal
-                                    when(item) {
-                                        NavigationBarItems.HOME -> navHostController.navigate(HomeDestination.route)
-                                        NavigationBarItems.SEARCH -> navHostController.navigate(SearchDestination(userId!!, token!!).route)
-                                        NavigationBarItems.ADD -> {
-                                            navHostController.navigate(AddPostDestination(userId = userId!! , token).route)
+                        navigationBarItems.forEach { item ->
+                            Box(
+                                modifier = Modifier
+                                    .noRippleClickable {
+                                        selectedIndex = item.ordinal
+                                        when (item) {
+                                            NavigationBarItems.HOME -> navHostController.navigate(HomeDestination.route)
+                                            NavigationBarItems.SEARCH -> navHostController.navigate(SearchDestination(userId!!, token!!).route)
+                                            NavigationBarItems.ADD -> navHostController.navigate(AddPostDestination(userId = userId!!, token).route)
+                                            NavigationBarItems.PROFILE -> navHostController.navigate(ProfileDestination(userId!!, userId, token!!).route)
                                         }
-                                        NavigationBarItems.PROFILE -> navHostController.navigate(ProfileDestination(userId!! , userId  , token!!))
-                                    }}
-                                .fillMaxSize(),
-
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                modifier = Modifier.size(24.dp),
-                                imageVector = item.icons,
-                                contentDescription = null,
-                                tint = if (selectedIndex == item.ordinal) MaterialTheme.colors.primary else MaterialTheme.colors.onSurface.copy(
-                                    alpha = 0.6f
+                                    }
+                                    .fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    modifier = Modifier.size(24.dp),
+                                    imageVector = item.icons,
+                                    contentDescription = null,
+                                    tint = if (selectedIndex == item.ordinal) MaterialTheme.colors.primary else MaterialTheme.colors.onSurface.copy(
+                                        alpha = 0.6f
+                                    )
                                 )
-                            )
-
+                            }
                         }
                     }
                 }
-
-                }
             }
-
         }
-
     ) { innerPadding ->
         DestinationsNavHost(
             modifier = Modifier.padding(innerPadding),
             navGraph = NavGraphs.root,
             navController = navHostController
         )
-
     }
     LaunchedEffect(key1 = token) {
         if (token != null && token.isEmpty()) {
@@ -163,8 +163,6 @@ fun SocialApp(
                 }
             }
         }
-
-
     }
 }
 enum class NavigationBarItems (val icons : ImageVector){
