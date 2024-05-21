@@ -36,7 +36,6 @@ class SearchViewModel(
             searchedHeroes = searchedHeroes.copy(isLoading = true)
             searchedHeroes = searchedHeroes.copy(error = null)
             val result = useCase(query, token)
-            Log.d("result", "${result.message}")
             when (result) {
                 is Result.Success -> {
                     val convertedUser = result.data?.follows?.map {

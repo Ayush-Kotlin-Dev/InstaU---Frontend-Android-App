@@ -16,7 +16,6 @@ fun Followers (
     token : String
 ){
     val viewModel: FollowsViewModel = koinViewModel()
-    Log.d("follow" , "FollowsScreen: ${userId},, ${currentUserid},, ${token}")
 
     FollowsScreen(
         uiState = viewModel.uiState,

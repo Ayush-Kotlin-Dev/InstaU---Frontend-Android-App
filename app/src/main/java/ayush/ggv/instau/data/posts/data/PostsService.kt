@@ -1,7 +1,6 @@
 package ayush.ggv.instau.data.posts.data
 
 import ayush.ggv.instau.data.KtorApi
-import ayush.ggv.instau.data.posts.domain.model.PostResultData
 import ayush.ggv.instau.model.PostResponse
 import ayush.ggv.instau.model.PostTextParams
 import ayush.ggv.instau.model.PostsResponse

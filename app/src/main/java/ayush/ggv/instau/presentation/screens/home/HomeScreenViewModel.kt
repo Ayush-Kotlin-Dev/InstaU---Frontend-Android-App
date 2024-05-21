@@ -1,26 +1,35 @@
 package ayush.ggv.instau.presentation.screens.home
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import ayush.ggv.instau.common.datastore.UserSettings
 import ayush.ggv.instau.common.datastore.toAuthResultData
+import ayush.ggv.instau.data.posts.data.PostsRepositoryImpl
+import ayush.ggv.instau.data.posts.domain.repository.PostRepository
 import ayush.ggv.instau.domain.usecases.followsusecase.SuggestionsUseCase
+import ayush.ggv.instau.domain.usecases.postsusecase.GetPostsStreamUseCase
 import ayush.ggv.instau.domain.usecases.postusecase.PostUseCase
 import ayush.ggv.instau.model.Post
 import ayush.ggv.instau.presentation.screens.home.onboarding.OnBoardingUiState
 import ayush.ggv.instau.util.Result
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class HomeScreenViewModel(
     private val postUseCase: PostUseCase,
     private val dataStore: DataStore<UserSettings>,
-    private val suggestionsUseCase: SuggestionsUseCase
+    private val suggestionsUseCase: SuggestionsUseCase,
+    private val postsStreamUseCase: GetPostsStreamUseCase,
 ) : ViewModel(
 
 ) {
@@ -30,11 +39,18 @@ class HomeScreenViewModel(
     var postsUiState by mutableStateOf(PostsUiState())
         private set
 
+    var currentPostResult: Flow<PagingData<Post>>? = null
+
     var onBoardingUiState by mutableStateOf(OnBoardingUiState())
         private set
 
     init {
         fetchData()
+    }
+    fun getPosts(): Flow<PagingData<Post>> {
+        val newResult: Flow<PagingData<Post>> = postsStreamUseCase()
+        currentPostResult = newResult
+        return newResult
     }
 
     fun fetchData() {
@@ -48,14 +64,13 @@ class HomeScreenViewModel(
                 token.value = userSettings.token
             }
         }
-
         viewModelScope.launch {
             delay(500)
 
             // Fetch posts
             val result = postUseCase(currentUserId.value, page , limit, token.value)
             val resultSuggestions = suggestionsUseCase(currentUserId.value, token.value)
-
+            Log.d("HomeScreenViewModel", "fetchData: ${currentUserId.value}  ,, ${token.value}" )
 
             when (result) {
                 is Result.Success -> {

@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.paging.compose.LazyPagingItems
 import ayush.ggv.instau.R
 import ayush.ggv.instau.model.Post
 import ayush.ggv.instau.presentation.components.PostListItem
@@ -54,7 +55,8 @@ fun HomeScreen(
     fetchData: () -> Unit,
     profileScreenViewModel: ProfileScreenViewModel,
     currentUserId: Long,
-    token : String
+    token : String,
+    post : LazyPagingItems<Post>
 ) {
 
     val pullRefreshState = rememberPullRefreshState(
@@ -117,14 +119,17 @@ fun HomeScreen(
                         ShimmerPostListItemPlaceholder()
                     }
                 } else {
-                    items(postsUiState.posts, key = { post -> post.postId }) { post ->
-                        PostListItem(
-                            post = post,
-                            onPostClick = onPostClick,
-                            onProfileClick = onProfileClick,
-                            onLikeClick = { onLikeClick(post.postId.toString()) },
-                            onCommentClick = { onCommentClick(post.postId.toString()) }
-                        )
+                     items(post.itemCount) { index ->
+                        val postItem = post[index]
+                        postItem?.let {
+                            PostListItem(
+                                post = it,
+                                onPostClick = onPostClick,
+                                onProfileClick = onProfileClick,
+                                onLikeClick = { onLikeClick(it.postId.toString()) },
+                                onCommentClick = { },
+                            )
+                        }
                     }
                 }
         }
@@ -136,28 +141,3 @@ fun HomeScreen(
     }
 
 }
-
-
-//@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
-//@Composable
-//fun PreviewHomeScreen() {
-//    HomeScreen(
-//        onBoardingUiState = OnBoardingUiState(
-//            users = sampleUsers,
-//            shouldShowOnBoarding = true,
-//        ),
-//        postsUiState = PostsUiState(
-//            posts = samplePosts
-//        ),
-//        onPostClick = {},
-//        onProfileClick = {},
-//        onLikeClick = {},
-//        onCommentClick = {},
-//        onBoardingFinish = {},
-//        onUserClick = {},
-//        onFollowClick = { _, _ -> },
-//        fetchData = {}
-//
-//    )
-//}
-//

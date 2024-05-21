@@ -1,6 +1,7 @@
 package ayush.ggv.instau.presentation.screens.home
 
 import androidx.compose.runtime.Composable
+import androidx.paging.compose.collectAsLazyPagingItems
 import ayush.ggv.instau.presentation.screens.account.profile.ProfileScreenViewModel
 import ayush.ggv.instau.presentation.screens.destinations.PostDetailDestination
 import ayush.ggv.instau.presentation.screens.destinations.ProfileDestination
@@ -20,6 +21,7 @@ fun Home(
     val token = viewModel.token
 
     val profileScreenViewModel: ProfileScreenViewModel = koinViewModel()
+    val posts = viewModel.getPosts().collectAsLazyPagingItems()
 
     HomeScreen(
         onBoardingUiState = viewModel.onBoardingUiState,
@@ -53,6 +55,7 @@ fun Home(
         },
         profileScreenViewModel = profileScreenViewModel,
         currentUserId = currentUserId.value,
-        token = token.value
+        token = token.value,
+        post = posts
     )
 }

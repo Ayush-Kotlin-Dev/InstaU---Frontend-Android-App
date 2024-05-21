@@ -1,11 +1,14 @@
 package ayush.ggv.instau.model
 
+import androidx.room.Entity
 import kotlinx.serialization.Serializable
 
 
 
 @Serializable
+@Entity(tableName = "post")
 data class Post(
+    @androidx.room.PrimaryKey(autoGenerate = false)
     val postId: Long,
     val caption: String,
     val imageUrl: String,

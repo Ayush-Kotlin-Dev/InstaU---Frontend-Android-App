@@ -2,10 +2,12 @@ package ayush.ggv.instau.di
 
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
+import androidx.room.Room
 import ayush.ggv.instau.MainActivityViewModel
 import ayush.ggv.instau.presentation.screens.auth.signup.SignUpViewModel
 import ayush.ggv.instau.presentation.screens.auth.login.LoginViewModel
 import ayush.ggv.instau.common.datastore.UserSettingsSerializer
+import ayush.ggv.instau.dao.post.PostsDatabase
 import ayush.ggv.instau.data.auth.data.AuthRepositoryImpl
 import ayush.ggv.instau.data.auth.data.AuthService
 import ayush.ggv.instau.data.KtorApi
@@ -36,6 +38,7 @@ import ayush.ggv.instau.domain.usecases.postlikeusecase.PostLikeUseCase
 import ayush.ggv.instau.domain.usecases.postsusecase.AddPostUseCase
 import ayush.ggv.instau.domain.usecases.postsusecase.DeletePostUseCase
 import ayush.ggv.instau.domain.usecases.postsusecase.GetPostByIdUseCase
+import ayush.ggv.instau.domain.usecases.postsusecase.GetPostsStreamUseCase
 import ayush.ggv.instau.domain.usecases.postsusecase.getPostsByuserIdUseCase
 import ayush.ggv.instau.domain.usecases.postusecase.PostUseCase
 import ayush.ggv.instau.domain.usecases.profileusecase.ProfileUseCase
@@ -60,7 +63,15 @@ import org.koin.dsl.module
 val appModule = module {
     single<KtorApi> { AuthService() } // Provide AuthService as an instance of KtorApi
     single<AuthRepository> { AuthRepositoryImpl(get()) }
-    single <PostRepository> { PostsRepositoryImpl(get()) }
+    single {
+        Room.databaseBuilder(
+            androidContext(),
+            PostsDatabase::class.java,
+            "posts_database"
+        ).fallbackToDestructiveMigration()
+            .build()
+    }
+    single <PostRepository> { PostsRepositoryImpl(get() ,  get()) }
     single  <ProfileRepository>{ProfileRepositoryImpl(get()) }
     single  <PostCommentsRepository> {PostCommentsRepositoryImpl(get()) }
     single { FollowsUseCase() }
@@ -84,6 +95,7 @@ val appModule = module {
     factory { getPostsByuserIdUseCase() }
     factory { UpdateProfileUseCase() }
     factory { DeletePostUseCase() }
+    factory { GetPostsStreamUseCase() }
     factory { FollowsUseCase() }
     factory { PostLikeUseCase() }
     factory {CommentUseCase() }
@@ -91,11 +103,10 @@ val appModule = module {
     factory { DeleteCommentUseCase() }
     factory { SuggestionsUseCase() }
     factory { SearchUserUseCase() }
-
     viewModel { SignUpViewModel(get() , get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
     viewModel { LoginViewModel(get() , get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
     viewModel { MainActivityViewModel(get()) }
-    viewModel{ HomeScreenViewModel(get(),get () , get() ) }
+    viewModel{ HomeScreenViewModel(get(),get () , get() , get() ) }
     viewModel { PostDetailScreenViewModel(get(), get(), get(), get()  ) }
     viewModel{ ProfileScreenViewModel( get() , get()  , get() , get()) }
     viewModel { EditProfileViewModel(get() ,get()) }
