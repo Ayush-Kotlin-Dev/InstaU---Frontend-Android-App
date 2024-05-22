@@ -19,7 +19,8 @@ data class Post(
     val userName: String,
     val userImageUrl: String? = null,
     val isLiked: Boolean,
-    val isOwnPost: Boolean
+    val isOwnPost: Boolean,
+
 )
 
 @Serializable
@@ -33,5 +34,7 @@ data class PostResponse(
 data class PostsResponse(
     val success: Boolean,
     val posts: List<Post> = listOf(),
-    val message: String? = null
+    val message: String? = null,
+    val prevPage: Int? = null,
+    var nextPage: Int? = null,
 )

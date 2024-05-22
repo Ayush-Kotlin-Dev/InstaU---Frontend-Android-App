@@ -19,6 +19,7 @@ import ayush.ggv.instau.domain.usecases.postusecase.PostUseCase
 import ayush.ggv.instau.model.Post
 import ayush.ggv.instau.presentation.screens.home.onboarding.OnBoardingUiState
 import ayush.ggv.instau.util.Result
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
@@ -39,7 +40,6 @@ class HomeScreenViewModel(
     var postsUiState by mutableStateOf(PostsUiState())
         private set
 
-    var currentPostResult: Flow<PagingData<Post>>? = null
 
     var onBoardingUiState by mutableStateOf(OnBoardingUiState())
         private set
@@ -48,8 +48,7 @@ class HomeScreenViewModel(
         fetchData()
     }
     fun getPosts(): Flow<PagingData<Post>> {
-        val newResult: Flow<PagingData<Post>> = postsStreamUseCase()
-        currentPostResult = newResult
+        val newResult = postsStreamUseCase().flowOn(Dispatchers.IO).cachedIn(viewModelScope)
         return newResult
     }
 
@@ -64,48 +63,19 @@ class HomeScreenViewModel(
                 token.value = userSettings.token
             }
         }
+
         viewModelScope.launch {
             delay(500)
 
             // Fetch posts
-            val result = postUseCase(currentUserId.value, page , limit, token.value)
+            val newResult = getPosts()
+            postsUiState = postsUiState.copy(
+                currentPostResult = newResult,
+                isLoading = false
+            )
+
+
             val resultSuggestions = suggestionsUseCase(currentUserId.value, token.value)
-            Log.d("HomeScreenViewModel", "fetchData: ${currentUserId.value}  ,, ${token.value}" )
-
-            when (result) {
-                is Result.Success -> {
-                    val convertedPosts = result.data?.posts?.map { modelPost ->
-                        Post(
-                            postId = modelPost.postId,
-                            caption = modelPost.caption,
-                            imageUrl = modelPost.imageUrl,
-                            createdAt = modelPost.createdAt,
-                            likesCount = modelPost.likesCount,
-                            commentsCount = modelPost.commentsCount,
-                            userId = modelPost.userId,
-                            userName = modelPost.userName,
-                            userImageUrl = modelPost.userImageUrl ?: "",
-                            isLiked = modelPost.isLiked,
-                            isOwnPost = modelPost.isOwnPost
-                        )
-                    }
-                    postsUiState = postsUiState.copy(
-                        posts = convertedPosts ?: listOf(),
-                        isLoading = false
-                    )
-                }
-
-                is Result.Error -> {
-                    postsUiState = postsUiState.copy(
-                        error = result.message,
-                        isLoading = false
-                    )
-                }
-
-                is Result.Loading -> {
-                    postsUiState = postsUiState.copy(isLoading = true)
-                }
-            }
             when (resultSuggestions) {
                 is Result.Success -> {
                     onBoardingUiState = onBoardingUiState.copy(
@@ -134,6 +104,6 @@ class HomeScreenViewModel(
 
 data class PostsUiState(
     val isLoading: Boolean = false,
-    val posts: List<Post> = listOf(),
+    var currentPostResult: Flow<PagingData<Post>>? = null,
     val error: String? = null
 )

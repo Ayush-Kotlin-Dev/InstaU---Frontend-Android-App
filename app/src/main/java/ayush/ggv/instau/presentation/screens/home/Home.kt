@@ -21,7 +21,7 @@ fun Home(
     val token = viewModel.token
 
     val profileScreenViewModel: ProfileScreenViewModel = koinViewModel()
-    val posts = viewModel.getPosts().collectAsLazyPagingItems()
+    val posts = viewModel.postsUiState.currentPostResult?.collectAsLazyPagingItems()
 
     HomeScreen(
         onBoardingUiState = viewModel.onBoardingUiState,

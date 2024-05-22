@@ -56,7 +56,7 @@ fun HomeScreen(
     profileScreenViewModel: ProfileScreenViewModel,
     currentUserId: Long,
     token : String,
-    post : LazyPagingItems<Post>
+    post : LazyPagingItems<Post> ?= null
 ) {
 
     val pullRefreshState = rememberPullRefreshState(
@@ -87,7 +87,7 @@ fun HomeScreen(
 
                 }
 
-                if(postsUiState.posts.isEmpty() && !postsUiState.isLoading){
+                if(  post== null && !postsUiState.isLoading){
                     item (key = "empty"){
                         Box(modifier = Modifier.fillMaxWidth() , contentAlignment = Alignment.Center){
                             Column(
@@ -119,16 +119,18 @@ fun HomeScreen(
                         ShimmerPostListItemPlaceholder()
                     }
                 } else {
-                     items(post.itemCount) { index ->
-                        val postItem = post[index]
-                        postItem?.let {
-                            PostListItem(
-                                post = it,
-                                onPostClick = onPostClick,
-                                onProfileClick = onProfileClick,
-                                onLikeClick = { onLikeClick(it.postId.toString()) },
-                                onCommentClick = { },
-                            )
+                    if (post != null) {
+                        items(post.itemCount) { index ->
+                            val postItem = post.get(index)
+                            postItem?.let {
+                                PostListItem(
+                                    post = it,
+                                    onPostClick = onPostClick,
+                                    onProfileClick = onProfileClick,
+                                    onLikeClick = { onLikeClick(it.postId.toString()) },
+                                    onCommentClick = { },
+                                )
+                            }
                         }
                     }
                 }

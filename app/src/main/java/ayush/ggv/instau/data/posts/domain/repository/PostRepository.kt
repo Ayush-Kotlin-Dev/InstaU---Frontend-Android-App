@@ -23,7 +23,7 @@ interface PostRepository {
 
     suspend fun  deletePost(postId: Long , token : String) : Result<PostResponse>
 
-    fun getPostsStream(pagerConfig: PagingConfig = PagingConfig(pageSize = 20)): Flow<PagingData<Post>>
+    fun getPostsStream(pagerConfig: PagingConfig = PagingConfig(pageSize = 4 , prefetchDistance = 5)): Flow<PagingData<Post>>
 
 
 

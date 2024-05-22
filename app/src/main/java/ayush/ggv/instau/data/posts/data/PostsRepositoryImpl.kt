@@ -4,8 +4,6 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import androidx.paging.RemoteMediator
-import ayush.ggv.instau.dao.post.PostEntity
 import ayush.ggv.instau.dao.post.PostsDatabase
 import ayush.ggv.instau.dao.post.PostsRemoteMediator
 import ayush.ggv.instau.data.posts.domain.repository.PostRepository
@@ -42,9 +40,10 @@ class PostsRepositoryImpl(
 
     @OptIn(ExperimentalPagingApi::class)
     override fun getPostsStream(pagerConfig: PagingConfig): Flow<PagingData<Post>> {
+        val pagingSourceFactory = { database.postsDao().getAllPosts() }
         return Pager(
-            config = pagerConfig,
-            pagingSourceFactory = { database.postsDao().getAllPosts() },
+            config =  PagingConfig(pageSize = 4),
+            pagingSourceFactory =pagingSourceFactory,
             remoteMediator = PostsRemoteMediator(postService, database)
         ).flow
     }

@@ -1,5 +1,6 @@
 package ayush.ggv.instau.data.posts.data
 
+import android.util.Log
 import ayush.ggv.instau.data.KtorApi
 import ayush.ggv.instau.model.PostResponse
 import ayush.ggv.instau.model.PostTextParams
@@ -11,6 +12,9 @@ import io.ktor.client.request.headers
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.bodyAsText
+import io.ktor.client.statement.readText
+import kotlinx.serialization.json.Json
 
 class PostService : KtorApi() {
     suspend fun getFeedPosts(
@@ -28,6 +32,8 @@ class PostService : KtorApi() {
                 append("Authorization", "Bearer $token")
             }
         }
+        Log.d("PostsRemoteMediator", "API request: ${response.bodyAsText()}")
+        Log.d("PostsRemoteMediator", "API request: ${currentUserId},${page}, ${limit}  limit = $limit")
         return response.body<PostsResponse>()
     }
 
@@ -42,6 +48,7 @@ class PostService : KtorApi() {
                 setBody(postTextParams)
             }
         }
+
         return response.body<PostResponse>()
 
     }
