@@ -23,11 +23,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import ayush.ggv.instau.R
 import ayush.ggv.instau.model.Post
+import ayush.ggv.instau.presentation.common.EmptyScreen
 import ayush.ggv.instau.presentation.components.PostListItem
+import ayush.ggv.instau.presentation.components.ShimmerEffect
 import ayush.ggv.instau.presentation.components.ShimmerPostListItemPlaceholder
 import ayush.ggv.instau.presentation.screens.account.profile.ProfileScreenViewModel
 import ayush.ggv.instau.presentation.screens.home.onboarding.OnBoardingSection
@@ -56,13 +60,19 @@ fun HomeScreen(
     fetchData: () -> Unit,
     profileScreenViewModel: ProfileScreenViewModel,
     currentUserId: Long,
-    token : String,
-    post : LazyPagingItems<Post> ?= null
+    token: String,
 ) {
-
+    val post = postsUiState.currentPostResult?.collectAsLazyPagingItems()
+    val result = handlePagingResult(posts = post?:return)
+    if (!result) {
+        return
+    }
     val pullRefreshState = rememberPullRefreshState(
         refreshing = onBoardingUiState.isLoading && postsUiState.isLoading,
-        onRefresh = { fetchData() })
+        onRefresh = {
+            post.refresh()
+        }
+    )
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -71,9 +81,9 @@ fun HomeScreen(
 
         LazyColumn(
             modifier = modifier.fillMaxSize(),
-            content= {
-                if(onBoardingUiState.shouldShowOnBoarding){
-                    item (key = "onboardingsection"){
+            content = {
+                if (onBoardingUiState.shouldShowOnBoarding) {
+                    item(key = "onboardingsection") {
                         OnBoardingSection(
                             users = onBoardingUiState.users,
                             onBoardingFinish = onBoardingFinish,
@@ -86,58 +96,22 @@ fun HomeScreen(
                     }
 
                 }
-
-                if(  post== null && !postsUiState.isLoading){
-                    item (key = "empty"){
-                        Box(modifier = Modifier.fillMaxWidth() , contentAlignment = Alignment.Center){
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                Spacer(modifier = Modifier.height(150.dp))
-                                AsyncImage(model = R.drawable.network_error, contentDescription =null  , modifier = Modifier
-                                    .size(200.dp)
-                                    .alpha(0.3f)
-                                )
-                                Text(text = "SomeThings Went Wrong " , style = MaterialTheme.typography.button , modifier = Modifier
-                                    .padding(8.dp)
-                                    .alpha(0.3f)
-                                )
-                                Text(text = "Please Refresh the feed " , style = MaterialTheme.typography.button , modifier = Modifier
-                                    .padding(8.dp)
-                                    .alpha(0.3f)
-                                )
-                            }
-
-                        }
-
+                items(
+                    items = post,
+                    key = { post -> post.postId.toString() }
+                ) { index ->
+                    index?.let {
+                        PostListItem(
+                            post = it,
+                            onPostClick = onPostClick,
+                            onProfileClick = onProfileClick,
+                            onLikeClick = { onLikeClick(it.postId.toString()) },
+                            onCommentClick = { },
+                        )
                     }
                 }
-                if (postsUiState.isLoading) {
-                    // Display a list of shimmer placeholders when loading
-                    items(5) { // Replace 5 with the number of placeholders you want to show
-                        ShimmerPostListItemPlaceholder()
-                    }
-                } else {
 
-                    if (post != null) {
 
-                        items(
-                            items = post,
-                            key = { post -> post.postId.toString() }
-                        ) { index ->
-                            index?.let {
-                                PostListItem(
-                                    post = it,
-                                    onPostClick = onPostClick,
-                                    onProfileClick = onProfileClick,
-                                    onLikeClick = { onLikeClick(it.postId.toString()) },
-                                    onCommentClick = { },
-                                )
-                            }
-                        }
-                    }
-                }
             }
 
         )
@@ -146,6 +120,40 @@ fun HomeScreen(
             state = pullRefreshState,
             modifier = modifier.align(Alignment.TopCenter)
         )
+    }
+
+}
+
+@Composable
+fun handlePagingResult(
+    posts: LazyPagingItems<Post>,
+): Boolean {
+    posts.apply {
+        val error = when {
+            loadState.refresh is LoadState.Error -> loadState.refresh as LoadState.Error
+            loadState.prepend is LoadState.Error -> loadState.prepend as LoadState.Error
+            loadState.append is LoadState.Error -> loadState.append as LoadState.Error
+            else -> null
+        }
+        return when {
+            loadState.refresh is LoadState.Loading -> {
+                ShimmerEffect()
+                false
+            }
+
+            error != null -> {
+
+                EmptyScreen(error = error, posts = posts)
+                false
+            }
+
+            posts.itemCount < 1 -> {
+                EmptyScreen()
+                false
+            }
+
+            else -> true // Success
+        }
     }
 
 }

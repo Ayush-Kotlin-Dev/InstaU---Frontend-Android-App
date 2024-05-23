@@ -45,16 +45,15 @@ class HomeScreenViewModel(
     init {
         fetchData()
     }
-    fun getPosts(): Flow<PagingData<Post>> {
-        val newResult = postsStreamUseCase().flowOn(Dispatchers.IO).cachedIn(viewModelScope)
+    fun getPosts(userId:Long , token : String ): Flow<PagingData<Post>> {
+        val newResult = postsStreamUseCase(userId , token).flowOn(Dispatchers.IO).cachedIn(viewModelScope)
         return newResult
     }
 
     fun fetchData() {
         onBoardingUiState = onBoardingUiState.copy(isLoading = true)
         postsUiState = postsUiState.copy(isLoading = true)
-        val page = 1
-        val limit = 10
+
         viewModelScope.launch {
             dataStore.data.map { it.toAuthResultData() }.collect { userSettings ->
                 currentUserId.value = userSettings.id
@@ -66,7 +65,7 @@ class HomeScreenViewModel(
             delay(500)
 
             // Fetch posts
-            val newResult = getPosts()
+            val newResult = getPosts(userId = currentUserId.value, token = token.value)
             postsUiState = postsUiState.copy(
                 currentPostResult = newResult,
                 isLoading = false

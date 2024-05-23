@@ -21,41 +21,47 @@ fun Home(
     val token = viewModel.token
 
     val profileScreenViewModel: ProfileScreenViewModel = koinViewModel()
-    val posts = viewModel.postsUiState.currentPostResult?.collectAsLazyPagingItems()
 
-    HomeScreen(
-        onBoardingUiState = viewModel.onBoardingUiState,
-        postsUiState = viewModel.postsUiState,
+        HomeScreen(
+            onBoardingUiState = viewModel.onBoardingUiState,
+            postsUiState = viewModel.postsUiState,
 
-        onPostClick = {
-            navigator.navigate(PostDetailDestination(  it.postId , currentUserId.value, token.value ))
+            onPostClick = {
+                navigator.navigate(
+                    PostDetailDestination(
+                        it.postId,
+                        currentUserId.value,
+                        token.value
+                    )
+                )
 
-        },
-        onProfileClick = { userId ->
-            navigator.navigate(ProfileDestination(userId , currentUserId.value    , token.value))
-        },
-        onLikeClick = { postId ->
+            },
+            onProfileClick = { userId ->
+                navigator.navigate(ProfileDestination(userId, currentUserId.value, token.value))
+            },
+            onLikeClick = { postId ->
 
-        },
-        onCommentClick = { postId ->
+            },
+            onCommentClick = { postId ->
 
-        },
-        onBoardingFinish = {
+            },
+            onBoardingFinish = {
 
-        },
-        onUserClick = { userId ->
-            navigator.navigate(ProfileDestination(userId , currentUserId.value    , token.value))
-        },
+            },
+            onUserClick = { userId ->
+                navigator.navigate(ProfileDestination(userId, currentUserId.value, token.value))
+            },
 
-        onFollowClick = {
-            currentUserId.value
-        },
-        fetchData = {
-            viewModel.fetchData()
-        },
-        profileScreenViewModel = profileScreenViewModel,
-        currentUserId = currentUserId.value,
-        token = token.value,
-        post = posts
-    )
+            onFollowClick = {
+                currentUserId.value
+            },
+            fetchData = {
+                viewModel.fetchData()
+            },
+            profileScreenViewModel = profileScreenViewModel,
+            currentUserId = currentUserId.value,
+            token = token.value
+        )
+
+
 }

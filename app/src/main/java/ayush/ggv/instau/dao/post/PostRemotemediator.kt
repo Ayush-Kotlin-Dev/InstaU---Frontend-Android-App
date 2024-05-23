@@ -12,17 +12,20 @@ import ayush.ggv.instau.model.Post
 @OptIn(ExperimentalPagingApi::class)
 class PostsRemoteMediator(
     private val service: PostService,
-    private val database: PostsDatabase
+    private val database: PostsDatabase,
+    private val userId: Long,
+    private val token: String
 ) : RemoteMediator<Int, Post>() {
 
 
-    private val cacheTimeout = 5 // minutes
+    private val cacheTimeout = 60// minutes
 
     override suspend fun initialize(): InitializeAction {
         val currentTime = System.currentTimeMillis()
         val lastUpdated = database.postRemoteKeysDao().getLastUpdatedTimestamp() ?: 0
         val diffInMinutes = (currentTime - lastUpdated) / 1000 / 60
         return if (diffInMinutes > cacheTimeout) {
+            Log.d("PostsRemoteMediator" ,"Not skipping initial refresh")
             InitializeAction.LAUNCH_INITIAL_REFRESH
         } else {
             Log.d("PostsRemoteMediator" ,"skipping initial refresh")
@@ -76,10 +79,10 @@ class PostsRemoteMediator(
             Log.d("PostsRemoteMediator", "API request: $page")
 
             val response = service.getFeedPosts(
-                currentUserId = 580654918340186112,
+                currentUserId = userId,
                 page = page,
                 limit = state.config.pageSize,
-                token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzb2NpYWxhcHBrdG9yIiwiaXNzIjoiYXl1c2guY29tIiwiZW1haWwiOiJpc2hhbkBnbWFpbC5jb20ifQ.hA8AKL_DPVVW-J2qovLStAly6DE1-dzQBsdl6jZu4Wc"
+                token = token
             )
 
             val posts = response.posts

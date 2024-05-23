@@ -21,12 +21,12 @@ class PostsRepositoryImpl(
 
 
     @OptIn(ExperimentalPagingApi::class)
-    override fun getPostsStream(pagerConfig: PagingConfig): Flow<PagingData<Post>> {
+    override fun getPostsStream(pagerConfig: PagingConfig , userId: Long, token: String): Flow<PagingData<Post>> {
         val pagingSourceFactory = { database.postsDao().getAllPosts() }
         return Pager(
             config =  PagingConfig(pageSize = 6,  prefetchDistance = 1  , initialLoadSize = 10),
             pagingSourceFactory =pagingSourceFactory,
-            remoteMediator = PostsRemoteMediator(postService, database)
+            remoteMediator = PostsRemoteMediator(postService, database , userId , token)
         ).flow
     }
 
