@@ -15,4 +15,7 @@ interface PostRemoteKeysDao {
 
     @Query("DELETE FROM post_remote_keys")
     suspend fun clearRemoteKeys()
+
+    @Query("SELECT MAX(lastUpdated) FROM post_remote_keys")
+    suspend fun getLastUpdatedTimestamp(): Long?
 }

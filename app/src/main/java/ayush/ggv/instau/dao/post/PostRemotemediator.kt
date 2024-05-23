@@ -8,13 +8,27 @@ import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import ayush.ggv.instau.data.posts.data.PostService
 import ayush.ggv.instau.model.Post
-import ayush.ggv.instau.model.PostsResponse
 
 @OptIn(ExperimentalPagingApi::class)
 class PostsRemoteMediator(
     private val service: PostService,
     private val database: PostsDatabase
 ) : RemoteMediator<Int, Post>() {
+
+
+    private val cacheTimeout = 5 // minutes
+
+    override suspend fun initialize(): InitializeAction {
+        val currentTime = System.currentTimeMillis()
+        val lastUpdated = database.postRemoteKeysDao().getLastUpdatedTimestamp() ?: 0
+        val diffInMinutes = (currentTime - lastUpdated) / 1000 / 60
+        return if (diffInMinutes > cacheTimeout) {
+            InitializeAction.LAUNCH_INITIAL_REFRESH
+        } else {
+            Log.d("PostsRemoteMediator" ,"skipping initial refresh")
+            InitializeAction.SKIP_INITIAL_REFRESH
+        }
+    }
 
     private suspend fun getRemoteKeyClosestToCurrentPosition(
         state: PagingState<Int, Post>
@@ -41,24 +55,21 @@ class PostsRemoteMediator(
     override suspend fun load(
         loadType: LoadType, state: PagingState<Int, Post>
     ): MediatorResult {
-        return try {
+        try {
             val page = when (loadType) {
                 LoadType.REFRESH -> {
                     val remoteKeys = getRemoteKeyClosestToCurrentPosition(state)
                     remoteKeys?.nextPage?.minus(1) ?: 1
                 }
-
                 LoadType.PREPEND -> {
                     val remoteKeys = getRemoteKeyForFirstItem(state)
-                    remoteKeys?.prevPage
-                        ?: return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
+                    val prevPage = remoteKeys?.prevPage ?: return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
+                    prevPage
                 }
-
                 LoadType.APPEND -> {
                     val remoteKeys = getRemoteKeyForLastItem(state)
-                    remoteKeys?.nextPage?.plus(1) ?: return MediatorResult.Success(
-                        endOfPaginationReached = remoteKeys != null
-                    )
+                    val nextPage = remoteKeys?.nextPage ?: return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
+                    nextPage
                 }
             }
 
@@ -68,34 +79,38 @@ class PostsRemoteMediator(
                 currentUserId = 580654918340186112,
                 page = page,
                 limit = state.config.pageSize,
-                token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzb2NpYWxhcHBrdG9yIiwiaXNzIjoiYXl1c2guY29tIiwiZW1haWwiOiJpc2hhbkBnbWFpbC5jb20ifQ.hA8AKL_DPVVW-J2qovLStAly6DE1-dzQBsdl6jZu4Wc",
+                token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzb2NpYWxhcHBrdG9yIiwiaXNzIjoiYXl1c2guY29tIiwiZW1haWwiOiJpc2hhbkBnbWFpbC5jb20ifQ.hA8AKL_DPVVW-J2qovLStAly6DE1-dzQBsdl6jZu4Wc"
             )
 
-            if(response.posts.isEmpty()) {
-                database.withTransaction {
-                    if (loadType == LoadType.REFRESH) {
-                        database.postRemoteKeysDao().clearRemoteKeys()
-                        database.postsDao().deleteAllPosts()
-                    }
+            val posts = response.posts
+            val endOfPaginationReached = posts.size < state.config.pageSize
 
-                    val prevKey = response.prevPage
-                    val nextKey = response.nextPage
-                    val keys = response.posts.map {
-                        PostRemoteKeys(
-                            postId = it.postId,
-                            prevPage = prevKey,
-                            nextPage = nextKey,
-                            lastUpdated = System.currentTimeMillis()
-                        )
-                    }
-
-                    database.postRemoteKeysDao().insertAll(keys)
-                    database.postsDao().insertAllPosts(response.posts)
+            database.withTransaction {
+                if (loadType == LoadType.REFRESH) {
+                    database.postRemoteKeysDao().clearRemoteKeys()
+                    database.postsDao().deleteAllPosts()
                 }
+
+                val keys = posts.map {
+                    PostRemoteKeys(
+                        postId = it.postId,
+                        prevPage = if (page == 1) null else page - 1,
+                        nextPage = if (endOfPaginationReached) null else page + 1,
+                        lastUpdated = System.currentTimeMillis()
+                    )
+                }
+
+                database.postRemoteKeysDao().insertAll(keys)
+                database.postsDao().insertAllPosts(posts)
             }
-            MediatorResult.Success(endOfPaginationReached = response.nextPage == null)
+
+            Log.d("PostsRemoteMediator", "End of pagination reached: $endOfPaginationReached")
+
+            return MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
         } catch (e: Exception) {
+            Log.e("PostsRemoteMediator", "Error: ${e.message}", e)
             return MediatorResult.Error(e)
         }
     }
+
 }

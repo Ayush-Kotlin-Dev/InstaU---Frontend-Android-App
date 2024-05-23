@@ -15,7 +15,6 @@ import ayush.ggv.instau.data.posts.data.PostsRepositoryImpl
 import ayush.ggv.instau.data.posts.domain.repository.PostRepository
 import ayush.ggv.instau.domain.usecases.followsusecase.SuggestionsUseCase
 import ayush.ggv.instau.domain.usecases.postsusecase.GetPostsStreamUseCase
-import ayush.ggv.instau.domain.usecases.postusecase.PostUseCase
 import ayush.ggv.instau.model.Post
 import ayush.ggv.instau.presentation.screens.home.onboarding.OnBoardingUiState
 import ayush.ggv.instau.util.Result
@@ -27,7 +26,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class HomeScreenViewModel(
-    private val postUseCase: PostUseCase,
     private val dataStore: DataStore<UserSettings>,
     private val suggestionsUseCase: SuggestionsUseCase,
     private val postsStreamUseCase: GetPostsStreamUseCase,

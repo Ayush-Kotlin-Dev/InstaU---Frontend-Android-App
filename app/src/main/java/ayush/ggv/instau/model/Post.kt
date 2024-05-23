@@ -8,7 +8,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 @Entity(tableName = "post")
 data class Post(
-    @androidx.room.PrimaryKey(autoGenerate = false)
+    @androidx.room.PrimaryKey(autoGenerate = true)
+    val id : Int = 0,
     val postId: Long,
     val caption: String,
     val imageUrl: String,
@@ -35,6 +36,4 @@ data class PostsResponse(
     val success: Boolean,
     val posts: List<Post> = listOf(),
     val message: String? = null,
-    val prevPage: Int? = null,
-    var nextPage: Int? = null,
 )

@@ -11,7 +11,6 @@ import ayush.ggv.instau.util.Result
 import kotlinx.coroutines.flow.Flow
 
 interface PostRepository {
-    suspend fun getFeedPosts(currentUserId: Long, page: Int, limit: Int ,token : String ) : Result<PostsResponse>
 
     suspend fun createPost(postTextParams: PostTextParams, token: String) : Result<PostResponse>
     // In PostRepository.kt

@@ -24,6 +24,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.items
 import ayush.ggv.instau.R
 import ayush.ggv.instau.model.Post
 import ayush.ggv.instau.presentation.components.PostListItem
@@ -69,9 +70,8 @@ fun HomeScreen(
     ) {
 
         LazyColumn(
-            modifier = modifier.fillMaxSize()
-
-        ) {
+            modifier = modifier.fillMaxSize(),
+            content= {
                 if(onBoardingUiState.shouldShowOnBoarding){
                     item (key = "onboardingsection"){
                         OnBoardingSection(
@@ -119,10 +119,14 @@ fun HomeScreen(
                         ShimmerPostListItemPlaceholder()
                     }
                 } else {
+
                     if (post != null) {
-                        items(post.itemCount) { index ->
-                            val postItem = post.get(index)
-                            postItem?.let {
+
+                        items(
+                            items = post,
+                            key = { post -> post.postId.toString() }
+                        ) { index ->
+                            index?.let {
                                 PostListItem(
                                     post = it,
                                     onPostClick = onPostClick,
@@ -134,7 +138,9 @@ fun HomeScreen(
                         }
                     }
                 }
-        }
+            }
+
+        )
         PullRefreshIndicator(
             refreshing = onBoardingUiState.isLoading,
             state = pullRefreshState,

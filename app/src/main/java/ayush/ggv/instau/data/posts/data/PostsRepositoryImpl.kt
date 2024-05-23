@@ -18,31 +18,13 @@ class PostsRepositoryImpl(
     private val postService: PostService,
     private val database: PostsDatabase
 ) : PostRepository {
-    override suspend fun getFeedPosts(
-        currentUserId: Long, page: Int, limit: Int, token: String
-    ): Result<PostsResponse> {
-        return try {
-            val response = postService.getFeedPosts(
-                currentUserId,
-                page,
-                limit,
-                token
-            )
-            if (response.success) {
-                Result.Success(response)
-            } else {
-                Result.Error(Exception("Error: ${response.message}").toString())
-            }
-        } catch (e: Exception) {
-            Result.Error(e.toString())
-        }
-    }
+
 
     @OptIn(ExperimentalPagingApi::class)
     override fun getPostsStream(pagerConfig: PagingConfig): Flow<PagingData<Post>> {
         val pagingSourceFactory = { database.postsDao().getAllPosts() }
         return Pager(
-            config =  PagingConfig(pageSize = 4),
+            config =  PagingConfig(pageSize = 6,  prefetchDistance = 1  , initialLoadSize = 10),
             pagingSourceFactory =pagingSourceFactory,
             remoteMediator = PostsRemoteMediator(postService, database)
         ).flow

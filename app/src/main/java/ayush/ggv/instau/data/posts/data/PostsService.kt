@@ -32,8 +32,7 @@ class PostService : KtorApi() {
                 append("Authorization", "Bearer $token")
             }
         }
-        Log.d("PostsRemoteMediator", "API request: ${response.bodyAsText()}")
-        Log.d("PostsRemoteMediator", "API request: ${currentUserId},${page}, ${limit}  limit = $limit")
+        Log.d("PostsRemoteMediator", "getFeedPosts: page $page ${response.bodyAsText()}" )
         return response.body<PostsResponse>()
     }
 

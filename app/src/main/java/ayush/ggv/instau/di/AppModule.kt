@@ -40,7 +40,6 @@ import ayush.ggv.instau.domain.usecases.postsusecase.DeletePostUseCase
 import ayush.ggv.instau.domain.usecases.postsusecase.GetPostByIdUseCase
 import ayush.ggv.instau.domain.usecases.postsusecase.GetPostsStreamUseCase
 import ayush.ggv.instau.domain.usecases.postsusecase.getPostsByuserIdUseCase
-import ayush.ggv.instau.domain.usecases.postusecase.PostUseCase
 import ayush.ggv.instau.domain.usecases.profileusecase.ProfileUseCase
 import ayush.ggv.instau.domain.usecases.profileusecase.SearchUserUseCase
 import ayush.ggv.instau.domain.usecases.profileusecase.UpdateProfileUseCase
@@ -87,7 +86,6 @@ val appModule = module {
     factory { PostCommentService() }
     factory { SignUpUseCase() }
     factory { SignInuseCase() }
-    factory { PostUseCase() }
     factory {  AddPostUseCase()}
     factory { GetPostByIdUseCase() }
     factory {  ProfileService()}
@@ -106,7 +104,7 @@ val appModule = module {
     viewModel { SignUpViewModel(get() , get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
     viewModel { LoginViewModel(get() , get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
     viewModel { MainActivityViewModel(get()) }
-    viewModel{ HomeScreenViewModel(get(),get () , get() , get() ) }
+    viewModel{ HomeScreenViewModel(get(),get () , get()  ) }
     viewModel { PostDetailScreenViewModel(get(), get(), get(), get()  ) }
     viewModel{ ProfileScreenViewModel( get() , get()  , get() , get()) }
     viewModel { EditProfileViewModel(get() ,get()) }
