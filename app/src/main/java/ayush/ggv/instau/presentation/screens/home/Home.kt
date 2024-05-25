@@ -1,5 +1,6 @@
 package ayush.ggv.instau.presentation.screens.home
 
+import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 import androidx.paging.compose.collectAsLazyPagingItems
 import ayush.ggv.instau.presentation.screens.account.profile.ProfileScreenViewModel
@@ -10,6 +11,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import instaU.ayush.com.model.FollowsParams
 import org.koin.androidx.compose.koinViewModel
 
+@SuppressLint("SuspiciousIndentation")
 @Composable
 @Destination(start = true)
 
@@ -54,9 +56,6 @@ fun Home(
 
             onFollowClick = {
                 currentUserId.value
-            },
-            fetchData = {
-                viewModel.fetchData()
             },
             profileScreenViewModel = profileScreenViewModel,
             currentUserId = currentUserId.value,

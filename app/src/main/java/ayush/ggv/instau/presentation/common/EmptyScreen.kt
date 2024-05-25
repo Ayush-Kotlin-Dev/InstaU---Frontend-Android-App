@@ -38,11 +38,13 @@ import androidx.paging.compose.LazyPagingItems
 import ayush.ggv.instau.R
 import ayush.ggv.instau.model.Post
 import ayush.ggv.instau.ui.theme.NETWORK_ERROR_HEIGHT
+import instaU.ayush.com.model.FollowUserData
 
 @Composable
 fun EmptyScreen(
     error: LoadState.Error?= null,
-    posts : LazyPagingItems<Post>?=null
+    posts : LazyPagingItems<Post>?=null,
+    followListUsers : LazyPagingItems<FollowUserData>?=null
 ) {
     var errorMessage by remember {
         mutableStateOf("Find Your Favourite Hero")

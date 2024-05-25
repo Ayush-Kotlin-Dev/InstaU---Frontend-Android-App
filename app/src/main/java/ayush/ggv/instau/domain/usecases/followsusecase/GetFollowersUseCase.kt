@@ -9,7 +9,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 class GetFollowersUseCase : KoinComponent {
-    private val repository: FollowRepository by inject()
+    val repository: FollowRepository by inject()
 
     suspend operator fun invoke(
         userId: Long,

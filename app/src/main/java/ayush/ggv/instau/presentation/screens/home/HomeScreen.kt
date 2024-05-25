@@ -56,8 +56,6 @@ fun HomeScreen(
     onBoardingFinish: () -> Unit,
     onUserClick: (Long) -> Unit,
     onFollowClick: (Long) -> Unit,
-
-    fetchData: () -> Unit,
     profileScreenViewModel: ProfileScreenViewModel,
     currentUserId: Long,
     token: String,
