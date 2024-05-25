@@ -151,17 +151,3 @@ fun GotoSignUp(
         )
     }
 }
-
-
-@Composable
-@Preview
-fun PreviewLoginScreen() {
-    LoginScreen(
-        uiState = LoginState(),
-        onEmailChange = {},
-        onPasswordChange = {},
-        onNavigateToHome = {},
-        onSignInClick = {},
-        onNavigateToSignUp = {}
-    )
-}

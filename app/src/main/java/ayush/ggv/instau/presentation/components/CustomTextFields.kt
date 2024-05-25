@@ -131,14 +131,3 @@ fun PasswordEyeIcon(
 
 
 }
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewCustomTextFields() {
-    CustomTextFields(
-        value = "",
-        onValueChange = {},
-        hint = androidx.compose.ui.R.string.default_error_message,
-        keyboardType = KeyboardType.Email
-    )
-}

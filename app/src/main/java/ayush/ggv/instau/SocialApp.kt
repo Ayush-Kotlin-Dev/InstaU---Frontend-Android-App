@@ -54,8 +54,6 @@ fun SocialApp(
     token: String? = null,
     userId: Long? = null,
 ) {
-
-
     val navHostController = rememberNavController()
     val scaffoldState = rememberScaffoldState()
     val systemUiController = rememberSystemUiController()
@@ -72,9 +70,8 @@ fun SocialApp(
         mutableStateOf(0)
     }
     val currentDestination by navHostController.currentDestinationAsState()
-    val shouldUpdateBottomBar = currentDestination?.route != ProfileDestination.route
 
-    if (shouldUpdateBottomBar) {
+    if (currentDestination?.route != null && currentDestination?.route != ProfileDestination.route) {
         selectedIndex = getNavigationBarIndex(currentDestination?.route)
     }
 
@@ -119,7 +116,7 @@ fun SocialApp(
                         ballColor = MaterialTheme.colors.primary,
                         barColor = MaterialTheme.colors.surface,
                     ) {
-                        navigationBarItems.forEach { item ->
+                        navigationBarItems.forEachIndexed { index, item ->
                             Box(
                                 modifier = Modifier
                                     .noRippleClickable {
@@ -138,13 +135,14 @@ fun SocialApp(
                                     modifier = Modifier.size(24.dp),
                                     imageVector = item.icons,
                                     contentDescription = null,
-                                    tint = if (selectedIndex == item.ordinal) MaterialTheme.colors.primary else MaterialTheme.colors.onSurface.copy(
+                                    tint = if (selectedIndex == index) MaterialTheme.colors.primary else MaterialTheme.colors.onSurface.copy(
                                         alpha = 0.6f
                                     )
                                 )
                             }
                         }
                     }
+
                 }
             }
         }
@@ -155,6 +153,7 @@ fun SocialApp(
             navController = navHostController
         )
     }
+
     LaunchedEffect(key1 = token) {
         if (token != null && token.isEmpty()) {
             navHostController.navigate(LoginDestination.route) {
@@ -165,10 +164,10 @@ fun SocialApp(
         }
     }
 }
-enum class NavigationBarItems (val icons : ImageVector){
-    HOME(icons = Icons.Filled.Home),
-    SEARCH(icons = Icons.TwoTone.Search),
-    ADD(icons = Icons.Filled.Add),
-    PROFILE(icons = Icons.Filled.Person)
-}
 
+enum class NavigationBarItems(val icons: ImageVector) {
+    HOME(Icons.Filled.Home),
+    SEARCH(Icons.TwoTone.Search),
+    ADD(Icons.Filled.Add),
+    PROFILE(Icons.Filled.Person)
+}

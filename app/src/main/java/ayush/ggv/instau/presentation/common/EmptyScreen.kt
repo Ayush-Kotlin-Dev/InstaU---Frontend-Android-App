@@ -3,28 +3,13 @@ package ayush.ggv.instau.presentation.common
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.*
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -35,6 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.items
 import ayush.ggv.instau.R
 import ayush.ggv.instau.model.Post
 import ayush.ggv.instau.ui.theme.NETWORK_ERROR_HEIGHT
@@ -42,12 +28,12 @@ import instaU.ayush.com.model.FollowUserData
 
 @Composable
 fun EmptyScreen(
-    error: LoadState.Error?= null,
-    posts : LazyPagingItems<Post>?=null,
-    followListUsers : LazyPagingItems<FollowUserData>?=null
+    error: LoadState.Error? = null,
+    posts: LazyPagingItems<Post>? = null,
+    followListUsers: LazyPagingItems<FollowUserData>? = null
 ) {
     var errorMessage by remember {
-        mutableStateOf("Find Your Favourite Hero")
+        mutableStateOf("Oops Nothing to show!")
     }
     var icon by remember {
         mutableStateOf(R.drawable.search_document)
@@ -60,12 +46,12 @@ fun EmptyScreen(
         mutableStateOf(false)
     }
     val alphaAnim by animateFloatAsState(
-        targetValue = if(startAnimation) ContentAlpha.disabled else 0f,
+        targetValue = if (startAnimation) ContentAlpha.disabled else 0f,
         animationSpec = tween(
             durationMillis = 1000
         )
     )
-    LaunchedEffect (key1 = startAnimation){
+    LaunchedEffect(key1 = startAnimation) {
         startAnimation = true
     }
 
@@ -74,9 +60,11 @@ fun EmptyScreen(
         errorMessage = errorMessage,
         alphaAnim = alphaAnim,
         posts = posts,
+        followListUsers = followListUsers,
         error = error
     )
 }
+
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun EmptyContent(
@@ -84,7 +72,8 @@ fun EmptyContent(
     icon: Int,
     errorMessage: String,
     alphaAnim: Float,
-    posts: LazyPagingItems<Post>?
+    posts: LazyPagingItems<Post>? = null,
+    followListUsers: LazyPagingItems<FollowUserData>? = null
 ) {
     var isRefreshing by remember {
         mutableStateOf(false)
@@ -93,49 +82,47 @@ fun EmptyContent(
         refreshing = isRefreshing,
         onRefresh = {
             posts?.refresh()
+            followListUsers?.refresh()
         }
     )
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .pullRefresh(state = pullRefreshState)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Icon(
-                modifier = Modifier
-                    .size(NETWORK_ERROR_HEIGHT)
-                    .alpha(alphaAnim),
-                painter = painterResource(id = icon),
-                contentDescription = null,
-                tint = if (isSystemInDarkTheme()) Color.LightGray else Color.DarkGray
-            )
+            item {
+                Icon(
+                    modifier = Modifier
+                        .size(NETWORK_ERROR_HEIGHT)
+                        .alpha(alphaAnim),
+                    painter = painterResource(id = icon),
+                    contentDescription = null,
+                    tint = if (isSystemInDarkTheme()) Color.LightGray else Color.DarkGray
+                )
 
-            Text(
-                modifier = Modifier
-                    .padding(top = 16.dp)
-                    .alpha(alphaAnim),
-                text = errorMessage,
-                color = if (isSystemInDarkTheme()) Color.LightGray else Color.DarkGray,
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Medium,
-                fontSize = MaterialTheme.typography.subtitle1.fontSize,
-            )
+                Text(
+                    modifier = Modifier
+                        .padding(top = 16.dp)
+                        .alpha(alphaAnim),
+                    text = errorMessage,
+                    color = if (isSystemInDarkTheme()) Color.LightGray else Color.DarkGray,
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = MaterialTheme.typography.subtitle1.fontSize,
+                )
+
+            }
+
+
+            }
         }
-        PullRefreshIndicator(
-            refreshing = isRefreshing,
-            state = pullRefreshState,
-            modifier = Modifier
-                .align(Alignment.TopCenter) // Correct alignment for top center
-        )
     }
-}
-
 
 fun parseErrorMessage(message: String): String {
     return when {

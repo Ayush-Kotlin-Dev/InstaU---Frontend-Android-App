@@ -1,12 +1,12 @@
 package ayush.ggv.instau.presentation.screens.account.profile
 
-import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.LoadState
 import ayush.ggv.instau.common.datastore.UserSettings
 import ayush.ggv.instau.data.profile.domain.model.Profile
 import ayush.ggv.instau.domain.usecases.followsusecase.FollowsUseCase
@@ -15,8 +15,6 @@ import ayush.ggv.instau.domain.usecases.profileusecase.ProfileUseCase
 import ayush.ggv.instau.model.Post
 import ayush.ggv.instau.util.Result
 import instaU.ayush.com.model.FollowsParams
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class ProfileScreenViewModel(
@@ -27,11 +25,11 @@ class ProfileScreenViewModel(
 
 ) : ViewModel() {
 
-    var isFollowing by mutableStateOf(false)
-    var userInfoUiState by mutableStateOf(UserInfoUiState())
+    var isFollowing: Boolean = false
         private set
     var profilePostUiState by mutableStateOf(ProfilePostUiState())
         private set
+    var userInfoUiState by mutableStateOf(UserInfoUiState())
 
     fun logout() {
         viewModelScope.launch {
@@ -39,7 +37,12 @@ class ProfileScreenViewModel(
             userSettingsDataStore.updateData { newSettings }
         }
     }
-    fun fetchProfile(userId: Long, currentUserId: Long, token: String) {
+
+    fun fetchProfile(
+        userId: Long,
+        currentUserId: Long,
+        token: String
+    ) {
         userInfoUiState = userInfoUiState.copy(
             isLoading = true
         )
@@ -47,32 +50,34 @@ class ProfileScreenViewModel(
         viewModelScope.launch {
 
             try {
-                val Profileresult = profileUseCase(userId, currentUserId, token)
+                val profileResult = profileUseCase(userId, currentUserId, token)
                 val postResult = getPostsbyUserIdUseCase(userId, currentUserId, 1, 10, token)
 
-                when (Profileresult) {
+                when (profileResult) {
                     is Result.Success -> {
                         userInfoUiState = userInfoUiState.copy(
-                            profile = Profileresult.data?.profile,
+                            profile = profileResult.data?.profile,
                             isLoading = false
                         )
-                        isFollowing = Profileresult.data?.profile?.isFollowing ?: false
+                        isFollowing = profileResult.data?.profile?.isFollowing ?: false
                     }
 
                     is Result.Error -> {
                         userInfoUiState = userInfoUiState.copy(
-                            errorMessage = Profileresult.message,
+                            errorMessage = profileResult.message,
                             isLoading = false
                         )
                     }
 
-                    is Result.Loading -> {}
+                    is Result.Loading -> {
+                        // Optionally handle loading state
+                    }
                 }
 
                 when (postResult) {
                     is Result.Success -> {
                         profilePostUiState = profilePostUiState.copy(
-                            posts = postResult.data?.posts ?: listOf(),
+                            posts = postResult.data?.posts ?: emptyList(),
                             isLoading = false
                         )
                     }
@@ -85,26 +90,24 @@ class ProfileScreenViewModel(
                     }
 
                     is Result.Loading -> {
-                        profilePostUiState = profilePostUiState.copy(isLoading = true)
+                        profilePostUiState = profilePostUiState.copy(
+                            isLoading = true
+                        )
                     }
                 }
             } catch (e: Exception) {
                 userInfoUiState = userInfoUiState.copy(
                     errorMessage = e.message,
-                )
-                profilePostUiState = profilePostUiState.copy(
-                    errorMessage = e.message,
-                )
-            } finally {
-                userInfoUiState = userInfoUiState.copy(
                     isLoading = false
                 )
                 profilePostUiState = profilePostUiState.copy(
+                    errorMessage = e.message,
                     isLoading = false
                 )
             }
         }
     }
+
     fun followUnfollowUser(followsParams: FollowsParams, token: String) {
         viewModelScope.launch {
             try {
@@ -117,8 +120,10 @@ class ProfileScreenViewModel(
                         isFollowing = !followsParams.isFollowing
 
                         userInfoUiState.profile?.let { profile ->
-                            val updatedFollowersCount = if (isFollowing) profile.followersCount + 1 else profile.followersCount - 1
-                            val updatedProfile = profile.copy(followersCount = updatedFollowersCount)
+                            val updatedFollowersCount =
+                                if (isFollowing) profile.followersCount + 1 else profile.followersCount - 1
+                            val updatedProfile =
+                                profile.copy(followersCount = updatedFollowersCount)
                             userInfoUiState = userInfoUiState.copy(profile = updatedProfile)
                         }
 
@@ -137,9 +142,7 @@ class ProfileScreenViewModel(
                 }
             } catch (e: Exception) {
                 userInfoUiState = userInfoUiState.copy(
-                )
-            } finally {
-                userInfoUiState = userInfoUiState.copy(
+                    errorMessage = e.message,
                     isLoading = false
                 )
             }

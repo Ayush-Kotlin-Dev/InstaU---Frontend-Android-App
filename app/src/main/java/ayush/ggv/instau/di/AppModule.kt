@@ -106,7 +106,7 @@ val appModule = module {
     viewModel { MainActivityViewModel(get()) }
     viewModel{ HomeScreenViewModel(get(),get () , get()  ) }
     viewModel { PostDetailScreenViewModel(get(), get(), get(), get()  ) }
-    viewModel{ ProfileScreenViewModel( get() , get()  , get() , get()) }
+    viewModel{ ProfileScreenViewModel( get() , get()  , get() , get() ) }
     viewModel { EditProfileViewModel(get() ,get()) }
     viewModel{ FollowsViewModel(get() , get()) }
     viewModel { AddPostViewModel( get()) }

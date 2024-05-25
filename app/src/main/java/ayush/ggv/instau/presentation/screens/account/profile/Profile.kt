@@ -46,7 +46,7 @@ fun Profile(
         onPostClick = { },
         onLikeClick = { },
         onCommentClick = { },
-        fetchData = {viewModel.fetchProfile(userId , currentUserId , token)},
+        fetchData = {viewModel.fetchProfile(userId , currentUserId , token )},
         navigator = navigator,
         token = token,
         isFollowing = viewModel.isFollowing

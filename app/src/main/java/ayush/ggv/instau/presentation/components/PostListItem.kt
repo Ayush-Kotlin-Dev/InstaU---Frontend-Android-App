@@ -422,38 +422,3 @@ fun PostLikeRow(
         Spacer(modifier = Modifier.width(MediumSpacing))
     }
 }
-
-//@Preview(showBackground = false , uiMode = UI_MODE_NIGHT_YES  )
-//@Composable
-//fun PostListItemPreview() {
-//    SocialAppTheme {
-//        Surface(
-//            color = MaterialTheme.colors.surface
-//        ) {
-//            val context = LocalContext.current
-//            PostListItem(
-//                post = Post(
-//                    postId = 1,
-//                    userId = 1,
-//                    userName = "John Doe",
-//                    userImageUrl = "",
-//                    imageUrl = "",
-//                    caption = "This is a caption",
-//                    createdAt = "2021-09-01T10:15:30.000000",
-//                    likesCount = 10,
-//                    commentsCount = 5,
-//                    isLiked = false,
-//                    isOwnPost = true
-//                ),
-//                onPostClick = { Toast.makeText(context, "onPostClick", Toast.LENGTH_SHORT).show() },
-//                onProfileClick = {
-//                    Toast.makeText(context, "onProfile", Toast.LENGTH_SHORT).show()
-//                },
-//                onLikeClick = { Toast.makeText(context, "onPostClick", Toast.LENGTH_SHORT).show() },
-//                onCommentClick = {
-//                    Toast.makeText(context, "onPostClick", Toast.LENGTH_SHORT).show()
-//                }
-//            )
-//        }
-//    }
-//}

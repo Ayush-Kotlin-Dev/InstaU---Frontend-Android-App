@@ -116,6 +116,7 @@ fun HomeScreen(
         PullRefreshIndicator(
             refreshing = onBoardingUiState.isLoading,
             state = pullRefreshState,
+            contentColor = androidx.compose.ui.graphics.Color.Blue,
             modifier = modifier.align(Alignment.TopCenter)
         )
     }

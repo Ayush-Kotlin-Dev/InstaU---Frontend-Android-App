@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -66,7 +67,21 @@ fun ShimmerAnimation(
         )
     }
 }
-@Preview
+@Composable
+fun FollowsShimmerList(
+    count: Int
+) {
+    //Use LAxyColumn
+    LazyColumn(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        items(count) {
+            ShimmerFollowsListItemPlaceholder()
+        }
+
+    }
+}
+
 @Composable
 fun ShimmerFollowsListItemPlaceholder() {
     val colors = listOf(Color.LightGray.copy(0.9f), Color.LightGray.copy(0.2f), Color.LightGray.copy(0.9f))

@@ -89,14 +89,3 @@ fun OnBoardingUserItem(
         }
     }
 }
-//@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-//@Composable
-//fun PreviewOnBoardingUserItem() {
-//    SocialAppTheme {
-//        OnBoardingUserItem(
-//            followsUser = sampleUsers.first(),
-//            onUserClick = {},
-//            onFollowButtonClick = { _, _ -> },
-//        )
-//    }
-//}

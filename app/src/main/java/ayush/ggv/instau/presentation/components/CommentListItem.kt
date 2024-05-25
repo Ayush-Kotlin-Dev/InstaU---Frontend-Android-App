@@ -151,26 +151,3 @@ fun CommentListItem(
 
 
 }
-
-@Composable
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
-fun PreviewCommentListItem() {
-    SocialAppTheme {
-        Surface(color = MaterialTheme.colors.surface) {
-            CommentListItem(
-                comment = PostComment(
-                    commentId = 1,
-                    content = "This is a comment , and this is large comment to test the comment list item component.",
-                    postId = 1,
-                    userId = 1,
-                    userName = "John Doe",
-                    userImageUrl = "",
-                    createdAt = "2 hours ago"
-
-                ),
-                onProfileClick = {},
-                onDeleteClick = {}
-            )
-        }
-    }
-}

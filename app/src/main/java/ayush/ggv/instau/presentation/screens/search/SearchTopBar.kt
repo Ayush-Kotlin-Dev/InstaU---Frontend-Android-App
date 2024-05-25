@@ -120,13 +120,3 @@ fun SearchWidget(
         )
     }
 }
-@Composable
-@Preview
-fun SearchTopBarPreview() {
-    SearchTopBar(
-        text = "Search",
-        onTextChange = { },
-        onCloseClicked = { },
-        onSearchClicked = { }
-    )
-}

@@ -168,17 +168,3 @@ fun GoToLogin(modifier: Modifier = Modifier,
         )
     }
 }
-
-@Composable
-@Preview(showBackground = true)
-fun PreviewSignUpScreen() {
-    SignUpScreen(
-        uiState = SignUpState(),
-        onUsernameChange = {},
-        onEmailChange = {},
-        onPasswordChange = {},
-        onNavigateToLogin = {},
-        onNavigateToHome = {},
-        onSignupClick = {}
-    )
-}

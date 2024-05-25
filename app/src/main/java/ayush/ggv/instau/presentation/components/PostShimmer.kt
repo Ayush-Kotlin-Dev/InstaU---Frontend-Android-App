@@ -94,7 +94,6 @@ fun ShimmerEffect(){
 
     }
 }
-@Preview
 @Composable
 fun ShimmerPostListItemPlaceholder() { // make it adapt for dark theme also
     val isDarkTheme = isSystemInDarkTheme()

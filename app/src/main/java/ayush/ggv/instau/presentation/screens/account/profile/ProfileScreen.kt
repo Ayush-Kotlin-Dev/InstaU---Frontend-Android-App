@@ -81,6 +81,7 @@ fun ProfileScreen(
     token: String,
     isFollowing: Boolean
 ) {
+
     val pullRefreshState = rememberPullRefreshState(
         refreshing = userInfoUiState.isLoading && profilePostsUiState.isLoading,
         onRefresh = { fetchData() })
@@ -153,7 +154,7 @@ fun ProfileScreen(
             modifier = modifier.align(Alignment.TopCenter)
         )
     }
-    LaunchedEffect(key1 = Unit) {
+    LaunchedEffect(Unit) {
         fetchData()
     }
 }
@@ -308,7 +309,6 @@ fun FollowText(
 }
 
 @Composable
-@Preview
 fun ProfileHeaderSectionPreview() {
     SocialAppTheme {
         Surface(color = MaterialTheme.colors.surface) {
