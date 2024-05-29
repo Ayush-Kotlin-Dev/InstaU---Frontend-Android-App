@@ -47,6 +47,7 @@ import ayush.ggv.instau.presentation.screens.destinations.PostDetailDestination
 import ayush.ggv.instau.presentation.screens.destinations.ProfileDestination
 import ayush.ggv.instau.presentation.screens.destinations.SearchDestination
 import ayush.ggv.instau.presentation.screens.destinations.SignUpNDestination
+import ayush.ggv.instau.presentation.screens.destinations.WebSocketChatScreenDestination
 import ayush.ggv.instau.ui.theme.SmallElevation
 import com.ramcosta.composedestinations.utils.currentDestinationAsState
 import org.koin.androidx.compose.koinViewModel
@@ -81,6 +82,7 @@ fun AppBar(
                         //chat icon
                         IconButton(
                             onClick = {
+                                navHostController.navigate(WebSocketChatScreenDestination.route)
                                 Toast.makeText(context, "Chat Screen ", Toast.LENGTH_SHORT).show()
                             }
                         ) {
