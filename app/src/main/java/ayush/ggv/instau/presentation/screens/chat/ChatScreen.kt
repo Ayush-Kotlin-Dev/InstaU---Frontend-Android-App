@@ -1,4 +1,4 @@
-package ayush.ggv.instau.presentation.screens
+package ayush.ggv.instau.presentation.screens.chat
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn

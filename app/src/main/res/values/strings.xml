@@ -33,4 +33,20 @@
     <string name="could_not_load_profile">Oops, we could not load your profile!</string>
     <string name="edit_profile_destination_title">Edit profile</string>
     <string name="caption">Write a caption...</string>
+
+
+    <!-- Common -->
+    <string name="user_online">Online</string>
+    <string name="user_last_activity">Last activity %s</string>
+
+    <!-- Contacts -->
+    <string name="contacts_title">Contacts</string>
+    <string name="favorites_title">Favorites</string>
+    <string name="search_hint">Search</string>
+
+    <!-- Messages -->
+    <string name="messages_title">Messages</string>
+    <string name="messages_new_count">%d new messages</string>
+
+
 </resources>
