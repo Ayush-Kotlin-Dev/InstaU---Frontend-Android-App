@@ -44,10 +44,12 @@ import ayush.ggv.instau.presentation.screens.destinations.FollowersDestination
 import ayush.ggv.instau.presentation.screens.destinations.FollowingDestination
 import ayush.ggv.instau.presentation.screens.destinations.HomeDestination
 import ayush.ggv.instau.presentation.screens.destinations.LoginDestination
+import ayush.ggv.instau.presentation.screens.destinations.MessagesDestination
 import ayush.ggv.instau.presentation.screens.destinations.PostDetailDestination
 import ayush.ggv.instau.presentation.screens.destinations.ProfileDestination
 import ayush.ggv.instau.presentation.screens.destinations.SearchDestination
 import ayush.ggv.instau.presentation.screens.destinations.SignUpNDestination
+import ayush.ggv.instau.presentation.screens.destinations.TestChatScreenDestination
 import ayush.ggv.instau.presentation.screens.destinations.WebSocketChatScreenDestination
 import ayush.ggv.instau.ui.theme.SmallElevation
 import com.ramcosta.composedestinations.utils.currentDestinationAsState
@@ -83,7 +85,7 @@ fun AppBar(
                         //chat icon
                         IconButton(
                             onClick = {
-                                navHostController.navigate(ContactsDestination.route)
+                                navHostController.navigate(TestChatScreenDestination.route)
                                 Toast.makeText(context, "Chat Screen ", Toast.LENGTH_SHORT).show()
                             }
                         ) {
@@ -171,7 +173,8 @@ fun getAppBarTitle(currentDestinationRoute: String?): Int {
         EditProfileDestination.route -> R.string.edit_profile_destination_title
         FollowingDestination.route -> R.string.following_text
         FollowersDestination.route -> R.string.followers_text
-
+        WebSocketChatScreenDestination.route  -> R.string.Chat_Text
+        MessagesDestination.route -> R.string.Chat_Text
         else -> R.string.app_name
 
     }

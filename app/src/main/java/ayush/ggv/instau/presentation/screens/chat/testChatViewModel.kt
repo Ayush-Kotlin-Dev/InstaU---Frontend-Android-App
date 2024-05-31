@@ -14,51 +14,52 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ChatViewModel : ViewModel() {
+class TestChatViewModel : ViewModel() {
     private val client = HttpClient { install(WebSockets) }
     var webSocketSession: DefaultClientWebSocketSession? = null
     val messages = mutableStateListOf<String>()
 
     init {
         viewModelScope.launch {
-            client.webSocket(
-                method = HttpMethod.Get,
-                host = "instau-backend-server.onrender.com",
-                port = 80, // Port 80 for HTTP
-                path = "/chat"
-            ) {
-                webSocketSession = this
-                launch {
-                    getAndDisplayOutput { receivedMessage ->
-                        messages.add(receivedMessage)
-                    }
+            try {
+                client.webSocket(
+                    method = HttpMethod.Get,
+                    host = "instau-backend-server.onrender.com",
+                    port = 80,
+                    path = "/chat"
+                ) {
+                    webSocketSession = this
+                    listenForMessages()
                 }
+            } catch (e: Exception) {
+                println("WebSocket connection failed: ${e.localizedMessage}")
             }
         }
     }
 
-
-    suspend fun DefaultClientWebSocketSession.getAndDisplayOutput(onMessageReceived: (String) -> Unit) {
+    private suspend fun DefaultClientWebSocketSession.listenForMessages() {
         try {
             for (frame in incoming) {
                 if (frame is Frame.Text) {
                     val receivedText = frame.readText()
                     withContext(Dispatchers.Main) {
-                        onMessageReceived(receivedText)
+                        messages.add(receivedText)
                     }
                 }
             }
         } catch (e: Exception) {
-            println("Error occurred while receiving ${e.localizedMessage}")
+            println("Error occurred while receiving messages: ${e.localizedMessage}")
         }
     }
 
-    suspend fun sendInput(message: String) {
-        webSocketSession?.let { session ->
+    fun sendInput(message: String) {
+        viewModelScope.launch {
             try {
-                session.send(Frame.Text(message))
+                webSocketSession?.send(Frame.Text(message))
+                println("Message sent: $message")
+
             } catch (e: Exception) {
-                println("Error occurred while sending ${e.localizedMessage}")
+                println("Error occurred while sending message: ${e.localizedMessage}")
             }
         }
     }

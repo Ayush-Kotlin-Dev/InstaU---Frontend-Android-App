@@ -47,6 +47,7 @@
     <!-- Messages -->
     <string name="messages_title">Messages</string>
     <string name="messages_new_count">%d new messages</string>
+    <string name="Chat_Text">Chats</string>
 
 
 </resources>
