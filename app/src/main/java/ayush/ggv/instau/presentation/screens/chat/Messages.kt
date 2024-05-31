@@ -27,8 +27,10 @@ import ayush.ggv.instau.model.Message
 import ayush.ggv.instau.ui.theme.AppColors
 import ayush.ggv.instau.R
 import coil.compose.AsyncImage
+import com.ramcosta.composedestinations.annotation.Destination
 
 @Composable
+@Destination
 fun Messages() {
     val messages = remember { randomMessageList() }
 

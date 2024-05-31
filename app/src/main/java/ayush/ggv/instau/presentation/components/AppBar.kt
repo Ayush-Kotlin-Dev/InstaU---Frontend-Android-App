@@ -38,6 +38,7 @@ import ayush.ggv.instau.NavigationBarItems
 import ayush.ggv.instau.R
 import ayush.ggv.instau.presentation.screens.account.profile.ProfileScreenViewModel
 import ayush.ggv.instau.presentation.screens.destinations.AddPostDestination
+import ayush.ggv.instau.presentation.screens.destinations.ContactsDestination
 import ayush.ggv.instau.presentation.screens.destinations.EditProfileDestination
 import ayush.ggv.instau.presentation.screens.destinations.FollowersDestination
 import ayush.ggv.instau.presentation.screens.destinations.FollowingDestination
@@ -82,7 +83,7 @@ fun AppBar(
                         //chat icon
                         IconButton(
                             onClick = {
-                                navHostController.navigate(WebSocketChatScreenDestination.route)
+                                navHostController.navigate(ContactsDestination.route)
                                 Toast.makeText(context, "Chat Screen ", Toast.LENGTH_SHORT).show()
                             }
                         ) {
