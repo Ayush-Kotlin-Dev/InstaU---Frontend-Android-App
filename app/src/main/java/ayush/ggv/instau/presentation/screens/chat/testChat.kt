@@ -29,9 +29,11 @@ import com.ramcosta.composedestinations.annotation.Destination
 fun TestChatScreen(chatViewModel: TestChatViewModel = viewModel()) {
     var message by remember { mutableStateOf("") }
     val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
 
-    Column(Modifier.fillMaxSize()) {
+    Column(
+        Modifier.fillMaxSize()
+
+    ) {
         LazyColumn(
             modifier = Modifier.weight(1f),
             contentPadding = PaddingValues(16.dp)

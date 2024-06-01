@@ -9,6 +9,7 @@ import io.ktor.client.plugins.websocket.WebSockets
 import io.ktor.client.plugins.websocket.webSocket
 import io.ktor.http.HttpMethod
 import io.ktor.websocket.Frame
+import io.ktor.websocket.close
 import io.ktor.websocket.readText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -55,6 +56,12 @@ class TestChatViewModel : ViewModel() {
     fun sendInput(message: String) {
         viewModelScope.launch {
             try {
+                if (message == "exit") {
+                    webSocketSession?.close()
+                    println("WebSocket connection closed.")
+                    return@launch
+                }
+
                 webSocketSession?.send(Frame.Text(message))
                 println("Message sent: $message")
 
