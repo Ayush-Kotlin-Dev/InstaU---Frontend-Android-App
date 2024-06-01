@@ -73,7 +73,11 @@ fun Home(
             },
             profileScreenViewModel = profileScreenViewModel,
             currentUserId = currentUserId.value,
-            token = token.value
+            token = token.value,
+            newPostsAvailable = viewModel.newPostsAvailable,
+            onDismiss = {
+                viewModel.newPostsAvailable = false
+            }
         )
 
 

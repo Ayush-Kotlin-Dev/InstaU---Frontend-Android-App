@@ -25,6 +25,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -34,7 +35,6 @@ class HomeScreenViewModel(
     private val suggestionsUseCase: SuggestionsUseCase,
     private val postsStreamUseCase: GetPostsStreamUseCase,
     private val repository: PostRepository,
-    private val database: PostsDatabase
 ) : ViewModel(
 
 ) {
@@ -48,6 +48,7 @@ class HomeScreenViewModel(
 
     var onBoardingUiState by mutableStateOf(OnBoardingUiState())
         private set
+    var newPostsAvailable by mutableStateOf(true)
 
     init {
         fetchData()
@@ -72,21 +73,17 @@ class HomeScreenViewModel(
                     Log.d("HomeScreen", "connectToSocket: ${result.errorMessage}")
 
                 }
+                //TODO i will also get details of the post (DELETED OR ADDED) from the server ,
+                // and directly manipulate the database with that post details rather than deleting the whole database
+
                 is ResponseResource.Success -> {
                     repository.receiveMessage().onEach {
                         Log.d("HomeScreen", "connectToSocket: $it")
                         if (it == "added" || it == "deleted") {
                             //how can i refresh the posts here ?
-                            database.withTransaction {
-                                    database.postRemoteKeysDao().clearRemoteKeys()
-                                    database.postsDao().deleteAllPosts()
-
-                            }
-                            fetchData()
+                            newPostsAvailable = true
                         }
-
-
-                    }.flowOn(Dispatchers.IO)
+                    }.flowOn(Dispatchers.IO).launchIn(viewModelScope)
                 }
             }
         }
