@@ -1,5 +1,6 @@
 package ayush.ggv.instau.di
 
+import ChatService
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
 import androidx.room.Room
@@ -13,7 +14,6 @@ import ayush.ggv.instau.data.auth.data.AuthService
 import ayush.ggv.instau.data.KtorApi
 import ayush.ggv.instau.data.auth.domain.repository.AuthRepository
 import ayush.ggv.instau.data.chat.data.ChatRepositoryImpl
-import ayush.ggv.instau.data.chat.data.ChatService
 import ayush.ggv.instau.data.chat.domain.ChatRepository
 import ayush.ggv.instau.data.followunfollow.data.FollowRepositoryImpl
 import ayush.ggv.instau.data.followunfollow.data.FollowService

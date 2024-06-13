@@ -1,5 +1,6 @@
 package ayush.ggv.instau.presentation.screens.chat.friends_list
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.datastore.core.DataStore
@@ -9,17 +10,20 @@ import ayush.ggv.instau.common.datastore.UserSettings
 import ayush.ggv.instau.common.datastore.toAuthResultData
 import ayush.ggv.instau.domain.usecases.chat_service.FriendListUseCase
 import ayush.ggv.instau.model.FriendList
-import ayush.ggv.instau.util.Result
+import ayush.ggv.instau.util.ResponseResource
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+
 class FriendListScreenViewModel(
     private val dataStore: DataStore<UserSettings>,
     private val useCase: FriendListUseCase
 ) : ViewModel() {
 
-
     val token = mutableStateOf("")
-    val  currentUserId = mutableStateOf(-1L)
+    val currentUserId = mutableStateOf(-1L)
 
     private val _searchState = mutableStateOf("")
     val searchState: State<String> = _searchState
@@ -33,33 +37,33 @@ class FriendListScreenViewModel(
 
     fun getFriendList() {
         viewModelScope.launch {
+            // Fetch token and currentUserId
             dataStore.data.map { it.toAuthResultData() }.collect { userSettings ->
                 currentUserId.value = userSettings.id
                 token.value = userSettings.token
-            }
-        }
-        viewModelScope.launch {
-            _friendListState.value = FriendListState(isLoading = true)
-            useCase(currentUserId.value, token.value).collect {
-                when (it) {
-                    is Result.Success -> {
-                        _friendListState.value = FriendListState(data = it.data?.friendInfo.orEmpty())
-                        _friendListState.value = FriendListState(isLoading = false)
-
-                    }
-                    is Result.Error -> {
-                        _friendListState.value = FriendListState(error = it.message ?: "An unexpected error occurred")
-                        _friendListState.value = FriendListState(isLoading = false)
-
-                    }
-                    is Result.Loading -> TODO()
-                }
+                // Once token and currentUserId are fetched, call useCase
+                fetchFriendList()
             }
         }
     }
+
+    private fun fetchFriendList() {
+        viewModelScope.launch {
+            useCase(currentUserId.value, token.value).onEach {
+                when (it) {
+                    is ResponseResource.Error ->
+                        _friendListState.value =
+                            FriendListState(error = it.errorMessage.errorMessage.orEmpty())
+
+                    is ResponseResource.Success ->
+                        _friendListState.value =
+                            FriendListState(data = it.data.friendInfo.orEmpty())
+                }
+                Log.d("FriendListScreenViewModel", "getFriendList: $it")
+            }.launchIn(viewModelScope)
+        }
+    }
 }
-
-
 
 data class FriendListState(
     val isLoading: Boolean = false,

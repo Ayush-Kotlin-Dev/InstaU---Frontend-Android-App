@@ -17,35 +17,38 @@ data class FriendList(
         @Serializable
         data class LastMessage(
             val textMessage: String?,
-            val timestamp: Long?
+            val timestamp: String?
         )
     }
 }
 
 @Serializable
 data class FriendListResponseDto(
-    val data: List<FriendListData?>? = null,
+    val data: List<FriendInfoWrapper>? = null,
     val error: Error? = null
 ) {
     @Serializable
-    data class FriendListData(
-        val friendInfo: FriendInfo?,
+    data class FriendInfoWrapper(
+        val friendInfo: FriendInfo?
+    )
+
+    @Serializable
+    data class FriendInfo(
+        val username: String,
+        val userId: Long,
+        val email: String,
+        val avatar: String? = null,
+        val lastMessage: LastMessage? = null
     ) {
         @Serializable
-        data class FriendInfo(
-            val avatar: String?,
-            val email: String?,
-            val lastMessage: LastMessage?,
-            val username: String?
-        ) {
-            @Serializable
-            data class LastMessage(
-                val receiver: String?,
-                val sender: String?,
-                val textMessage: String?,
-                val timestamp: Long?
-            )
-        }
+        data class LastMessage(
+            val messageId: Long,
+            val sessionId: Long,
+            val textMessage: String,
+            val sender: Long,
+            val receiver: Long,
+            val timestamp: String
+        )
     }
 
     @Serializable

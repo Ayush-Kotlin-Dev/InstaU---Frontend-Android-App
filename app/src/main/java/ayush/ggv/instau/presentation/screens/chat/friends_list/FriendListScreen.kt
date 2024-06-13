@@ -92,8 +92,8 @@ fun FriendListScreen(
                 contentDescription = "No friends!"
             )
 
-//        if (friendListState.isLoading) {
-//            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-//        }
+        if (friendListState.isLoading) {
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+        }
     }
 }

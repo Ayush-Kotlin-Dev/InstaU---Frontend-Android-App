@@ -68,7 +68,7 @@ fun FriendListItemRow(friendData: FriendList.FriendInfo) {
                     )
                 )
                 Text(
-                    text = if (friendData.lastMessage?.timestamp != null) getTimeAgo(friendData.lastMessage.timestamp) else "",
+                    text = if (friendData.lastMessage?.timestamp != null) ""  else "",
                     style = MaterialTheme.typography.caption
                 )
             }
