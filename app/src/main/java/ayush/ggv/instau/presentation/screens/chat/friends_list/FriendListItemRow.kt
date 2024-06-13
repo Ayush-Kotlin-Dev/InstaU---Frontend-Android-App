@@ -19,25 +19,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import ayush.ggv.instau.model.FriendList
 import ayush.ggv.instau.util.getTimeAgo
 import coil.compose.rememberAsyncImagePainter
 
-
 @Composable
 fun FriendListItemRow(friendData: FriendList.FriendInfo) {
-
     Row(
         Modifier
             .fillMaxWidth()
             .clickable {
-//                navigateTo(
-//                    navController = navController,
-//                    "${Routes.ChatRoom.route}/$args"
-//                )
+                // Navigate to chat room
             }
             .height(60.dp)
     ) {
@@ -63,12 +58,12 @@ fun FriendListItemRow(friendData: FriendList.FriendInfo) {
             ) {
                 Text(
                     text = friendData.username,
-                    style = MaterialTheme.typography.h2.copy(
+                    style = MaterialTheme.typography.body1.copy(
                         fontWeight = FontWeight.Bold
                     )
                 )
                 Text(
-                    text = if (friendData.lastMessage?.timestamp != null) ""  else "",
+                    text = if (friendData.lastMessage?.timestamp != null) "no messages" else " No messages",
                     style = MaterialTheme.typography.caption
                 )
             }
@@ -79,11 +74,26 @@ fun FriendListItemRow(friendData: FriendList.FriendInfo) {
                     .padding(end = 40.dp),
                 text = friendData.lastMessage?.textMessage ?: "...",
                 overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.body1.copy(
+                style = MaterialTheme.typography.body2.copy(
                     fontSize = 11.sp
                 ),
                 maxLines = 1
             )
         }
     }
+}
+@Preview
+@Composable
+fun FriendListItemRowPreview() {
+    FriendListItemRow(
+        friendData = FriendList.FriendInfo(
+            email = "",
+            username = "John Doe",
+            avatar = "",
+            lastMessage = FriendList.FriendInfo.LastMessage(
+                textMessage = "Hello",
+                timestamp = "2021-09-01T12:00:00Z"
+            )
+        )
+    )
 }

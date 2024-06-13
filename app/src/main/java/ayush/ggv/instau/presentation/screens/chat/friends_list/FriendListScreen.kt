@@ -27,7 +27,6 @@ fun FriendListScreen(
             .padding(top = 16.dp, start = 16.dp, end = 16.dp)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-
             Box(
                 Modifier
                     .fillMaxWidth()
@@ -46,14 +45,14 @@ fun FriendListScreen(
                     modifier = Modifier
                         .align(Alignment.Center),
                     text = "Chats",
-                    style = MaterialTheme.typography.h1.copy(fontWeight = FontWeight.Bold)
+                    style = MaterialTheme.typography.h6.copy(fontWeight = FontWeight.Bold)
                 )
             }
 
             OutlinedTextField(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 32.dp),
+                    .padding(top = 25.dp),
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Outlined.Search,

@@ -11,7 +11,6 @@ import ayush.ggv.instau.common.datastore.toAuthResultData
 import ayush.ggv.instau.domain.usecases.chat_service.FriendListUseCase
 import ayush.ggv.instau.model.FriendList
 import ayush.ggv.instau.util.ResponseResource
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -49,6 +48,7 @@ class FriendListScreenViewModel(
 
     private fun fetchFriendList() {
         viewModelScope.launch {
+            _friendListState.value = FriendListState(isLoading = true)
             useCase(currentUserId.value, token.value).onEach {
                 when (it) {
                     is ResponseResource.Error ->
