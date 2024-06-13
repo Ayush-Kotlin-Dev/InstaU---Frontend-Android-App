@@ -38,10 +38,10 @@ import ayush.ggv.instau.NavigationBarItems
 import ayush.ggv.instau.R
 import ayush.ggv.instau.presentation.screens.account.profile.ProfileScreenViewModel
 import ayush.ggv.instau.presentation.screens.destinations.AddPostDestination
-import ayush.ggv.instau.presentation.screens.destinations.ContactsDestination
 import ayush.ggv.instau.presentation.screens.destinations.EditProfileDestination
 import ayush.ggv.instau.presentation.screens.destinations.FollowersDestination
 import ayush.ggv.instau.presentation.screens.destinations.FollowingDestination
+import ayush.ggv.instau.presentation.screens.destinations.FriendListDestination
 import ayush.ggv.instau.presentation.screens.destinations.HomeDestination
 import ayush.ggv.instau.presentation.screens.destinations.LoginDestination
 import ayush.ggv.instau.presentation.screens.destinations.PostDetailDestination
@@ -56,7 +56,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun AppBar(
     modifier: Modifier = Modifier,
-    navHostController: NavHostController
+    navHostController: NavHostController,
 ) {
     val currentDestination = navHostController.currentDestinationAsState().value
     val context = LocalContext.current
@@ -83,7 +83,7 @@ fun AppBar(
                         //chat icon
                         IconButton(
                             onClick = {
-                                navHostController.navigate(TestChatScreenDestination.route)
+                                navHostController.navigate(FriendListDestination().route)
                                 Toast.makeText(context, "Chat Screen ", Toast.LENGTH_SHORT).show()
                             }
                         ) {

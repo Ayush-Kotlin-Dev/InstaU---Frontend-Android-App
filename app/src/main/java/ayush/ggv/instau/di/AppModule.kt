@@ -12,6 +12,9 @@ import ayush.ggv.instau.data.auth.data.AuthRepositoryImpl
 import ayush.ggv.instau.data.auth.data.AuthService
 import ayush.ggv.instau.data.KtorApi
 import ayush.ggv.instau.data.auth.domain.repository.AuthRepository
+import ayush.ggv.instau.data.chat.data.ChatRepositoryImpl
+import ayush.ggv.instau.data.chat.data.ChatService
+import ayush.ggv.instau.data.chat.domain.ChatRepository
 import ayush.ggv.instau.data.followunfollow.data.FollowRepositoryImpl
 import ayush.ggv.instau.data.followunfollow.data.FollowService
 import ayush.ggv.instau.data.followunfollow.domain.FollowRepository
@@ -27,6 +30,7 @@ import ayush.ggv.instau.data.posts.domain.repository.PostRepository
 import ayush.ggv.instau.data.profile.data.ProfileRepositoryImpl
 import ayush.ggv.instau.data.profile.data.ProfileService
 import ayush.ggv.instau.data.profile.domain.repository.ProfileRepository
+import ayush.ggv.instau.domain.usecases.chat_service.FriendListUseCase
 import ayush.ggv.instau.domain.usecases.followsusecase.FollowsUseCase
 import ayush.ggv.instau.domain.usecases.followsusecase.GetFollowersUseCase
 import ayush.ggv.instau.domain.usecases.followsusecase.GetFollowingUseCase
@@ -52,6 +56,7 @@ import ayush.ggv.instau.presentation.screens.account.follows.FollowsViewModel
 import ayush.ggv.instau.presentation.screens.account.profile.ProfileScreenViewModel
 import ayush.ggv.instau.presentation.screens.add_post.AddPostScreen
 import ayush.ggv.instau.presentation.screens.add_post.AddPostViewModel
+import ayush.ggv.instau.presentation.screens.chat.friends_list.FriendListScreenViewModel
 import ayush.ggv.instau.presentation.screens.home.HomeScreenViewModel
 import ayush.ggv.instau.presentation.screens.post.PostDetailScreenViewModel
 import ayush.ggv.instau.presentation.screens.search.SearchViewModel
@@ -78,7 +83,9 @@ val appModule = module {
     single { GetFollowingUseCase() }
     single <FollowRepository>{ FollowRepositoryImpl(get()) }
     single <PostLikesRepository>{PostLikesRepositoryImpl(get())  }
-    single { SignUpUseCase() }
+    single <ChatRepository>{ChatRepositoryImpl(get()) }
+    factory { ChatService() }
+
     factory { AuthService() }
     factory { PostService() }
     factory { FollowService() }
@@ -101,6 +108,7 @@ val appModule = module {
     factory { DeleteCommentUseCase() }
     factory { SuggestionsUseCase() }
     factory { SearchUserUseCase() }
+    factory { FriendListUseCase() }
     viewModel { SignUpViewModel(get() , get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
     viewModel { LoginViewModel(get() , get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
     viewModel { MainActivityViewModel(get()) }
@@ -112,6 +120,7 @@ val appModule = module {
     viewModel { AddPostViewModel( get()) }
     viewModel{PostListItemViewModel(get() , get() , get())  }
     viewModel{SearchViewModel(get())}
+    viewModel{FriendListScreenViewModel(get() ,  get() )}
 
     single{
         DataStoreFactory.create(

@@ -96,7 +96,7 @@ fun SocialApp(
         backgroundColor = MaterialTheme.colors.background,
         topBar = {
             if (currentDestination?.route != SearchDestination.route) {
-                AppBar(navHostController = navHostController)
+                AppBar(navHostController = navHostController )
             }
         },
         bottomBar = {
