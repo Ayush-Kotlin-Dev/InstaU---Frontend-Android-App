@@ -6,8 +6,8 @@ data class RoomHistoryList(
 ) {
     data class Message(
         val sessionId: String? = null,
-        val receiver: String?,
-        val sender: String?,
+        val receiver: Long?,
+        val sender: Long?,
         val textMessage: String?,
         val timestamp: Long?,
         val formattedTime: String?,

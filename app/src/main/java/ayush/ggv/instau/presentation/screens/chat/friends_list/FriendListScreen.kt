@@ -20,6 +20,7 @@ import ayush.ggv.instau.R
 @Composable
 fun FriendListScreen(
     friendListState: FriendListState,
+    onNavigateToChatScreen: (Long,String,String) -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -76,7 +77,7 @@ fun FriendListScreen(
 
                     friendList.forEach {
                         item {
-                            FriendListItemRow(friendData = it)
+                            FriendListItemRow(friendData = it , onNavigateToChatScreen = onNavigateToChatScreen)
                         }
                     }
                 }

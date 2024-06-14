@@ -27,12 +27,19 @@ import ayush.ggv.instau.util.getTimeAgo
 import coil.compose.rememberAsyncImagePainter
 
 @Composable
-fun FriendListItemRow(friendData: FriendList.FriendInfo) {
+fun FriendListItemRow(
+    friendData: FriendList.FriendInfo,
+    onNavigateToChatScreen: (Long, String, String) -> Unit
+) {
     Row(
         Modifier
             .fillMaxWidth()
             .clickable {
-                // Navigate to chat room
+                onNavigateToChatScreen(
+                    friendData.friendId ?: -1L,
+                    friendData.username,
+                    friendData.avatar
+                )
             }
             .height(60.dp)
     ) {
@@ -82,18 +89,18 @@ fun FriendListItemRow(friendData: FriendList.FriendInfo) {
         }
     }
 }
-@Preview
-@Composable
-fun FriendListItemRowPreview() {
-    FriendListItemRow(
-        friendData = FriendList.FriendInfo(
-            email = "",
-            username = "John Doe",
-            avatar = "",
-            lastMessage = FriendList.FriendInfo.LastMessage(
-                textMessage = "Hello",
-                timestamp = "2021-09-01T12:00:00Z"
-            )
-        )
-    )
-}
+//@Preview
+//@Composable
+//fun FriendListItemRowPreview() {
+//    FriendListItemRow(
+//        friendData = FriendList.FriendInfo(
+//            email = "",
+//            username = "John Doe",
+//            avatar = "",
+//            lastMessage = FriendList.FriendInfo.LastMessage(
+//                textMessage = "Hello",
+//                timestamp = "2021-09-01T12:00:00Z"
+//            )
+//        )
+//    )
+//}

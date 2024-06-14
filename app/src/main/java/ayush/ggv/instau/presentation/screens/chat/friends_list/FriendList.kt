@@ -5,6 +5,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import ayush.ggv.instau.presentation.screens.destinations.ChatRoomDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
@@ -34,6 +35,16 @@ fun FriendList(
 
     FriendListScreen(
         friendListState = friendListState,
+        onNavigateToChatScreen = { friendId, friendName, friendAvatar ->
+            navigator.navigate(ChatRoomDestination(
+                friendId,
+                friendName,
+                friendAvatar,
+                viewModel.userAvatar.value,
+                viewModel.currentUserId.longValue,
+                viewModel.token.value
+            ).route)
+        }
 
     )
 

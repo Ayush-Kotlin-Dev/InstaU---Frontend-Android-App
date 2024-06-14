@@ -31,6 +31,7 @@ import ayush.ggv.instau.data.profile.data.ProfileRepositoryImpl
 import ayush.ggv.instau.data.profile.data.ProfileService
 import ayush.ggv.instau.data.profile.domain.repository.ProfileRepository
 import ayush.ggv.instau.domain.usecases.chat_service.FriendListUseCase
+import ayush.ggv.instau.domain.usecases.chat_service.GetRoomHistoryUseCase
 import ayush.ggv.instau.domain.usecases.followsusecase.FollowsUseCase
 import ayush.ggv.instau.domain.usecases.followsusecase.GetFollowersUseCase
 import ayush.ggv.instau.domain.usecases.followsusecase.GetFollowingUseCase
@@ -57,6 +58,7 @@ import ayush.ggv.instau.presentation.screens.account.profile.ProfileScreenViewMo
 import ayush.ggv.instau.presentation.screens.add_post.AddPostScreen
 import ayush.ggv.instau.presentation.screens.add_post.AddPostViewModel
 import ayush.ggv.instau.presentation.screens.chat.friends_list.FriendListScreenViewModel
+import ayush.ggv.instau.presentation.screens.chat.single_chat.ChatRoomViewModel
 import ayush.ggv.instau.presentation.screens.home.HomeScreenViewModel
 import ayush.ggv.instau.presentation.screens.post.PostDetailScreenViewModel
 import ayush.ggv.instau.presentation.screens.search.SearchViewModel
@@ -109,6 +111,7 @@ val appModule = module {
     factory { SuggestionsUseCase() }
     factory { SearchUserUseCase() }
     factory { FriendListUseCase() }
+    factory { GetRoomHistoryUseCase() }
     viewModel { SignUpViewModel(get() , get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
     viewModel { LoginViewModel(get() , get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
     viewModel { MainActivityViewModel(get()) }
@@ -121,6 +124,7 @@ val appModule = module {
     viewModel{PostListItemViewModel(get() , get() , get())  }
     viewModel{SearchViewModel(get())}
     viewModel{FriendListScreenViewModel(get() ,  get() )}
+    viewModel{ChatRoomViewModel(get() , get() )}
 
     single{
         DataStoreFactory.create(

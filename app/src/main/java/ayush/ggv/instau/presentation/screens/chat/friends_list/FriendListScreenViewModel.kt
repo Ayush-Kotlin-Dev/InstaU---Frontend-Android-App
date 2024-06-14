@@ -2,6 +2,7 @@ package ayush.ggv.instau.presentation.screens.chat.friends_list
 
 import android.util.Log
 import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
@@ -22,7 +23,8 @@ class FriendListScreenViewModel(
 ) : ViewModel() {
 
     val token = mutableStateOf("")
-    val currentUserId = mutableStateOf(-1L)
+    val currentUserId = mutableLongStateOf(-1L)
+    val userAvatar = mutableStateOf("")
 
     private val _searchState = mutableStateOf("")
     val searchState: State<String> = _searchState
@@ -40,6 +42,7 @@ class FriendListScreenViewModel(
             dataStore.data.map { it.toAuthResultData() }.collect { userSettings ->
                 currentUserId.value = userSettings.id
                 token.value = userSettings.token
+                userAvatar.value = userSettings.avatar.orEmpty()
                 // Once token and currentUserId are fetched, call useCase
                 fetchFriendList()
             }

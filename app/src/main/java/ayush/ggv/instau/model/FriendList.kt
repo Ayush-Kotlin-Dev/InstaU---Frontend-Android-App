@@ -9,7 +9,7 @@ data class FriendList(
 ) {
     @Serializable
     data class FriendInfo(
-        val email: String,
+        val friendId : Long,
         val username: String,
         val avatar: String,
         val lastMessage: LastMessage? = null
