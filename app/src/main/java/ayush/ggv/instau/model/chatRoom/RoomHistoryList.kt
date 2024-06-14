@@ -9,7 +9,7 @@ data class RoomHistoryList(
         val receiver: Long?,
         val sender: Long?,
         val textMessage: String?,
-        val timestamp: Long?,
+        val timestamp: String?,
         val formattedTime: String?,
         val formattedDate: String?,
     )

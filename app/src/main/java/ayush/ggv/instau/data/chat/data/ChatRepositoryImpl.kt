@@ -4,6 +4,7 @@ import ChatService
 import ayush.ggv.instau.data.chat.domain.ChatRepository
 import ayush.ggv.instau.model.FriendListResponseDto
 import ayush.ggv.instau.model.chatRoom.ChatRoomResponseDto
+import ayush.ggv.instau.model.chatRoom.MessageResponseDto
 import ayush.ggv.instau.util.ResponseResource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -33,5 +34,28 @@ class ChatRepositoryImpl(
             }
 
         emit(responseResource)
+    }
+
+    override suspend fun connectToSocket(
+        sender: Long,
+        receiver: Long,
+        token: String
+    ): ResponseResource<String> {
+        return when (val response =
+            chatService.connectToSocket(sender, receiver, token)) {
+            is ResponseResource.Error -> ResponseResource.error(response.errorMessage)
+            is ResponseResource.Success -> ResponseResource.success(response.data)
+        }
+    }
+
+    override suspend fun sendMessage(message: String) {
+        chatService.sendMessage(message)
+    }
+
+    override fun receiveMessage(): Flow<MessageResponseDto> = chatService.receiveMessage()
+
+
+    override suspend fun disconnectSocket() {
+        chatService.disconnectSocket()
     }
 }

@@ -7,11 +7,16 @@ import ayush.ggv.instau.model.FriendList
 import androidx.compose.runtime.State
 import androidx.lifecycle.viewModelScope
 import ayush.ggv.instau.data.chat.domain.ChatRepository
+import ayush.ggv.instau.data.toMessage
 import ayush.ggv.instau.domain.usecases.chat_service.GetRoomHistoryUseCase
+import ayush.ggv.instau.model.chatRoom.MessageResponseDto
 import ayush.ggv.instau.model.friendList.RoomHistoryList
 import ayush.ggv.instau.util.ResponseResource
 import kotlinx.coroutines.launch
 import ayush.ggv.instau.util.Result
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+
 class ChatRoomViewModel(
     private val getRoomHistoryUseCase: GetRoomHistoryUseCase,
     private val repository: ChatRepository,
@@ -25,6 +30,21 @@ class ChatRoomViewModel(
 
     fun onMessageChange(message: String) {
         _messageText.value = message
+    }
+    private fun pushMessageToList(message: MessageResponseDto) {
+        val messageList = chatState.value.data.toMutableList().apply {
+            add(0, message.toMessage())
+        }
+        _chatState.value = chatState.value.copy(data = messageList)
+    }
+    fun sendMessage() {
+        viewModelScope.launch {
+            if (messageText.value.isNotBlank()) {
+                repository.sendMessage(messageText.value)
+                _chatState.value=chatState.value.copy()
+                _messageText.value = ""
+            }
+        }
     }
 
     fun getChatHistory(sender : Long ,  receiver: Long , token : String) {
@@ -40,6 +60,27 @@ class ChatRoomViewModel(
                 }
             }
         }
+    }
+    fun connectToSocket(sender: Long, receiver: Long , token : String) {
+        viewModelScope.launch {
+            when (val result = repository.connectToSocket(sender, receiver , token)) {
+                is ResponseResource.Error -> _chatState.value =
+                    ChatRoomHistoryState(error = result.errorMessage)
+                is ResponseResource.Success -> {
+                    repository.receiveMessage().onEach { message ->
+                        pushMessageToList(message)
+                    }.launchIn(viewModelScope)
+                }
+            }
+        }
+    }
+
+    fun disconnectSocket() {
+        viewModelScope.launch { repository.disconnectSocket() }
+    }
+    override fun onCleared() {
+        super.onCleared()
+        disconnectSocket()
     }
 
 }

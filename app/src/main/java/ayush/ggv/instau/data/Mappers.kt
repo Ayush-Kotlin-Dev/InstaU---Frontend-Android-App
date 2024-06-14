@@ -4,6 +4,10 @@ import ayush.ggv.instau.model.AuthResponseData
 import ayush.ggv.instau.data.auth.domain.model.AuthResultData
 import ayush.ggv.instau.model.FriendList
 import ayush.ggv.instau.model.FriendListResponseDto
+import ayush.ggv.instau.model.chatRoom.ChatRoomResponseDto
+import ayush.ggv.instau.model.chatRoom.MessageResponseDto
+import ayush.ggv.instau.model.friendList.RoomHistoryList
+import io.ktor.http.parsing.ParseException
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -24,12 +28,12 @@ fun FriendListResponseDto.toFriendList(): FriendList {
     data?.forEach {
         friendList.add(
             FriendList.FriendInfo(
-                username = it?.friendInfo?.username.orEmpty(),
-                email = it?.friendInfo?.email.orEmpty(),
-                avatar = it?.friendInfo?.avatar.orEmpty(),
+                username = it.friendInfo?.username.orEmpty(),
+                friendId = it.friendInfo?.userId ?: 0L,
+                avatar = it.friendInfo?.avatar.orEmpty(),
                 lastMessage = FriendList.FriendInfo.LastMessage(
-                    textMessage = it?.friendInfo?.lastMessage?.textMessage,
-                    timestamp = it?.friendInfo?.lastMessage?.timestamp
+                    textMessage = it.friendInfo?.lastMessage?.textMessage,
+                    timestamp = it.friendInfo?.lastMessage?.timestamp
                 )
             )
         )
@@ -40,9 +44,53 @@ fun FriendListResponseDto.toFriendList(): FriendList {
     )
 }
 
-private fun dateTimeFormat(timestamp: Long?): Pair<String, String> {
-    val date = Date(timestamp ?: 0L)
-    val formattedDate = SimpleDateFormat("dd MMMM yyyy", Locale.ENGLISH).format(date)
-    val formattedTime = SimpleDateFormat("hh:mm aa", Locale.ENGLISH).format(date)
-    return Pair(formattedDate, formattedTime)
+fun ChatRoomResponseDto.toRoomHistoryList(): RoomHistoryList {
+    val roomHistoryList = arrayListOf<RoomHistoryList.Message>()
+    data?.forEach {
+
+        val (formattedDate, formattedTime) = dateTimeFormat(it?.timestamp)
+
+        roomHistoryList.add(
+            RoomHistoryList.Message(
+                receiver = it?.receiver,
+                sender = it?.sender,
+                textMessage = it?.textMessage.orEmpty(),
+                timestamp = it?.timestamp,
+                formattedTime = formattedTime,
+                formattedDate = formattedDate,
+            )
+        )
+    }
+    return RoomHistoryList(
+        roomData = roomHistoryList,
+        errorMessage = error?.message
+    )
+}
+
+fun MessageResponseDto.toMessage(): RoomHistoryList.Message {
+
+    val (formattedDate, formattedTime) = dateTimeFormat(timestamp)
+    return RoomHistoryList.Message(
+        sessionId = sessionId,
+        textMessage = textMessage,
+        sender = sender,
+        receiver = receiver,
+        timestamp = timestamp,
+        formattedDate = formattedDate,
+        formattedTime = formattedTime
+    )
+}
+
+
+private fun dateTimeFormat(timestamp: String?): Pair<String, String> {
+    return try {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.ENGLISH)
+        val date: Date = dateFormat.parse(timestamp ?: "") ?: Date(0L)
+        val formattedDate = SimpleDateFormat("dd MMMM yyyy", Locale.ENGLISH).format(date)
+        val formattedTime = SimpleDateFormat("hh:mm aa", Locale.ENGLISH).format(date)
+        Pair(formattedDate, formattedTime)
+    } catch (e: ParseException) {
+        // Handle the case where the timestamp is not in the expected format
+        Pair("Unknown Date", "Unknown Time")
+    }
 }

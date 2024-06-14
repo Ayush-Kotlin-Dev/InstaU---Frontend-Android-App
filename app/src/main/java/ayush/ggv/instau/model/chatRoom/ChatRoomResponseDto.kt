@@ -10,10 +10,10 @@ data class ChatRoomResponseDto(
 ) {
     @Serializable
     data class ChatRoomData(
-        val receiver: Long?,
-        val sender: Long?,
         val textMessage: String?,
-        val timestamp: Long?
+        val sender: Long?,
+        val receiver: Long?,
+        val timestamp: String?
     )
 
     @Serializable

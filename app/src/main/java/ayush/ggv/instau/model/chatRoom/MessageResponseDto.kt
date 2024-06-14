@@ -9,5 +9,5 @@ data class MessageResponseDto(
     val receiver: Long?,
     val sender: Long?,
     val textMessage: String?,
-    val timestamp: Long?
+    val timestamp: String?
 )

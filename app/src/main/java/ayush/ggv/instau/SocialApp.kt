@@ -36,6 +36,8 @@ import ayush.ggv.instau.presentation.components.AppBar
 import ayush.ggv.instau.presentation.components.getNavigationBarIndex
 import ayush.ggv.instau.presentation.screens.NavGraphs
 import ayush.ggv.instau.presentation.screens.destinations.AddPostDestination
+import ayush.ggv.instau.presentation.screens.destinations.ChatRoomDestination
+import ayush.ggv.instau.presentation.screens.destinations.FriendListDestination
 import ayush.ggv.instau.presentation.screens.destinations.HomeDestination
 import ayush.ggv.instau.presentation.screens.destinations.LoginDestination
 import ayush.ggv.instau.presentation.screens.destinations.ProfileDestination
@@ -95,7 +97,7 @@ fun SocialApp(
         scaffoldState = scaffoldState,
         backgroundColor = MaterialTheme.colors.background,
         topBar = {
-            if (currentDestination?.route != SearchDestination.route) {
+            if (currentDestination?.route != SearchDestination.route && currentDestination?.route != FriendListDestination.route && currentDestination?.route != ChatRoomDestination.route) {
                 AppBar(navHostController = navHostController )
             }
         },

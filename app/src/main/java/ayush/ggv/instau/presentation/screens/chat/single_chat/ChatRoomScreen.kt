@@ -31,7 +31,9 @@ fun ChatRoomScreen(
     userId: Long,
     chatState: ChatRoomHistoryState,
     messageText : String,
-    onMessageChange : (String) -> Unit
+    onMessageChange : (String) -> Unit,
+    onSendClick : () -> Unit,
+    onBackClick :() -> Unit
 ) {
 
     Column(
@@ -44,7 +46,7 @@ fun ChatRoomScreen(
 
             OutlinedButton(
                 modifier = Modifier.align(Alignment.CenterStart),
-                onClick = { /*TODO*/ },
+                onClick = { onBackClick()},
                 shape = RoundedCornerShape(8.dp),
             ) {
                 Icon(
@@ -139,7 +141,7 @@ fun ChatRoomScreen(
                 trailingIcon = {
                     Icon(
                         modifier = Modifier
-//                            .clickable { viewModel.sendMessage() }
+                            .clickable { onSendClick()}
                             .rotate(-45f),
                         imageVector = Icons.Filled.Send,
                         contentDescription = "Send message",
