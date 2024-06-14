@@ -84,13 +84,23 @@ fun MessageResponseDto.toMessage(): RoomHistoryList.Message {
 
 private fun dateTimeFormat(timestamp: String?): Pair<String, String> {
     return try {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.ENGLISH)
-        val date: Date = dateFormat.parse(timestamp ?: "") ?: Date(0L)
+        val date: Date = if (timestamp?.matches(Regex("\\d+")) == true) {
+            // Handle millisecond timestamp
+            Date(timestamp.toLong())
+        } else {
+            // Handle ISO 8601 date string
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.ENGLISH)
+            dateFormat.parse(timestamp ?: "") ?: Date(0L)
+        }
         val formattedDate = SimpleDateFormat("dd MMMM yyyy", Locale.ENGLISH).format(date)
         val formattedTime = SimpleDateFormat("hh:mm aa", Locale.ENGLISH).format(date)
         Pair(formattedDate, formattedTime)
     } catch (e: ParseException) {
         // Handle the case where the timestamp is not in the expected format
         Pair("Unknown Date", "Unknown Time")
+    } catch (e: NumberFormatException) {
+        // Handle the case where the timestamp is not a valid number
+        Pair("Unknown Date", "Unknown Time")
     }
 }
+

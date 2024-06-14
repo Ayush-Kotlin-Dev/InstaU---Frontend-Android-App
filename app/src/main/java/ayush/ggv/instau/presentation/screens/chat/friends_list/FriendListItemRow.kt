@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ayush.ggv.instau.model.FriendList
 import ayush.ggv.instau.util.getTimeAgo
+import ayush.ggv.instau.util.parseTimestampToMillis
 import coil.compose.rememberAsyncImagePainter
 
 @Composable
@@ -70,7 +71,9 @@ fun FriendListItemRow(
                     )
                 )
                 Text(
-                    text = if (friendData.lastMessage?.timestamp != null) "no messages" else " No messages",
+                    text = if (friendData.lastMessage?.timestamp != null) {
+                        getTimeAgo(parseTimestampToMillis(friendData.lastMessage.timestamp))
+                    } else "",
                     style = MaterialTheme.typography.caption
                 )
             }

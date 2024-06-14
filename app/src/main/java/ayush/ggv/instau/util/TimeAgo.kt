@@ -1,5 +1,6 @@
 package ayush.ggv.instau.util
 
+import java.text.SimpleDateFormat
 import java.util.*
 
 private const val SECOND_MILLIS = 1000
@@ -33,5 +34,16 @@ fun getTimeAgo(timestamp: Long): String {
         diff < 24 * HOUR_MILLIS -> "${diff / HOUR_MILLIS} hours ago"
         diff < 48 * HOUR_MILLIS -> "Yesterday"
         else -> "${diff / DAY_MILLIS} days ago"
+    }
+}
+
+
+fun parseTimestampToMillis(timestamp: String?): Long {
+    return try {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+        val date: Date = dateFormat.parse(timestamp ?: "") ?: Date(0L)
+        date.time
+    } catch (e: Exception) {
+        0L
     }
 }
