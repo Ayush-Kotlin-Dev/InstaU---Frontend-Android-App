@@ -27,7 +27,9 @@ interface PostRepository {
 
      suspend fun connectToSocket(sender: Long, token: String): ResponseResource<String>
 
-    fun receiveMessage(): Flow<String>
+     fun receiveMessage(): Flow<String>
+    suspend fun disconnectSocket()
+
 
 
 

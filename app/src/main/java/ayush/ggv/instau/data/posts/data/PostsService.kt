@@ -5,6 +5,7 @@ import ayush.ggv.instau.data.KtorApi
 import ayush.ggv.instau.model.PostResponse
 import ayush.ggv.instau.model.PostTextParams
 import ayush.ggv.instau.model.PostsResponse
+import ayush.ggv.instau.model.chatRoom.MessageResponseDto
 import ayush.ggv.instau.util.ResponseResource
 import io.ktor.client.call.body
 import io.ktor.client.plugins.websocket.webSocketSession
@@ -16,9 +17,9 @@ import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
-import io.ktor.client.statement.readText
+import io.ktor.websocket.DefaultWebSocketSession
 import io.ktor.websocket.Frame
-import io.ktor.websocket.WebSocketSession
+import io.ktor.websocket.close
 import io.ktor.websocket.readText
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
@@ -30,7 +31,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.serialization.json.Json
 
 class PostService : KtorApi() {
-    private var webSocket: WebSocketSession? = null
+     var postsWebSocket: DefaultWebSocketSession? = null
 
     suspend fun getFeedPosts(
         currentUserId: Long,
@@ -47,7 +48,7 @@ class PostService : KtorApi() {
                 append("Authorization", "Bearer $token")
             }
         }
-        Log.d("PostsRemoteMediator", "getFeedPosts: page $page ${response.bodyAsText()}" )
+        Log.d("PostsRemoteMediator", "getFeedPosts: page $page ${response.bodyAsText()}")
         return response.body<PostsResponse>()
     }
 
@@ -87,8 +88,8 @@ class PostService : KtorApi() {
         currentUserId: Long,
         pageNumber: Int,
         pageSize: Int,
-        token : String
-    ):PostsResponse{
+        token: String
+    ): PostsResponse {
         val response = client.get {
             endPoint(path = "/posts/$userId")
             parameter("currentUserId", currentUserId)
@@ -100,11 +101,12 @@ class PostService : KtorApi() {
         }
         return response.body<PostsResponse>()
     }
+
     suspend fun deletePost(
         postId: Long,
         token: String
     ): PostResponse {
-        val response = client.delete{
+        val response = client.delete {
             endPoint(path = "/post/$postId")
             headers {
                 append("Authorization", "Bearer $token")
@@ -118,7 +120,7 @@ class PostService : KtorApi() {
         token: String
     ): ResponseResource<String> = try {
         Log.d("ChatService", "connectToSocketSuccess: $currentUserId")
-        webSocket = client.webSocketSession {
+        postsWebSocket = client.webSocketSession {
             webSocketEndPoint(path = "/ws/posts")
 //            parameter("currentUserId", currentUserId) TODO will send this also for some personalization in future
             header(
@@ -126,7 +128,8 @@ class PostService : KtorApi() {
                 "Bearer $token"
             )
         }
-        Log.d("ChatService", "connectToSocketSucc: ${webSocket?.isActive}")
+        Log.d("ChatService", "connectToSocketSucc: ${postsWebSocket?.isActive}")
+        receiveMessage()
         ResponseResource.success("Connected to socket")
     } catch (e: Exception) {
         e.printStackTrace()
@@ -134,17 +137,24 @@ class PostService : KtorApi() {
         ResponseResource.error(e.localizedMessage ?: "Unknown error")
     }
 
-     fun receiveMessage(): Flow<String> = try {
-        webSocket?.let {
-            flow {
-                while (true) {
-                    val message = it.incoming.receive() as Frame.Text
-                    emit(message.readText())
-                }
+    fun receiveMessage(): Flow<String> = try {
+        Log.d("ChatService", "receiveMessage: Called. WebSocket status: ${postsWebSocket?.isActive}")
+        postsWebSocket?.incoming
+            ?.receiveAsFlow()
+            ?.filter { it is Frame.Text }
+            ?.map {
+                val message = (it as Frame.Text).readText()
+                message
             }
-        } ?: emptyFlow()
+            ?: emptyFlow()
     } catch (e: Exception) {
+        Log.e("ChatService", "Exception in receiveMessage: ${e.localizedMessage}", e)
         emptyFlow()
+    }
+
+    suspend fun disconnectSocket() {
+        postsWebSocket?.close()
+        println("WebSocket: CLOSED")
     }
 
 

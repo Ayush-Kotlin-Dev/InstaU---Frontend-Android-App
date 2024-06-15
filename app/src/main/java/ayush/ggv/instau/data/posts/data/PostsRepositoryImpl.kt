@@ -39,7 +39,10 @@ class PostsRepositoryImpl(
         }
     }
 
-    override fun receiveMessage(): Flow<String> = postService.receiveMessage()
+    override  fun receiveMessage(): Flow<String> = postService.receiveMessage()
+    override suspend fun disconnectSocket() {
+        postService.disconnectSocket()
+    }
 
     override suspend fun createPost(
         postTextParams: PostTextParams,
