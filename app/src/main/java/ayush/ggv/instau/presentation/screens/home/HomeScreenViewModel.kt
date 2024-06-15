@@ -17,6 +17,7 @@ import ayush.ggv.instau.domain.usecases.followsusecase.SuggestionsUseCase
 import ayush.ggv.instau.domain.usecases.postsusecase.GetPostsStreamUseCase
 import ayush.ggv.instau.model.Post
 import ayush.ggv.instau.presentation.screens.home.onboarding.OnBoardingUiState
+import ayush.ggv.instau.util.ResponseResource
 import ayush.ggv.instau.util.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -29,9 +30,11 @@ class HomeScreenViewModel(
     private val dataStore: DataStore<UserSettings>,
     private val suggestionsUseCase: SuggestionsUseCase,
     private val postsStreamUseCase: GetPostsStreamUseCase,
+    private val repository: PostRepository
 ) : ViewModel(
 
 ) {
+
     val token = mutableStateOf("")
     val  currentUserId = mutableStateOf(-1L)
 
@@ -48,6 +51,26 @@ class HomeScreenViewModel(
     fun getPosts(userId:Long , token : String ): Flow<PagingData<Post>> {
         val newResult = postsStreamUseCase(userId , token).flowOn(Dispatchers.IO).cachedIn(viewModelScope)
         return newResult
+    }
+
+    fun connectToSocket(sender: Long, receiver: String) {
+        viewModelScope.launch {
+            when (val result = repository.connectToSocket(sender, receiver)) {
+                is ResponseResource.Error -> onBoardingUiState = onBoardingUiState.copy(
+                    error = result.errorMessage
+                )
+                is ResponseResource.Success -> {
+                    repository.receiveMessage().map {
+                        Log.d("ChatRoomViewModel", "connectToSocket: $it")
+                        if(it == "post created" || it == "post deleted"){
+                            //how can i refresh the posts here ?
+                        }
+
+
+                    }.flowOn(Dispatchers.IO)
+                }
+            }
+        }
     }
 
     fun fetchData() {

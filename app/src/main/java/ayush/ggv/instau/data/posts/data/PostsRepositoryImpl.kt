@@ -11,6 +11,7 @@ import ayush.ggv.instau.model.Post
 import ayush.ggv.instau.model.PostResponse
 import ayush.ggv.instau.model.PostTextParams
 import ayush.ggv.instau.model.PostsResponse
+import ayush.ggv.instau.util.ResponseResource
 import ayush.ggv.instau.util.Result
 import kotlinx.coroutines.flow.Flow
 
@@ -29,6 +30,16 @@ class PostsRepositoryImpl(
             remoteMediator = PostsRemoteMediator(postService, database , userId , token)
         ).flow
     }
+
+    override suspend fun connectToSocket(sender: Long, token: String): ResponseResource<String> {
+        return when (val response =
+            postService.connectToSocket(sender,token)) {
+            is ResponseResource.Error -> ResponseResource.error(response.errorMessage)
+            is ResponseResource.Success -> ResponseResource.success(response.data)
+        }
+    }
+
+    override fun receiveMessage(): Flow<String> = postService.receiveMessage()
 
     override suspend fun createPost(
         postTextParams: PostTextParams,

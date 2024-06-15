@@ -7,6 +7,7 @@ import ayush.ggv.instau.model.Post
 import ayush.ggv.instau.model.PostResponse
 import ayush.ggv.instau.model.PostTextParams
 import ayush.ggv.instau.model.PostsResponse
+import ayush.ggv.instau.util.ResponseResource
 import ayush.ggv.instau.util.Result
 import kotlinx.coroutines.flow.Flow
 
@@ -23,6 +24,11 @@ interface PostRepository {
     suspend fun  deletePost(postId: Long , token : String) : Result<PostResponse>
 
     fun getPostsStream(pagerConfig: PagingConfig = PagingConfig(pageSize = 4 , prefetchDistance = 5) , userId: Long, token: String): Flow<PagingData<Post>>
+
+     suspend fun connectToSocket(sender: Long, token: String): ResponseResource<String>
+
+    fun receiveMessage(): Flow<String>
+
 
 
 
