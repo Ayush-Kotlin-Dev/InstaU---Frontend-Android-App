@@ -36,9 +36,18 @@ Build and run the app on an Android emulator or physical device.
 ## Android UI
 <table>
   <tr>
-    <td><img src="https://mega.nz/file/cf4A2RiZ#umptOC3rkaYIDN8O1m84fb7QT9WmdtIUbOjtJTDb8Yg"/></td>
+    <td><img src="https://github.com/Ayush-Kotlin-Dev/InstaU---Frontend-Android-App/blob/5fc599cd5d21cabb102ff0453f04df5a404c37c0/app/src/main/res/assests/SS1_Login.png"/></td>
     <td><img src= "https://github.com/Ayushrai2005/InstaU/blob/5fc599cd5d21cabb102ff0453f04df5a404c37c0/app/src/main/res/assests/SS2_Signup.png"/></td>
     <td><img src="https://github.com/Ayushrai2005/InstaU/blob/5fc599cd5d21cabb102ff0453f04df5a404c37c0/app/src/main/res/assests/SS3_HomeScreen.png"/></td>
+    <td><img src="https://github.com/Ayush-Kotlin-Dev/InstaU---Frontend-Android-App/blob/master/.idea/SS5_PostDetail.jpg"/></td>
+  /tr>
+  </table>
+    <table>
+  <tr>
+    <td><img src= "https://github.com/Ayush-Kotlin-Dev/InstaU---Frontend-Android-App/blob/master/.idea/SS4_SearchScreen.jpg"/></td>
+    <td><img src="https://github.com/Ayush-Kotlin-Dev/InstaU---Frontend-Android-App/blob/master/.idea/S8%24_Profile.jpg"/></td>
+    <td><img src= "https://github.com/Ayush-Kotlin-Dev/InstaU---Frontend-Android-App/blob/master/.idea/S6_ChatList.jpg"/></td>
+    <td><img src="https://github.com/Ayush-Kotlin-Dev/InstaU---Frontend-Android-App/blob/master/.idea/S7_ChatScreen.jpg"/></td>
   </tr>
 </table>
 
