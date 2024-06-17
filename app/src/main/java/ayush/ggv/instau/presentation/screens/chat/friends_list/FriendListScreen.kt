@@ -20,7 +20,8 @@ import ayush.ggv.instau.R
 @Composable
 fun FriendListScreen(
     friendListState: FriendListState,
-    onNavigateToChatScreen: (Long,String,String) -> Unit
+    onNavigateToChatScreen: (Long,String,String) -> Unit,
+    onGroupChatClick : () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -36,10 +37,11 @@ fun FriendListScreen(
                 OutlinedButton(
                     modifier = Modifier
                         .align(Alignment.CenterStart)
-                        .padding(8.dp), onClick = {
-                        TODO("Perform Logout")
+                        .padding(8.dp),
+                    onClick = {
+                        onGroupChatClick()
                     }) {
-                    Text(text = "Logout")
+                    Text(text = "Group Chat")
                 }
 
                 Text(

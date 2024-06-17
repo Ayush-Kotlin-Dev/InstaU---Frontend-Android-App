@@ -48,7 +48,7 @@ class HomeScreenViewModel(
 
     var onBoardingUiState by mutableStateOf(OnBoardingUiState())
         private set
-    var newPostsAvailable by mutableStateOf(true)
+    var newPostsAvailable by mutableStateOf(false)
 
     init {
         fetchData()
