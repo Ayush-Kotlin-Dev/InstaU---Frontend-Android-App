@@ -69,6 +69,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.firebase.storage)
+    implementation(libs.firebase.messaging)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -77,11 +78,11 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    implementation ("androidx.compose.material:material:1.6.6")
+    implementation ("androidx.compose.material:material:1.6.8")
     implementation("io.github.raamcosta.compose-destinations:core:1.8.38-beta")
     ksp("io.github.raamcosta.compose-destinations:ksp:1.8.38-beta")
     implementation("androidx.core:core-splashscreen:1.0.1")
-    implementation("androidx.datastore:datastore-preferences:1.1.0")
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
     implementation("io.insert-koin:koin-androidx-compose:3.4.1")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.28.0")
@@ -115,6 +116,7 @@ dependencies {
     implementation("com.exyte:animated-navigation-bar:1.0.0")
     implementation ("androidx.compose.runtime:runtime-livedata:1.6.8")
     implementation("io.ktor:ktor-client-websockets:$ktorVersion")
+    implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
 
 
 }

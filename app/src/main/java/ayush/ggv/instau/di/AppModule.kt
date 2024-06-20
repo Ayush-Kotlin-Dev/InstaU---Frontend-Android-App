@@ -18,6 +18,7 @@ import ayush.ggv.instau.data.chat.domain.ChatRepository
 import ayush.ggv.instau.data.followunfollow.data.FollowRepositoryImpl
 import ayush.ggv.instau.data.followunfollow.data.FollowService
 import ayush.ggv.instau.data.followunfollow.domain.FollowRepository
+import ayush.ggv.instau.data.notification.NotificationService
 import ayush.ggv.instau.data.postcomments.data.PostCommentService
 import ayush.ggv.instau.data.postcomments.data.PostCommentsRepositoryImpl
 import ayush.ggv.instau.data.postcomments.domain.PostCommentsRepository
@@ -57,6 +58,7 @@ import ayush.ggv.instau.presentation.screens.account.follows.FollowsViewModel
 import ayush.ggv.instau.presentation.screens.account.profile.ProfileScreenViewModel
 import ayush.ggv.instau.presentation.screens.add_post.AddPostScreen
 import ayush.ggv.instau.presentation.screens.add_post.AddPostViewModel
+import ayush.ggv.instau.presentation.screens.chat.ChatViewModel
 import ayush.ggv.instau.presentation.screens.chat.friends_list.FriendListScreenViewModel
 import ayush.ggv.instau.presentation.screens.chat.single_chat.ChatRoomViewModel
 import ayush.ggv.instau.presentation.screens.home.HomeScreenViewModel
@@ -93,6 +95,7 @@ val appModule = module {
     factory { FollowService() }
     factory { PostLikeService() }
     factory { PostCommentService() }
+    factory {NotificationService() }
     factory { SignUpUseCase() }
     factory { SignInuseCase() }
     factory {  AddPostUseCase()}
@@ -125,6 +128,7 @@ val appModule = module {
     viewModel{SearchViewModel(get())}
     viewModel{FriendListScreenViewModel(get() ,  get() )}
     viewModel{ChatRoomViewModel(get() , get() )}
+    viewModel{ ChatViewModel(get() ) }
 
     single{
         DataStoreFactory.create(

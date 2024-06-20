@@ -8,6 +8,8 @@
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
 .DS_Store
+app/google-services.json
+app/src/main/java/ayush/ggv/instau/common/testIgnore.kt
 /build
 /captures
 .externalNativeBuild
