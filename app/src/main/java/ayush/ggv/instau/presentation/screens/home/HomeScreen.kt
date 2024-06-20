@@ -36,6 +36,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role.Companion.Button
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -188,6 +189,7 @@ fun handlePagingResult(
 
 }
 
+
 @Composable
 fun NewPostsOverlayButton(
     onClick: () -> Unit,
@@ -199,13 +201,12 @@ fun NewPostsOverlayButton(
     OutlinedButton(
         onClick = { onClick() },
         modifier = Modifier
-            .fillMaxWidth(fraction = 0.5f)
-//            .align(Alignment.CenterHorizontally)
+            .fillMaxWidth()
             .pointerInput(Unit) {
                 detectHorizontalDragGestures(
                     onDragEnd = {
                         coroutineScope.launch {
-                            if (abs(offsetX.value) > 100f) {
+                            if (abs(offsetX.value) > 150f) {
                                 // If the button is dragged horizontally enough, animate it out of view and then dismiss
                                 offsetX.animateTo(
                                     targetValue = if (offsetX.value > 0) 200f else -200f,
@@ -229,11 +230,9 @@ fun NewPostsOverlayButton(
                 }
             }
             .offset { IntOffset(offsetX.value.roundToInt(), 0) }
-            .padding(vertical = LargeSpacing),
+            .padding(horizontal = 80.dp),
         shape = RoundedCornerShape(50),
     ) {
         Text(text = stringResource(id = R.string.newPost))
-
     }
-
 }
