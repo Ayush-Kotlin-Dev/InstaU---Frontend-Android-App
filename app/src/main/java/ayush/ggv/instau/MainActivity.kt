@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import ayush.ggv.instau.presentation.screens.chat.Main_ChatScreen
 import ayush.ggv.instau.ui.theme.SocialAppTheme
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -33,7 +32,6 @@ class MainActivity : ComponentActivity() {
                     val userId = viewModel.userId.collectAsStateWithLifecycle(
                         initialValue = null
                     )
-                    Main_ChatScreen()
                     SocialApp(token = token.value, userId = userId.value)
                 }
             }

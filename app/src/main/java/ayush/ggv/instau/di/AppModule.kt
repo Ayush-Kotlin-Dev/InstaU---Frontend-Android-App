@@ -58,7 +58,6 @@ import ayush.ggv.instau.presentation.screens.account.follows.FollowsViewModel
 import ayush.ggv.instau.presentation.screens.account.profile.ProfileScreenViewModel
 import ayush.ggv.instau.presentation.screens.add_post.AddPostScreen
 import ayush.ggv.instau.presentation.screens.add_post.AddPostViewModel
-import ayush.ggv.instau.presentation.screens.chat.ChatViewModel
 import ayush.ggv.instau.presentation.screens.chat.friends_list.FriendListScreenViewModel
 import ayush.ggv.instau.presentation.screens.chat.single_chat.ChatRoomViewModel
 import ayush.ggv.instau.presentation.screens.home.HomeScreenViewModel
@@ -116,7 +115,7 @@ val appModule = module {
     factory { FriendListUseCase() }
     factory { GetRoomHistoryUseCase() }
     viewModel { SignUpViewModel(get() , get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
-    viewModel { LoginViewModel(get() , get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
+    viewModel { LoginViewModel(get() , get() , get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
     viewModel { MainActivityViewModel(get()) }
     viewModel{ HomeScreenViewModel(get(),get () , get()  ,get()  ) }
     viewModel { PostDetailScreenViewModel(get(), get(), get(), get()  ) }
@@ -128,7 +127,6 @@ val appModule = module {
     viewModel{SearchViewModel(get())}
     viewModel{FriendListScreenViewModel(get() ,  get() )}
     viewModel{ChatRoomViewModel(get() , get() )}
-    viewModel{ ChatViewModel(get() ) }
 
     single{
         DataStoreFactory.create(
