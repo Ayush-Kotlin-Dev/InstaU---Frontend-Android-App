@@ -8,7 +8,16 @@ Welcome to our Social Media App project! This app aims to provide users with a s
 </p>
 <p>
 Home Screen UI: Intuitive and visually appealing user interface for navigating through the app's core functionalities.
+</p>
 <p>
+Notifications: Real-time chat notifications to keep users engaged.
+</p>
+<p>
+Pagination: Smooth content loading with efficient data handling.
+  </p>
+<p>
+Local Caching: Mediators for enhanced performance and offline access.
+</p>
 
 
 
