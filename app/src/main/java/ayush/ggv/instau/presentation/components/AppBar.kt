@@ -57,14 +57,13 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun AppBar(
     modifier: Modifier = Modifier,
-    scaffoldState: ScaffoldState,
+    onHomeIconClick : ()-> Unit ,
     navHostController: NavHostController
 ) {
     val currentDestination = navHostController.currentDestinationAsState().value
     val context = LocalContext.current
     val viewModel: ProfileScreenViewModel = koinViewModel()
     var showDialog by remember { mutableStateOf(false) }
-    val scope = rememberCoroutineScope()
 
     Surface(
         elevation = SmallElevation,
@@ -114,12 +113,7 @@ fun AppBar(
             navigationIcon = {
                 AnimatedVisibility(visible = shouldShowNavigationIcon(currentDestination?.route)) {
                     if(currentDestination?.route == HomeDestination.route){
-                        IconButton(onClick = {
-                            scope.launch {
-                                scaffoldState.drawerState.open()
-                            }
-                            Toast.makeText(context, "Drawer Clicked", Toast.LENGTH_SHORT).show()
-                        }) {
+                        IconButton(onClick = onHomeIconClick) {
                             Icon(
                                 imageVector = Icons.Default.Menu,
                                 contentDescription = "Menu Icon"

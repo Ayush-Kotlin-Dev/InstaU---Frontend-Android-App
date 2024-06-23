@@ -1,6 +1,7 @@
 package ayush.ggv.instau.presentation.components
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -9,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -31,13 +34,14 @@ fun CustomDrawer(
     onNavigationItemClick: (NavigationItem) -> Unit,
     onCloseClick: () -> Unit
 ) {
-    BackHandler(onBack = onCloseClick)
 
     Column(
         modifier = Modifier
             .fillMaxHeight()
             .fillMaxWidth(fraction = 0.6f)
+            .verticalScroll(rememberScrollState())
             .padding(horizontal = 12.dp),
+
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
@@ -87,3 +91,4 @@ fun CustomDrawer(
         Spacer(modifier = Modifier.height(24.dp))
     }
 }
+

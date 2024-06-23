@@ -13,11 +13,11 @@ enum class NavigationItem(
     ),
     Profile(
         icon = R.drawable.baseline_whatshot_24,
-        title = "Profile"
+        title = "QNA"
     ),
     Premium(
         icon = R.drawable.person_circle_icon,
-        title = "Premium"
+        title = "Events"
     ),
     Settings(
         icon = R.drawable.like_icon_outlined,
