@@ -114,7 +114,7 @@ val appModule = module {
     factory { SearchUserUseCase() }
     factory { FriendListUseCase() }
     factory { GetRoomHistoryUseCase() }
-    viewModel { SignUpViewModel(get() , get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
+    viewModel { SignUpViewModel(get() , get(), get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
     viewModel { LoginViewModel(get() , get() , get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
     viewModel { MainActivityViewModel(get()) }
     viewModel{ HomeScreenViewModel(get(),get () , get()  ,get()  ) }

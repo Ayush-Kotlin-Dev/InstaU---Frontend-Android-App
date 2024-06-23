@@ -1,5 +1,6 @@
 package ayush.ggv.instau
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -16,12 +17,15 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
     private val viewModel: MainActivityViewModel by viewModel()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestNotificationPermissions()
+
+        handleDeepLink(intent)  // Handle the incoming intent
+
         setContent {
             SocialAppTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
@@ -37,6 +41,19 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    private fun handleDeepLink(intent: Intent?) {
+        intent?.data?.let { uri ->
+            // Log the deep link URI
+            println("Deep link URI: $uri")
+        }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        handleDeepLink(intent)  // Handle the new intent
+    }
+
     private fun requestNotificationPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             val hasPermission = ContextCompat.checkSelfPermission(
@@ -51,7 +68,5 @@ class MainActivity : ComponentActivity() {
                 )
             }
         }
-
     }
 }
-

@@ -1,5 +1,6 @@
 package ayush.ggv.instau.presentation.screens.auth.signup
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,13 +9,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ayush.ggv.instau.common.datastore.UserSettings
 import ayush.ggv.instau.common.datastore.toUserSettings
+import ayush.ggv.instau.data.profile.data.ProfileService
 import ayush.ggv.instau.domain.usecases.signupusecases.SignUpUseCase
 import kotlinx.coroutines.launch
 import ayush.ggv.instau.util.Result
+import com.google.firebase.Firebase
+import com.google.firebase.messaging.messaging
+import io.ktor.http.HttpStatusCode
+import kotlinx.coroutines.tasks.await
 
 class SignUpViewModel(
     private val signUpUseCase: SignUpUseCase,
-    private val dataStore: DataStore<UserSettings>
+    private val dataStore: DataStore<UserSettings>,
+    private val profileService: ProfileService
 ) : ViewModel() {
 
     var uiState by mutableStateOf(SignUpState())
@@ -24,6 +31,7 @@ class SignUpViewModel(
         viewModelScope.launch {
             uiState = uiState.copy(isAuthenticating = true)
             val authResultData = signUpUseCase(uiState.username, uiState.email, uiState.password)
+            val token = Firebase.messaging.token.await()
             uiState = uiState.copy(isAuthenticating = false)
 
             uiState = when (authResultData) {
@@ -35,6 +43,12 @@ class SignUpViewModel(
                 }
 
                 is Result.Success -> {
+                    val storeIsSuccess =  profileService.storeToken(token = token , userId = authResultData.data!!.id)
+                    if(storeIsSuccess.status == HttpStatusCode.OK){
+                        Log.d("Token", "Token stored successfully $token")
+                    }else{
+                        Log.d("Token", "Token stored failed")
+                    }
                     dataStore.updateData {
                         authResultData.data!!.toUserSettings()
                     }
