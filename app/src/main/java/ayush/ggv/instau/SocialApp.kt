@@ -1,9 +1,14 @@
 package ayush.ggv.instau
 
 import android.annotation.SuppressLint
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+//setter for mutable state
+import androidx.compose.runtime.setValue
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,18 +27,26 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
+import ayush.ggv.instau.model.NavigationItem
+import ayush.ggv.instau.model.NavigationItem.*
 import ayush.ggv.instau.presentation.components.AppBar
+import ayush.ggv.instau.presentation.components.CustomDrawer
 import ayush.ggv.instau.presentation.components.getNavigationBarIndex
+
 import ayush.ggv.instau.presentation.screens.NavGraphs
 import ayush.ggv.instau.presentation.screens.destinations.AddPostDestination
 import ayush.ggv.instau.presentation.screens.destinations.ChatRoomDestination
@@ -50,6 +63,11 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.navigation.navigate
 import com.ramcosta.composedestinations.utils.currentDestinationAsState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 @Composable
 fun SocialApp(
@@ -77,6 +95,28 @@ fun SocialApp(
         selectedIndex = getNavigationBarIndex(currentDestination?.route)
     }
 
+    val drawerState by remember { mutableStateOf(scaffoldState.drawerState.isClosed) }
+    var selectedNavigationItem by remember { mutableStateOf(NavigationItem.Home) }
+
+    val configuration = LocalConfiguration.current
+    val density = LocalDensity.current.density
+    val scope = rememberCoroutineScope()
+
+
+    val screenWidth = remember {
+        derivedStateOf { (configuration.screenWidthDp * density).roundToInt() }
+    }
+
+    val offsetValue by remember { derivedStateOf { (screenWidth.value / 4.5).dp } }
+    val animatedOffset by animateDpAsState(
+        targetValue = if (drawerState) offsetValue else 0.dp,
+        label = "Animated Offset"
+    )
+    val animatedScale by animateFloatAsState(
+        targetValue = if (!drawerState) 0.9f else 1f,
+        label = "Animated Scale"
+    )
+
     @SuppressLint("ModifierFactoryUnreferencedReceiver")
     fun Modifier.noRippleClickable(onClick: () -> Unit): Modifier = composed {
         clickable(
@@ -98,8 +138,24 @@ fun SocialApp(
         backgroundColor = MaterialTheme.colors.background,
         topBar = {
             if (currentDestination?.route != SearchDestination.route && currentDestination?.route != FriendListDestination.route && currentDestination?.route != ChatRoomDestination.route) {
-                AppBar(navHostController = navHostController )
+                AppBar(
+                    scaffoldState = scaffoldState,
+                    navHostController = navHostController
+                )
             }
+        },
+        drawerContent = {
+            CustomDrawer(
+                selectedNavigationItem = selectedNavigationItem,
+                onNavigationItemClick = {
+                    selectedNavigationItem = it
+                },
+                onCloseClick = {
+                    scope.launch {
+                        scaffoldState.drawerState.close()
+                    }
+                }
+            )
         },
         bottomBar = {
             if (currentDestination?.route in listOf(
@@ -144,7 +200,6 @@ fun SocialApp(
                             }
                         }
                     }
-
                 }
             }
         }

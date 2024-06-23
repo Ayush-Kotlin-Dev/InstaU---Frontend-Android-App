@@ -9,25 +9,26 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Call
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.twotone.Email
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -48,20 +49,22 @@ import ayush.ggv.instau.presentation.screens.destinations.PostDetailDestination
 import ayush.ggv.instau.presentation.screens.destinations.ProfileDestination
 import ayush.ggv.instau.presentation.screens.destinations.SearchDestination
 import ayush.ggv.instau.presentation.screens.destinations.SignUpNDestination
-import ayush.ggv.instau.presentation.screens.destinations.TestChatScreenDestination
 import ayush.ggv.instau.ui.theme.SmallElevation
 import com.ramcosta.composedestinations.utils.currentDestinationAsState
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun AppBar(
     modifier: Modifier = Modifier,
-    navHostController: NavHostController,
+    scaffoldState: ScaffoldState,
+    navHostController: NavHostController
 ) {
     val currentDestination = navHostController.currentDestinationAsState().value
     val context = LocalContext.current
     val viewModel: ProfileScreenViewModel = koinViewModel()
     var showDialog by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
 
     Surface(
         elevation = SmallElevation,
@@ -79,7 +82,7 @@ fun AppBar(
             backgroundColor = MaterialTheme.colors.surface,
             actions = {
                 AnimatedVisibility(visible = currentDestination?.route == HomeDestination.route || currentDestination?.route == ProfileDestination.route) {
-                    if(currentDestination?.route == HomeDestination.route){
+                    if (currentDestination?.route == HomeDestination.route) {
                         //chat icon
                         IconButton(
                             onClick = {
@@ -87,9 +90,12 @@ fun AppBar(
                                 Toast.makeText(context, "Chat Screen ", Toast.LENGTH_SHORT).show()
                             }
                         ) {
-                            Icon(imageVector = Icons.TwoTone.Email, contentDescription = "ChatScreen")
+                            Icon(
+                                imageVector = Icons.TwoTone.Email,
+                                contentDescription = "ChatScreen"
+                            )
                         }
-                    }else{
+                    } else {
                         IconButton(
                             onClick = {
                                 showDialog = true
@@ -103,11 +109,23 @@ fun AppBar(
                     }
 
 
-
                 }
             },
             navigationIcon = {
                 AnimatedVisibility(visible = shouldShowNavigationIcon(currentDestination?.route)) {
+                    if(currentDestination?.route == HomeDestination.route){
+                        IconButton(onClick = {
+                            scope.launch {
+                                scaffoldState.drawerState.open()
+                            }
+                            Toast.makeText(context, "Drawer Clicked", Toast.LENGTH_SHORT).show()
+                        }) {
+                            Icon(
+                                imageVector = Icons.Default.Menu,
+                                contentDescription = "Menu Icon"
+                            )
+                        }
+                    }else
                     IconButton(
                         onClick = {
                             navHostController.navigateUp()
@@ -179,8 +197,7 @@ fun getAppBarTitle(currentDestinationRoute: String?): Int {
 // should show navigation icon only when current destination is not HomeDestination
 fun shouldShowNavigationIcon(currentDestinationRoute: String?): Boolean {
     return !(
-            currentDestinationRoute == HomeDestination.route
-                    || currentDestinationRoute == LoginDestination.route
+            currentDestinationRoute == LoginDestination.route
                     || currentDestinationRoute == SignUpNDestination.route
             )
 }
@@ -190,7 +207,7 @@ fun getNavigationBarIndex(route: String?): Int {
         HomeDestination.route -> NavigationBarItems.HOME.ordinal
         AddPostDestination.route -> NavigationBarItems.ADD.ordinal
         ProfileDestination.route -> NavigationBarItems.PROFILE.ordinal
-        SearchDestination.route-> NavigationBarItems.SEARCH.ordinal
+        SearchDestination.route -> NavigationBarItems.SEARCH.ordinal
         else -> NavigationBarItems.HOME.ordinal // default to HOME
     }
 }
