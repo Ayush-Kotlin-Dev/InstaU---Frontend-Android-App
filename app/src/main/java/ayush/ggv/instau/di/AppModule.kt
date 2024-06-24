@@ -31,6 +31,9 @@ import ayush.ggv.instau.data.posts.domain.repository.PostRepository
 import ayush.ggv.instau.data.profile.data.ProfileRepositoryImpl
 import ayush.ggv.instau.data.profile.data.ProfileService
 import ayush.ggv.instau.data.profile.domain.repository.ProfileRepository
+import ayush.ggv.instau.data.qna.data.QnaRepositoryImpl
+import ayush.ggv.instau.data.qna.data.QnaService
+import ayush.ggv.instau.data.qna.domain.QnaRepository
 import ayush.ggv.instau.domain.usecases.chat_service.FriendListUseCase
 import ayush.ggv.instau.domain.usecases.chat_service.GetRoomHistoryUseCase
 import ayush.ggv.instau.domain.usecases.followsusecase.FollowsUseCase
@@ -49,6 +52,7 @@ import ayush.ggv.instau.domain.usecases.postsusecase.getPostsByuserIdUseCase
 import ayush.ggv.instau.domain.usecases.profileusecase.ProfileUseCase
 import ayush.ggv.instau.domain.usecases.profileusecase.SearchUserUseCase
 import ayush.ggv.instau.domain.usecases.profileusecase.UpdateProfileUseCase
+import ayush.ggv.instau.domain.usecases.qnausecase.QnaUseCase
 import ayush.ggv.instau.domain.usecases.signinusecase.SignInuseCase
 import ayush.ggv.instau.domain.usecases.signupusecases.SignUpUseCase
 import ayush.ggv.instau.model.GetCommentsResponse
@@ -62,6 +66,7 @@ import ayush.ggv.instau.presentation.screens.chat.friends_list.FriendListScreenV
 import ayush.ggv.instau.presentation.screens.chat.single_chat.ChatRoomViewModel
 import ayush.ggv.instau.presentation.screens.home.HomeScreenViewModel
 import ayush.ggv.instau.presentation.screens.post.PostDetailScreenViewModel
+import ayush.ggv.instau.presentation.screens.qna.QnaViewModel
 import ayush.ggv.instau.presentation.screens.search.SearchViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -87,6 +92,7 @@ val appModule = module {
     single <FollowRepository>{ FollowRepositoryImpl(get()) }
     single <PostLikesRepository>{PostLikesRepositoryImpl(get())  }
     single <ChatRepository>{ChatRepositoryImpl(get()) }
+    single <QnaRepository>{ QnaRepositoryImpl(get()) }
     factory { ChatService() }
 
     factory { AuthService() }
@@ -95,6 +101,8 @@ val appModule = module {
     factory { PostLikeService() }
     factory { PostCommentService() }
     factory {NotificationService() }
+    factory { QnaService() }
+
     factory { SignUpUseCase() }
     factory { SignInuseCase() }
     factory {  AddPostUseCase()}
@@ -114,6 +122,7 @@ val appModule = module {
     factory { SearchUserUseCase() }
     factory { FriendListUseCase() }
     factory { GetRoomHistoryUseCase() }
+    factory { QnaUseCase() }
     viewModel { SignUpViewModel(get() , get(), get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
     viewModel { LoginViewModel(get() , get() , get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
     viewModel { MainActivityViewModel(get()) }
@@ -127,6 +136,7 @@ val appModule = module {
     viewModel{SearchViewModel(get())}
     viewModel{FriendListScreenViewModel(get() ,  get() )}
     viewModel{ChatRoomViewModel(get() , get() )}
+    viewModel{QnaViewModel(get())}
 
     single{
         DataStoreFactory.create(

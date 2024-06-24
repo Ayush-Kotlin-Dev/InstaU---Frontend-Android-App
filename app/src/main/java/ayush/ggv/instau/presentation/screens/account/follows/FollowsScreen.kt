@@ -61,7 +61,6 @@ fun FollowsScreen(
     val pullRefreshState = rememberPullRefreshState(
         refreshing = listUsers.loadState.refresh == LoadState.Loading,
         onRefresh = {
-            Log.d("FollowsScreen", "Pull to Refresh triggered")
             listUsers.refresh()
         }
     )

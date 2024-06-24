@@ -40,6 +40,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import androidx.navigation.Navigator
 import androidx.navigation.compose.rememberNavController
 import ayush.ggv.instau.model.NavigationItem
 import ayush.ggv.instau.presentation.components.AppBar
@@ -55,6 +56,7 @@ import ayush.ggv.instau.presentation.screens.destinations.FriendListDestination
 import ayush.ggv.instau.presentation.screens.destinations.HomeDestination
 import ayush.ggv.instau.presentation.screens.destinations.LoginDestination
 import ayush.ggv.instau.presentation.screens.destinations.ProfileDestination
+import ayush.ggv.instau.presentation.screens.destinations.QnaDestination
 import ayush.ggv.instau.presentation.screens.destinations.SearchDestination
 import ayush.ggv.instau.util.coloredShadow
 import com.exyte.animatednavbar.AnimatedNavigationBar
@@ -128,6 +130,12 @@ fun SocialApp(
             onNavigationItemClick = {
                 selectedNavigationItem = it
                 drawerState = CustomDrawerState.Closed
+                when(it){
+                    NavigationItem.Home -> TODO()
+                    NavigationItem.Profile -> navHostController.navigate(QnaDestination.route)
+                    NavigationItem.Premium -> TODO()
+                    NavigationItem.Settings -> TODO()
+                }
             },
             onCloseClick = { drawerState = CustomDrawerState.Closed }
         )
@@ -139,10 +147,7 @@ fun SocialApp(
                     color = Color.Black,
                     alpha = 0.2f,
                     shadowRadius = 50.dp
-                )
-                .clickable(enabled = drawerState == CustomDrawerState.Opened) {
-                    drawerState = CustomDrawerState.Closed
-                },
+                ),
             topBar = {
                 if (currentDestination?.route != SearchDestination.route && currentDestination?.route != FriendListDestination.route && currentDestination?.route != ChatRoomDestination.route) {
                     AppBar(onHomeIconClick = {
