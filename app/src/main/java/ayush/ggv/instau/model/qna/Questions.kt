@@ -9,12 +9,6 @@ data class QnaTextParams(
     val userId: Long,
 )
 
-data class Question(
-    val id: Long,
-    val authorId: Long,
-    val question: String,
-    val createdAt: String,
-)
 
 @Serializable
 data class QuestionWithAnswer(
@@ -31,13 +25,4 @@ data class QuestionResponse(
     val success: Boolean,
     val questions: List<QuestionWithAnswer> = emptyList(),
     val message: String? = null
-)
-
-@Serializable
-data class Answer(
-    val id: Long,
-    val questionId: Long,
-    val authorId: Long,
-    val answer: String,
-    val createdAt: String,
 )

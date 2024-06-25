@@ -9,7 +9,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ayush.ggv.instau.domain.usecases.qnausecase.QnaUseCase
-import ayush.ggv.instau.model.qna.Question
 import ayush.ggv.instau.model.qna.QuestionResponse
 import ayush.ggv.instau.model.qna.QuestionWithAnswer
 import ayush.ggv.instau.util.Result

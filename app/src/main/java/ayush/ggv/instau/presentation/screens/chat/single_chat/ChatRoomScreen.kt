@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -143,7 +144,7 @@ fun ChatRoomScreen(
                         modifier = Modifier
                             .clickable { onSendClick()}
                             .rotate(-45f),
-                        imageVector = Icons.Filled.Send,
+                        imageVector = Icons.AutoMirrored.Filled.Send,
                         contentDescription = "Send message",
                         tint = MaterialTheme.colors.onBackground.copy(alpha = 0.3f)
                     )

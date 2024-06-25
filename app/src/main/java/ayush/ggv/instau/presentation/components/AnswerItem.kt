@@ -1,4 +1,4 @@
-package ayush.ggv.instau.presentation.screens.chat.single_chat
+package ayush.ggv.instau.presentation.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -19,16 +19,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ayush.ggv.instau.model.friendList.RoomHistoryList
+import ayush.ggv.instau.model.qna.Answer
 import coil.compose.rememberAsyncImagePainter
 
 @Composable
-fun MessageBubble(
-    message: RoomHistoryList.Message,
+fun AnswerBubble(
+    answer: Answer,
     isSender: Boolean,
-    senderAvatar: String,
-    receiverAvatar: String
 ) {
+
 
     val radius =
         if (isSender) RoundedCornerShape(
@@ -42,54 +41,51 @@ fun MessageBubble(
             topEnd = 16.dp,
             bottomEnd = 16.dp
         )
-
-    Row(
+    Column(
         modifier = Modifier
             .padding(bottom = 24.dp)
     ) {
 
-        if (isSender.not()) {
-            AvatarHead(message, senderAvatar, receiverAvatar, isSender)
+        Row {
+            if (isSender.not()) {
+                AvatarHeadQna(answer.createdAt)
+            }
+
+            Text(
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .weight(0.8f)
+                    .wrapContentSize(align = if (isSender) Alignment.CenterEnd else Alignment.CenterStart)
+                    .background(
+                        color = if (isSender)
+                            MaterialTheme.colors.secondary
+                        else
+                            MaterialTheme.colors.primary,
+                        shape = radius
+                    )
+                    .padding(12.dp),
+                text = answer.answer,
+                color = if (isSender)
+                    MaterialTheme.colors.onSecondary
+                else
+                    MaterialTheme.colors.onPrimary,
+                fontWeight = FontWeight.Normal
+            )
+            if (isSender) {
+                AvatarHeadQna(answer.createdAt)
+            }
         }
-
-        Text(
-            modifier = Modifier
-                .padding(top = 8.dp)
-                .weight(0.8f)
-                .wrapContentSize(align = if (isSender) Alignment.CenterEnd else Alignment.CenterStart)
-                .background(
-                    color = if (isSender)
-                        MaterialTheme.colors.secondary
-                    else
-                        MaterialTheme.colors.primary,
-                    shape = radius
-                )
-                .padding(12.dp),
-            text = message.textMessage.orEmpty(),
-            color = if (isSender)
-                MaterialTheme.colors.onSecondary
-            else
-                MaterialTheme.colors.onPrimary,
-            fontWeight = FontWeight.Normal
-
-        )
-
-        if (isSender) {
-            AvatarHead(message, senderAvatar, receiverAvatar, true)
-        }
-
     }
+
+
 }
 
 @Composable
-fun AvatarHead(
-    message: RoomHistoryList.Message,
-    senderAvatar: String,
-    receiverAvatar: String,
-    isSender: Boolean
+fun AvatarHeadQna(
+    time: String,
 ) {
     val avatar =
-        if (isSender) senderAvatar else receiverAvatar
+        "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTK6zxVFdnRvs-c5qBxap3VCBLf87lGp5EKB0eJRmjp1UvuoKGRO_Qmj8N1jPOcAaxL7lEQOQGDVc9sILOrCmXUZQjBU4FYkExFNRHGukU"
     Column(
         modifier = Modifier
             .padding(start = 8.dp, end = 8.dp, bottom = 8.dp),
@@ -104,15 +100,17 @@ fun AvatarHead(
             painter = rememberAsyncImagePainter(model = avatar),
             contentDescription = "Friend avatar"
         )
+
         Text(
             modifier = Modifier.padding(top = 8.dp),
-            text = message.formattedTime.orEmpty(),
-            color = Color.White,
+            text = time,
+            color = Color.Black,
             style = MaterialTheme.typography.body2
                 .copy(
                     fontSize = 10.sp,
                     color = MaterialTheme.colors.onBackground
                 )
         )
+
     }
 }
