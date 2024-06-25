@@ -132,7 +132,7 @@ fun SocialApp(
                 drawerState = CustomDrawerState.Closed
                 when(it){
                     NavigationItem.Home -> TODO()
-                    NavigationItem.Profile -> navHostController.navigate(QnaDestination.route)
+                    NavigationItem.Profile -> navHostController.navigate(QnaDestination(currentUserId = userId!! , token!!).route)
                     NavigationItem.Premium -> TODO()
                     NavigationItem.Settings -> TODO()
                 }

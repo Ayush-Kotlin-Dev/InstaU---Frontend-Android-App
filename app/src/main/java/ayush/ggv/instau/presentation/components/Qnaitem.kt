@@ -28,7 +28,10 @@ import ayush.ggv.instau.model.qna.QuestionWithAnswer
 import ayush.ggv.instau.util.coloredShadow
 
 @Composable
-fun QuestionItem(questionWithAnswer: QuestionWithAnswer, onItemClick: () -> Unit = {}) {
+fun QuestionItem(
+    questionWithAnswer: QuestionWithAnswer,
+    onItemClick: (QuestionWithAnswer) -> Unit
+) {
     val question = questionWithAnswer.question
     val questionRaiser = questionWithAnswer.authorName
     val recentAnswer = questionWithAnswer.mostRecentAnswer
@@ -42,13 +45,13 @@ fun QuestionItem(questionWithAnswer: QuestionWithAnswer, onItemClick: () -> Unit
                 alpha = 0.1f,
                 shadowRadius = 25.dp
             )
+        .clickable(onClick = { onItemClick(questionWithAnswer) })
             .padding(8.dp)
             .clip(RoundedCornerShape(7.dp)),
         elevation = 4.dp
     ) {
         Column(
             modifier = Modifier
-                .clickable(onClick = onItemClick)
                 .padding(16.dp)
         ) {
             Text(

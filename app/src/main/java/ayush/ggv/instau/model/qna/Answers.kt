@@ -19,3 +19,9 @@ data class AnswersResponse(
     val answers: List<Answer> = listOf(),
     val message: String? = null
 )
+@Serializable
+data class AnswerTextParams(
+    val content: String,
+    val authorId: Long,
+    val questionId: Long
+)

@@ -1,7 +1,7 @@
 package ayush.ggv.instau.data.qna.data
 
 import ayush.ggv.instau.data.KtorApi
-import ayush.ggv.instau.data.profile.domain.model.ProfileResponse
+import ayush.ggv.instau.model.qna.AnswersResponse
 import ayush.ggv.instau.model.qna.QuestionResponse
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -20,4 +20,23 @@ class QnaService : KtorApi() {
         }
         return response.body<QuestionResponse>()
     }
+
+    suspend fun getAnswers(
+        token: String,
+        questionId: Long,
+        page: Int,
+        limit: Int
+    ): AnswersResponse {
+        val response = client.get {
+            endPoint(path = "/qna/answers")
+            parameter("questionId", questionId)
+            headers {
+                append("Authorization", "Bearer $token")
+            }
+            parameter("page", page)
+            parameter("limit", limit)
+        }
+        return response.body<AnswersResponse>()
+    }
+
 }

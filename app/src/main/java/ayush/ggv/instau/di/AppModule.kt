@@ -52,6 +52,7 @@ import ayush.ggv.instau.domain.usecases.postsusecase.getPostsByuserIdUseCase
 import ayush.ggv.instau.domain.usecases.profileusecase.ProfileUseCase
 import ayush.ggv.instau.domain.usecases.profileusecase.SearchUserUseCase
 import ayush.ggv.instau.domain.usecases.profileusecase.UpdateProfileUseCase
+import ayush.ggv.instau.domain.usecases.qnausecase.QnaDetailUseCase
 import ayush.ggv.instau.domain.usecases.qnausecase.QnaUseCase
 import ayush.ggv.instau.domain.usecases.signinusecase.SignInuseCase
 import ayush.ggv.instau.domain.usecases.signupusecases.SignUpUseCase
@@ -67,6 +68,7 @@ import ayush.ggv.instau.presentation.screens.chat.single_chat.ChatRoomViewModel
 import ayush.ggv.instau.presentation.screens.home.HomeScreenViewModel
 import ayush.ggv.instau.presentation.screens.post.PostDetailScreenViewModel
 import ayush.ggv.instau.presentation.screens.qna.QnaViewModel
+import ayush.ggv.instau.presentation.screens.qna.qna_detailed.QnaDetailViewModel
 import ayush.ggv.instau.presentation.screens.search.SearchViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -123,6 +125,7 @@ val appModule = module {
     factory { FriendListUseCase() }
     factory { GetRoomHistoryUseCase() }
     factory { QnaUseCase() }
+    factory { QnaDetailUseCase() }
     viewModel { SignUpViewModel(get() , get(), get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
     viewModel { LoginViewModel(get() , get() , get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
     viewModel { MainActivityViewModel(get()) }
@@ -137,6 +140,7 @@ val appModule = module {
     viewModel{FriendListScreenViewModel(get() ,  get() )}
     viewModel{ChatRoomViewModel(get() , get() )}
     viewModel{QnaViewModel(get())}
+    viewModel{QnaDetailViewModel(get())}
 
     single{
         DataStoreFactory.create(

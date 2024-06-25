@@ -82,7 +82,7 @@ fun MessageResponseDto.toMessage(): RoomHistoryList.Message {
 }
 
 
-private fun dateTimeFormat(timestamp: String?): Pair<String, String> {
+ fun dateTimeFormat(timestamp: String?): Pair<String, String> {
     return try {
         val date: Date = if (timestamp?.matches(Regex("\\d+")) == true) {
             // Handle millisecond timestamp

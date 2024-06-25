@@ -13,11 +13,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
+import ayush.ggv.instau.model.qna.QuestionWithAnswer
 import ayush.ggv.instau.presentation.components.QuestionItem
 
 
 @Composable
-fun QnaScreen(qnaUiState: QnaUiState) {
+fun QnaScreen(
+    qnaUiState: QnaUiState,
+    onQuestionClick: (QuestionWithAnswer) -> Unit
+) {
     val questionsWithAnswers = qnaUiState.questionsWithAnswers ?: emptyList()
     Log.d("QnaViewModel", "Qna: ${questionsWithAnswers.size}")
     Box(modifier = Modifier.fillMaxSize()) {
@@ -32,7 +36,7 @@ fun QnaScreen(qnaUiState: QnaUiState) {
                     contentPadding = PaddingValues(16.dp)
                 ) {
                     items(questionsWithAnswers) { questionWithAnswer ->
-                        QuestionItem(questionWithAnswer)
+                        QuestionItem(questionWithAnswer, onQuestionClick)
                         Divider()
                     }
                 }

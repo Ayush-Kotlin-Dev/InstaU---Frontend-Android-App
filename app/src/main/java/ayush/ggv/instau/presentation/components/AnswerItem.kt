@@ -19,16 +19,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ayush.ggv.instau.data.dateTimeFormat
 import ayush.ggv.instau.model.qna.Answer
 import coil.compose.rememberAsyncImagePainter
-
 @Composable
 fun AnswerBubble(
     answer: Answer,
     isSender: Boolean,
 ) {
-
-
     val radius =
         if (isSender) RoundedCornerShape(
             topStart = 16.dp,
@@ -41,16 +39,15 @@ fun AnswerBubble(
             topEnd = 16.dp,
             bottomEnd = 16.dp
         )
+    val (formattedDate, formattedTime) = dateTimeFormat(answer.createdAt)
     Column(
         modifier = Modifier
             .padding(bottom = 24.dp)
     ) {
-
         Row {
             if (isSender.not()) {
-                AvatarHeadQna(answer.createdAt)
+                AvatarHeadQna(formattedTime)
             }
-
             Text(
                 modifier = Modifier
                     .padding(top = 8.dp)
@@ -72,14 +69,11 @@ fun AnswerBubble(
                 fontWeight = FontWeight.Normal
             )
             if (isSender) {
-                AvatarHeadQna(answer.createdAt)
+                AvatarHeadQna(formattedTime)
             }
         }
     }
-
-
 }
-
 @Composable
 fun AvatarHeadQna(
     time: String,
@@ -111,6 +105,5 @@ fun AvatarHeadQna(
                     color = MaterialTheme.colors.onBackground
                 )
         )
-
     }
 }
