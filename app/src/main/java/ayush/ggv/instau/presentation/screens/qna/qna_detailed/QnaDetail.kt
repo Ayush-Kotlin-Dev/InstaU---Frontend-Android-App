@@ -24,9 +24,14 @@ fun QnaDetail(
         question =questionWithAnswer.question,
         askedBy = questionWithAnswer.authorName,
         askedAt = questionWithAnswer.createdAt,
-        answers = answersUiState.answers?: listOf(),
+        answers = answersUiState,
         fetchData = {
             viewModel.fetchQuestionsWithAnswers(token, questionWithAnswer.id)
-        }
+        },
+        onAddAnswer = { content ->
+            viewModel.addAnswer(token, currentUserId, questionWithAnswer.id, content)
+        },
+        addAnswer = viewModel.addAnswerUiState.value,
+        onTextChange = viewModel::onTextChange
     )
 }

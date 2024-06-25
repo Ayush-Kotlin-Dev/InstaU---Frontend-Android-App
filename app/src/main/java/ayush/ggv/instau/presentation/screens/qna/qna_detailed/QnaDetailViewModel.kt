@@ -6,9 +6,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ayush.ggv.instau.data.qna.domain.QnaRepository
+import ayush.ggv.instau.domain.usecases.qnausecase.AddAnswerUseCase
 import ayush.ggv.instau.domain.usecases.qnausecase.QnaDetailUseCase
 import ayush.ggv.instau.domain.usecases.qnausecase.QnaUseCase
+import ayush.ggv.instau.model.PostTextParams
 import ayush.ggv.instau.model.qna.Answer
+import ayush.ggv.instau.model.qna.AnswerTextParams
 import ayush.ggv.instau.model.qna.AnswersResponse
 import ayush.ggv.instau.model.qna.QuestionResponse
 import ayush.ggv.instau.model.qna.QuestionWithAnswer
@@ -18,13 +21,21 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class QnaDetailViewModel(
-    private val qnaUseCase: QnaDetailUseCase
+    private val qnaUseCase: QnaDetailUseCase,
+    private val addAnswerUseCase : AddAnswerUseCase
 ) : ViewModel(
 ) {
     // Combined UI state for questions and answers
 
     private val _answersUiState = mutableStateOf(AnswersState())
     val answersUiState: State<AnswersState> = _answersUiState
+
+    private val _addAnswerUiState = mutableStateOf(addAnsweruiState(""))
+    val addAnswerUiState : State<addAnsweruiState> = _addAnswerUiState
+
+    fun onTextChange(answer : String){
+        _addAnswerUiState.value = _addAnswerUiState.value.copy(answer = answer)
+    }
 
 
     fun fetchQuestionsWithAnswers(token : String , questionId : Long ) {
@@ -71,10 +82,61 @@ class QnaDetailViewModel(
             }
         }
     }
+    fun addAnswer(token : String , currentUserId : Long , questionId : Long , content : String) {
+        viewModelScope.launch {
+            _addAnswerUiState.value = _addAnswerUiState.value.copy(isLoading = true)
+
+            try {
+                val answers = addAnswerUseCase(token, currentUserId , questionId , content)
+                when (answers) {
+                    is Result.Success -> {
+                        _addAnswerUiState.value = _addAnswerUiState.value.copy(
+                            isLoading = false,
+                            uploadSuccess = true
+                        )
+                        Log.d(
+                            "QnaViewModel",
+                            "fetchQuestionsWithhhhAnswers: Success - ${answers.data?.answers}"
+                        )
+                    }
+
+                    is Result.Error -> {
+                        _addAnswerUiState.value = _addAnswerUiState.value.copy(
+                            isLoading = false,
+                            error = answers.message
+                        )
+                        Log.e(
+                            "QnaViewModel",
+                            "fetchQuestionsWithhhhAnswers: Error - ${answers.message}"
+                        )
+                    }
+
+                    is Result.Loading -> {
+                        // Handle loading state if needed
+                        Log.d("QnaViewModel", "fetchQuestionsWithAnswers: Loading")
+                    }
+                }
+            } catch (e: Exception) {
+                _answersUiState.value = _answersUiState.value.copy(
+                    isLoading = false,
+                    errorMessage = "Error fetching data: ${e.message}"
+                )
+                Log.e("QnaViewModel", "fetchQuestionsWithAnswers: Exception - ${e.message}")
+            }
+        }
+
+    }
 }
 
 data class AnswersState(
     val isLoading: Boolean = false,
     val answers: List<Answer>? = emptyList(),
     val errorMessage: String? = null
+)
+
+data class addAnsweruiState(
+    val answer : String ,
+    val isLoading : Boolean = false,
+    val uploadSuccess : Boolean = false,
+    val error : String? = null
 )

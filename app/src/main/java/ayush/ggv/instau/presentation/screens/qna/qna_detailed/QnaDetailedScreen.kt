@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.Card
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -26,14 +27,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import ayush.ggv.instau.R
 import ayush.ggv.instau.data.dateTimeFormat
-import ayush.ggv.instau.model.qna.Answer
 import ayush.ggv.instau.presentation.components.AnswerBubble
 import ayush.ggv.instau.presentation.components.FollowsButton
-
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
@@ -42,14 +42,28 @@ fun QnaDetailedPage(
     question: String,
     askedBy: String,
     askedAt: String,
-    answers: List<Answer>,
-    fetchData: () -> Unit
+    answers: AnswersState,
+    fetchData: () -> Unit,
+    onAddAnswer: (String) -> Unit,
+    addAnswer: addAnsweruiState,
+    onTextChange: (String) -> Unit
 ) {
     var isDialogOpen by remember { mutableStateOf(false) }
-    var newAnswerText by remember { mutableStateOf("") }
+    var simulatedProgress by remember { mutableStateOf(0f) }
+    val dateTime = dateTimeFormat(askedAt)
 
     LaunchedEffect(key1 = Unit) {
         fetchData()
+    }
+
+    LaunchedEffect(key1 = answers.isLoading || addAnswer.isLoading) {
+        if (answers.isLoading || addAnswer.isLoading) {
+            simulatedProgress = 0f
+            while (simulatedProgress < 1f) {
+                delay(100)
+                simulatedProgress += 0.1f
+            }
+        }
     }
 
     Column(
@@ -66,7 +80,7 @@ fun QnaDetailedPage(
             ) {
                 Text(
                     text = question,
-                    style = MaterialTheme.typography.h6,
+                    style = MaterialTheme.typography.h6.copy(fontSize = 20.sp),
                     maxLines = 5,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -76,42 +90,55 @@ fun QnaDetailedPage(
                     style = MaterialTheme.typography.caption
                 )
                 Text(
-                    text = " at $askedAt",
+                    text = "at $dateTime",
                     style = MaterialTheme.typography.caption
                 )
             }
         }
 
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .weight(1f),
-            reverseLayout = true
-        ) {
-            val groupByDate = answers.groupBy { dateTimeFormat(it.createdAt).first }
+        if (answers.isLoading || addAnswer.isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(
+                    progress = simulatedProgress,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .weight(1f)
+            ) {
+                val groupByDate =
+                    answers.answers?.groupBy { dateTimeFormat(it.createdAt).first }
 
-            groupByDate.forEach { (date, answersByDate) ->
-
-                items(answersByDate) { answer ->
-                    val isSender = answer.authorId == currentUserId
-                    AnswerBubble(
-                        answer = answer,
-                        isSender = isSender
-                    )
-                }
-                stickyHeader {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = date,
-                            style = MaterialTheme.typography.body2
-                                .copy(color = MaterialTheme.colors.onBackground)
+                groupByDate?.forEach { (date, answersByDate) ->
+                    stickyHeader {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = date,
+                                style = MaterialTheme.typography.body2
+                                    .copy(color = MaterialTheme.colors.onBackground)
+                            )
+                        }
+                    }
+                    items(answersByDate) { answer ->
+                        val isSender = answer.authorId == currentUserId
+                        AnswerBubble(
+                            answer = answer,
+                            isSender = isSender
                         )
                     }
+
                 }
             }
         }
@@ -128,14 +155,20 @@ fun QnaDetailedPage(
                 title = { Text("Add an Answer") },
                 text = {
                     TextField(
-                        value = newAnswerText,
-                        onValueChange = { newAnswerText = it },
+                        value = addAnswer.answer,
+                        onValueChange = { onTextChange(it) },
                         label = { Text("Answer...") },
                         modifier = Modifier.fillMaxWidth()
                     )
                 },
                 confirmButton = {
-                    Button(onClick = { ; newAnswerText = ""; isDialogOpen = false }) {
+                    Button(
+                        onClick = {
+                            onAddAnswer(addAnswer.answer); onTextChange(""); isDialogOpen =
+                            false
+                        },
+                        enabled = (addAnswer.answer.isNotEmpty())
+                    ) {
                         Text("Add")
                     }
                 },
@@ -148,3 +181,4 @@ fun QnaDetailedPage(
         }
     }
 }
+

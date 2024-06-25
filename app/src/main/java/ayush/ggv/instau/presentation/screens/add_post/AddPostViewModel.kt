@@ -13,28 +13,29 @@ import kotlinx.coroutines.launch
 
 class AddPostViewModel(
     private val addPostUseCase: AddPostUseCase,
-) :ViewModel(
+) : ViewModel(
 
-){
+) {
 
 
     var uiState by mutableStateOf((AddPostUiState()))
         private set
 
 
-    var captionTextFieldValue : TextFieldValue by mutableStateOf(TextFieldValue())
+    var captionTextFieldValue: TextFieldValue by mutableStateOf(TextFieldValue())
         private set
 
 
-    val  userId = mutableStateOf(-1L)
+    val userId = mutableStateOf(-1L)
 
-fun onCaptionChange(inputCaption : String){
+    fun onCaptionChange(inputCaption: String) {
         captionTextFieldValue = captionTextFieldValue.copy(
             text = inputCaption,
             selection = captionTextFieldValue.selection
         )
     }
-    fun onUploadPost( imageUri: String, caption: String , token : String , userId : Long){
+
+    fun onUploadPost(imageUri: String, caption: String, token: String, userId: Long) {
 
         viewModelScope.launch {
             uiState = uiState.copy(
@@ -48,19 +49,21 @@ fun onCaptionChange(inputCaption : String){
                 ),
                 token = token
             )
-            when(createPostResult){
+            when (createPostResult) {
                 is Result.Error -> {
                     uiState = uiState.copy(
                         isLoading = false,
                         error = createPostResult.message
                     )
                 }
+
                 is Result.Success -> {
                     uiState = uiState.copy(
                         isLoading = false,
                         uploadSuccess = true
                     )
                 }
+
                 is Result.Loading ->
                     uiState = uiState.copy(
                         isLoading = true
@@ -69,14 +72,13 @@ fun onCaptionChange(inputCaption : String){
         }
 
 
-
     }
 
     data class AddPostUiState(
-        val isLoading : Boolean = false,
-        val AddPost : PostTextParams? = null,
-        val uploadSuccess : Boolean = false,
-        val error : String? = null
+        val isLoading: Boolean = false,
+        val AddPost: PostTextParams? = null,
+        val uploadSuccess: Boolean = false,
+        val error: String? = null
     )
 
 

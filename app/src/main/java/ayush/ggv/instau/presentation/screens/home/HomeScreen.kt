@@ -186,7 +186,6 @@ fun handlePagingResult(
             else -> true // Success
         }
     }
-
 }
 
 

@@ -9,4 +9,6 @@ interface QnaRepository {
     suspend fun getQuestions(token: String): Result<QuestionResponse>
 
     suspend fun getAnswers(token: String, questionId : Long , page : Int , limit : Int ) : Result<AnswersResponse>
+
+    suspend fun addAnswer(token: String, currentUserId : Long ,  questionId: Long, content: String): Result<AnswersResponse>
 }
