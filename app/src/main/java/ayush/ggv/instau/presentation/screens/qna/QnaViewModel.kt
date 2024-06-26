@@ -26,17 +26,15 @@ class QnaViewModel(
     private val _qnaUiState = mutableStateOf(QnaUiState())
     val qnaUiState: State<QnaUiState> = _qnaUiState
 
-    init {
-        fetchQuestionsWithAnswers()
-    }
 
-    fun fetchQuestionsWithAnswers() {
+
+    fun fetchQuestionsWithAnswers(token: String) {
         viewModelScope.launch {
             _qnaUiState.value = _qnaUiState.value.copy(isLoading = true)
 
             try {
                 // Simulate a network call or fetch from repository
-                val questions = getQuestionsFromApi()
+                val questions = getQuestionsFromApi(token)
                 when (questions) {
                     is Result.Success -> {
                         _qnaUiState.value = _qnaUiState.value.copy(
@@ -75,10 +73,10 @@ class QnaViewModel(
         }
     }
 
-    suspend fun getQuestionsFromApi(): Result<QuestionResponse> {
+    suspend fun getQuestionsFromApi(token:String): Result<QuestionResponse> {
         return withContext(Dispatchers.IO) {
             // Simulated delay to mimic network call
-            qnaUseCase("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzb2NpYWxhcHBrdG9yMzA3MSIsImlzcyI6bnVsbCwiZW1haWwiOiJheXVzaEBnbWFpbC5jb20ifQ.TqNhQIjgCVp47J_Fl8yFmRJgg3OHRbzT5wtNSE52ROg")
+            qnaUseCase(token)
         }
     }
 }

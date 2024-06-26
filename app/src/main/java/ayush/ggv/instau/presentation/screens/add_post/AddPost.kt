@@ -1,11 +1,6 @@
 package ayush.ggv.instau.presentation.screens.add_post
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
-import ayush.ggv.instau.presentation.screens.account.edit.EditProfileScreen
-import ayush.ggv.instau.presentation.screens.account.edit.EditProfileViewModel
 import ayush.ggv.instau.presentation.screens.destinations.HomeDestination
 import ayush.ggv.instau.presentation.screens.home.HomeScreenViewModel
 import com.ramcosta.composedestinations.annotation.Destination
