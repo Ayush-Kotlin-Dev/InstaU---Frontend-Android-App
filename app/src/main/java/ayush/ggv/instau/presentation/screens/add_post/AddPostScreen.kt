@@ -1,5 +1,6 @@
 package ayush.ggv.instau.presentation.screens.add_post
 
+import android.graphics.Bitmap
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -55,16 +56,14 @@ fun AddPostScreen(
     addPostUiState: AddPostViewModel.AddPostUiState,
     captionText: String,
     onCaptionChange: (String) -> Unit,
-    initialSelectedImageUri: String?,
+    initialSelectedImageUri: String,
     userId: Long,
-    onUploadPost: (String, String , String , Long ) -> Unit,
+    onUploadPost: (ByteArray, String, String, Long) -> Unit,
     onUploadSuccess: () -> Unit,
-    token : String
-
+    token: String
 ) {
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
-    val storage = FirebaseStorage.getInstance()
     var imageSelected by remember { mutableStateOf(false) }
     var selectedImageUri by remember { mutableStateOf(initialSelectedImageUri) }
     val galleryLauncher =
@@ -72,7 +71,7 @@ fun AddPostScreen(
             selectedImageUri = uri.toString()
             imageSelected = uri != null
         }
-    var isLoading by remember { mutableStateOf(false) } // Add this line
+    var isLoading by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         galleryLauncher.launch("image/*")
@@ -86,30 +85,25 @@ fun AddPostScreen(
     ) {
         Spacer(modifier = Modifier.height(10.dp))
         if (addPostUiState.isLoading || isLoading) {
-            Dialog(onDismissRequest = {} ) {
+            Dialog(onDismissRequest = {}) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize(0.8f)
-                    ,// This will make the box occupy 80% of the screen
+                    modifier = Modifier.fillMaxSize(0.8f),
                     contentAlignment = Alignment.Center
                 ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         CircularProgressIndicator(
                             color = Color.Black,
                             strokeWidth = 2.dp,
-                            modifier = Modifier.size(50.dp) // Adjust size as needed
+                            modifier = Modifier.size(50.dp)
                         )
-                        Text(text = "Uploading Post..." , fontWeight = FontWeight.Bold )
+                        Text(text = "Uploading Post...", fontWeight = FontWeight.Bold)
                     }
-
                 }
             }
         }
         Box(
             modifier = Modifier
-                .aspectRatio(ratio = 1.0f)
+                .aspectRatio(1.0f)
                 .padding(4.dp)
                 .clip(RoundedCornerShape(16.dp))
                 .clickable { galleryLauncher.launch("image/*") }
@@ -118,29 +112,25 @@ fun AddPostScreen(
                 Image(
                     painter = rememberAsyncImagePainter(model = selectedImageUri),
                     contentDescription = "Selected Image",
-                    modifier = Modifier
-                        .fillMaxSize(),
-                        contentScale = ContentScale.Crop
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
                 )
             } else {
-                   Image(
-                       painter =
-                       if (MaterialTheme.colors.isLight) {
-                       painterResource(id = R.drawable.light_image_place_holder)
-                   } else {
-                       painterResource(id = R.drawable.dark_image_place_holder)
-                   } , contentDescription =  null  , modifier = Modifier
-                           .fillMaxSize()
-                   )
-                    Text(
-                        text = "No image selected, Click here to select an image",
-                        color = if (MaterialTheme.colors.isLight) Color.Black.copy(alpha = 0.5f)  else Color.White.copy(alpha = 0.4f),
-                        modifier = Modifier.align(Alignment.Center),
-                    )
-
-
+                Image(
+                    painter = if (MaterialTheme.colors.isLight) {
+                        painterResource(id = R.drawable.light_image_place_holder)
+                    } else {
+                        painterResource(id = R.drawable.dark_image_place_holder)
+                    },
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize()
+                )
+                Text(
+                    text = "No image selected, Click here to select an image",
+                    color = if (MaterialTheme.colors.isLight) Color.Black.copy(alpha = 0.5f) else Color.White.copy(alpha = 0.4f),
+                    modifier = Modifier.align(Alignment.Center)
+                )
             }
-
         }
         Spacer(modifier = Modifier.height(16.dp))
         CustomTextFields(
@@ -152,7 +142,7 @@ fun AddPostScreen(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .clip(RoundedCornerShape(16.dp))
-                .height(100.dp),
+                .height(100.dp)
         )
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -163,32 +153,23 @@ fun AddPostScreen(
                 .padding(start = 16.dp, end = 16.dp),
             onClick = {
                 coroutineScope.launch {
-                    val imageUri = Uri.parse(selectedImageUri)
-                    val storageRef =
-                        storage.reference.child("posts_images/${userId}_${imageUri.lastPathSegment}")
-                    val uploadTask = storageRef.putFile(imageUri)
-                    isLoading = true
-                    try {
-                        withContext(Dispatchers.IO) {
-                            withTimeout(5000) { // Set timeout for 5 seconds
-                                uploadTask.addOnSuccessListener {
-                                    storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
-                                        onUploadPost(downloadUri.toString(), captionText , token , userId )
-                                        isLoading = false
-                                    }
-                                }.addOnFailureListener {
-                                    isLoading = false
-                                }
-                            }
+                    val resolver = context.contentResolver
+                    val imageBytes = resolver.openInputStream(Uri.parse(selectedImageUri))?.readBytes()
+
+                    if (imageBytes != null) {
+                        isLoading = true
+                        try {
+                            onUploadPost(imageBytes, captionText, token, userId)
+                            isLoading = false
+                        } catch (e: Exception) {
+                            isLoading = false
+                            Toast.makeText(context, "Upload failed. Please try again.", Toast.LENGTH_LONG).show()
                         }
-                    } catch (e: TimeoutCancellationException) {
-                        isLoading = false
-                        // Handle the timeout exception as needed
-                        // For example, you can show a toast message
-                        Toast.makeText(context, "Upload timed out. Please check your internet connection.", Toast.LENGTH_LONG).show()
+                    } else {
+                        Toast.makeText(context, "Failed to read image data.", Toast.LENGTH_LONG).show()
                     }
                 }
-            },
+            }
         ) {
             Text(text = "Share Post")
         }
@@ -197,7 +178,6 @@ fun AddPostScreen(
                 addPostUiState.uploadSuccess -> {
                     Toast.makeText(context, "Post uploaded successfully", Toast.LENGTH_SHORT).show()
                     onUploadSuccess()
-
                 }
                 addPostUiState.error != null -> {
                     Toast.makeText(context, "Error: ${addPostUiState.error}", Toast.LENGTH_LONG).show()

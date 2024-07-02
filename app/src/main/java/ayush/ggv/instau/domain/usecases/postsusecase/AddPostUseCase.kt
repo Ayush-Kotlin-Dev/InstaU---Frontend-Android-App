@@ -1,9 +1,9 @@
 package ayush.ggv.instau.domain.usecases.postsusecase
 
+import android.util.Log
 import ayush.ggv.instau.data.posts.domain.repository.PostRepository
 import ayush.ggv.instau.model.PostResponse
-import ayush.ggv.instau.model.PostTextParams
-import ayush.ggv.instau.model.PostsResponse
+import ayush.ggv.instau.model.PostParams
 import ayush.ggv.instau.util.Result
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -12,10 +12,12 @@ class AddPostUseCase : KoinComponent {
     private val repository: PostRepository by inject()
 
     suspend operator fun invoke(
-       postTextParams: PostTextParams,
+        imageUri : ByteArray,
+        postTextParams: PostParams,
         token: String
-
     ): Result<PostResponse> {
-        return repository.createPost(postTextParams, token)
+        Log.d("PostService", "createPost: Called USecase")
+
+        return repository.createPost(imageUri ,postTextParams, token)
     }
 }

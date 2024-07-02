@@ -1,5 +1,6 @@
 package ayush.ggv.instau.data.posts.data
 
+import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -9,7 +10,7 @@ import ayush.ggv.instau.dao.post.PostsRemoteMediator
 import ayush.ggv.instau.data.posts.domain.repository.PostRepository
 import ayush.ggv.instau.model.Post
 import ayush.ggv.instau.model.PostResponse
-import ayush.ggv.instau.model.PostTextParams
+import ayush.ggv.instau.model.PostParams
 import ayush.ggv.instau.model.PostsResponse
 import ayush.ggv.instau.util.ResponseResource
 import ayush.ggv.instau.util.Result
@@ -45,11 +46,13 @@ class PostsRepositoryImpl(
     }
 
     override suspend fun createPost(
-        postTextParams: PostTextParams,
+        image: ByteArray,
+        postTextParams: PostParams,
         token: String
     ): Result<PostResponse> {
         return try {
-            val response = postService.createPost(postTextParams, token)
+            Log.d("PostService", "createPost: Called Repo")
+            val response = postService.createPost(image , postTextParams, token)
             if (response.success) {
                 Result.Success(response)
             } else {

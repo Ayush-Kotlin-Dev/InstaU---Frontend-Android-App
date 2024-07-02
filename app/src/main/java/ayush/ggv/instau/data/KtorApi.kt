@@ -26,11 +26,11 @@ abstract class KtorApi {
                 useAlternativeNames = false
             })
         }
-//        install(HttpTimeout) {
-//            requestTimeoutMillis = 15000
-//            connectTimeoutMillis = 15000
-//            socketTimeoutMillis = 15000
-//        }
+        install(HttpTimeout) {
+            requestTimeoutMillis = 15000
+            connectTimeoutMillis = 15000
+            socketTimeoutMillis = 15000
+        }
     }
 
     fun HttpRequestBuilder.endPoint(path: String) {

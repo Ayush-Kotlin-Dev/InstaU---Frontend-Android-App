@@ -142,13 +142,14 @@ fun HomeScreen(
             ) {
                 NewPostsOverlayButton(onClick = {
                     post.refresh()
+                    onDismiss()
                 }, onDismiss = onDismiss)
             }
         }
         PullRefreshIndicator(
             refreshing = onBoardingUiState.isLoading,
             state = pullRefreshState,
-            contentColor = androidx.compose.ui.graphics.Color.Blue,
+            contentColor = Color.Blue,
             modifier = modifier.align(Alignment.TopCenter)
         )
     }

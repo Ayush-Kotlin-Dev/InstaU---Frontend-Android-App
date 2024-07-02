@@ -22,7 +22,7 @@ fun AddPost(
         onCaptionChange = viewModel::onCaptionChange,
         onUploadPost = viewModel::onUploadPost,
         userId = userId!!,
-        initialSelectedImageUri = viewModel.uiState.AddPost?.imageUrl,
+        initialSelectedImageUri = "",
         onUploadSuccess = {
             homeScreenViewModel.fetchData()
             navigator.navigate(HomeDestination)

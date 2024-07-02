@@ -1,5 +1,6 @@
 package ayush.ggv.instau.presentation.screens.add_post
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -7,7 +8,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ayush.ggv.instau.domain.usecases.postsusecase.AddPostUseCase
-import ayush.ggv.instau.model.PostTextParams
+import ayush.ggv.instau.model.PostParams
 import ayush.ggv.instau.util.Result
 import kotlinx.coroutines.launch
 
@@ -35,17 +36,19 @@ class AddPostViewModel(
         )
     }
 
-    fun onUploadPost(imageUri: String, caption: String, token: String, userId: Long) {
+    fun onUploadPost(imageUri: ByteArray, caption: String, token: String, userId: Long) {
 
         viewModelScope.launch {
             uiState = uiState.copy(
                 isLoading = true
             )
+            Log.d("PostService", "createPost: Called VM ")
+
             val createPostResult = addPostUseCase(
-                PostTextParams(
+                imageUri = imageUri,
+                PostParams(
                     userId = userId,
                     caption = caption,
-                    imageUrl = imageUri
                 ),
                 token = token
             )
@@ -76,7 +79,7 @@ class AddPostViewModel(
 
     data class AddPostUiState(
         val isLoading: Boolean = false,
-        val AddPost: PostTextParams? = null,
+        val AddPost: PostParams? = null,
         val uploadSuccess: Boolean = false,
         val error: String? = null
     )

@@ -3,8 +3,7 @@ package ayush.ggv.instau.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class PostTextParams(
+data class PostParams(
     val caption: String,
     val userId: Long,
-    val imageUrl: String
 )

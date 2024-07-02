@@ -80,6 +80,7 @@ fun AvatarHeadQna(
 ) {
     val avatar =
         "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTK6zxVFdnRvs-c5qBxap3VCBLf87lGp5EKB0eJRmjp1UvuoKGRO_Qmj8N1jPOcAaxL7lEQOQGDVc9sILOrCmXUZQjBU4FYkExFNRHGukU"
+
     Column(
         modifier = Modifier
             .padding(start = 8.dp, end = 8.dp, bottom = 8.dp),

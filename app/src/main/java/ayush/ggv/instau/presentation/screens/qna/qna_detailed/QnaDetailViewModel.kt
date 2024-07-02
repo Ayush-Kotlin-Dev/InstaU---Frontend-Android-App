@@ -5,20 +5,11 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ayush.ggv.instau.data.qna.domain.QnaRepository
 import ayush.ggv.instau.domain.usecases.qnausecase.AddAnswerUseCase
 import ayush.ggv.instau.domain.usecases.qnausecase.QnaDetailUseCase
-import ayush.ggv.instau.domain.usecases.qnausecase.QnaUseCase
-import ayush.ggv.instau.model.PostTextParams
 import ayush.ggv.instau.model.qna.Answer
-import ayush.ggv.instau.model.qna.AnswerTextParams
-import ayush.ggv.instau.model.qna.AnswersResponse
-import ayush.ggv.instau.model.qna.QuestionResponse
-import ayush.ggv.instau.model.qna.QuestionWithAnswer
 import ayush.ggv.instau.util.Result
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class QnaDetailViewModel(
     private val qnaUseCase: QnaDetailUseCase,
