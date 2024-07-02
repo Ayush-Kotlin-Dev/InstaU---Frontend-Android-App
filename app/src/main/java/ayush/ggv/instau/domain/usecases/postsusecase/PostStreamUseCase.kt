@@ -10,11 +10,8 @@ import org.koin.core.component.inject
 class GetPostsStreamUseCase : KoinComponent {
     private val repository: PostRepository by inject()
 
-    operator fun invoke(
-        userId : Long,
-        token: String
-    ): Flow<PagingData<Post>> {
+      operator fun invoke(): Flow<PagingData<Post>> {
 
-        return repository.getPostsStream(userId = userId , token = token )
+        return repository.getPostsStream()
     }
 }

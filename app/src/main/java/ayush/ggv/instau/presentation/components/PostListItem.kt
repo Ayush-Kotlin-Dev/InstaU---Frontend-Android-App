@@ -142,11 +142,7 @@ fun PostListItem(
                 } else if (currentDestination?.route == PostDetailDestination.route) {
                     navHostController.navigateUp()
                 } else {
-                    profileScreenViewModel.fetchProfile(
-                        post.userId,
-                        homeScreenViewModel.currentUserId.value,
-                        homeScreenViewModel.token.value
-                    )
+                    profileScreenViewModel.fetchProfile(post.userId,)
                 }
             }
         )
@@ -167,9 +163,8 @@ fun PostListItem(
             onLikeClick = {
                 viewModel.likePost(
                 likeParams = LikeParams(
-                    postId = post.postId ,
-                    userId = homeScreenViewModel.currentUserId.value
-                ), token = homeScreenViewModel.token.value
+                    postId = post.postId
+                )
             )},
             onCommentClick = { onCommentClick(post.postId) },
             likesCount = likesCount,

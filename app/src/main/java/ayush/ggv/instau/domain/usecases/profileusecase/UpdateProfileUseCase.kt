@@ -11,8 +11,7 @@ class UpdateProfileUseCase : KoinComponent {
 
     suspend operator fun invoke(
         updateUserParams: UpdateUserParams,
-        token: String
     ): Result<ProfileResponse> {
-        return repository.updateUserProfile(updateUserParams, token)
+        return repository.updateUserProfile(updateUserParams)
     }
 }

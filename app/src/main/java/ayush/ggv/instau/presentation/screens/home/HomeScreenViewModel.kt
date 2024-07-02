@@ -31,16 +31,12 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class HomeScreenViewModel(
-    private val dataStore: DataStore<UserSettings>,
     private val suggestionsUseCase: SuggestionsUseCase,
     private val postsStreamUseCase: GetPostsStreamUseCase,
     private val repository: PostRepository,
 ) : ViewModel(
 
 ) {
-
-    val token = mutableStateOf("")
-    val currentUserId = mutableStateOf(-1L)
 
     var postsUiState by mutableStateOf(PostsUiState())
         private set
@@ -54,16 +50,16 @@ class HomeScreenViewModel(
         fetchData()
     }
 
-    fun getPosts(userId: Long, token: String): Flow<PagingData<Post>> {
+    fun getPosts(): Flow<PagingData<Post>> {
         val newResult =
-            postsStreamUseCase(userId, token).flowOn(Dispatchers.IO).cachedIn(viewModelScope)
+            postsStreamUseCase().flowOn(Dispatchers.IO).cachedIn(viewModelScope)
         return newResult
     }
 
     fun connectToSocket() {
         viewModelScope.launch {
             Log.d("HomeScreen", "connectToSocket: ")
-            val result = repository.connectToSocket(currentUserId.value, token.value)
+            val result = repository.connectToSocket()
             Log.d("HomeScreen", "connectToSocket: $result")
             when (result) {
                 is ResponseResource.Error -> {
@@ -94,24 +90,17 @@ class HomeScreenViewModel(
         postsUiState = postsUiState.copy(isLoading = true)
 
         viewModelScope.launch {
-            dataStore.data.map { it.toAuthResultData() }.collect { userSettings ->
-                currentUserId.value = userSettings.id
-                token.value = userSettings.token
-            }
-        }
-
-        viewModelScope.launch {
             delay(500)
 
             // Fetch posts
-            val newResult = getPosts(userId = currentUserId.value, token = token.value)
+            val newResult = getPosts()
             postsUiState = postsUiState.copy(
                 currentPostResult = newResult,
                 isLoading = false
             )
 
 
-            val resultSuggestions = suggestionsUseCase(currentUserId.value, token.value)
+            val resultSuggestions = suggestionsUseCase()
             when (resultSuggestions) {
                 is Result.Success -> {
                     onBoardingUiState = onBoardingUiState.copy(

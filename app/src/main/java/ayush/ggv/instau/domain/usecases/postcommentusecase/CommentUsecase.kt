@@ -17,8 +17,7 @@ class CommentUseCase : KoinComponent {
     private val repository: PostCommentsRepository by inject()
     suspend operator fun invoke(
         params  : NewCommentParams,
-        token : String
     ) : Result<CommentResponse> {
-        return repository.addComment(params ,token)
+        return repository.addComment(params)
     }
 }

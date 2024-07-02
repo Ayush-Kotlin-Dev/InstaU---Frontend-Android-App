@@ -18,13 +18,10 @@ import org.koin.androidx.compose.koinViewModel
 @SuppressLint("SuspiciousIndentation")
 @Composable
 @Destination(start = true)
-
 fun Home(
     navigator: DestinationsNavigator
 ) {
     val viewModel: HomeScreenViewModel = koinViewModel()
-    val currentUserId = viewModel.currentUserId
-    val token = viewModel.token
     val lifecycleOwner = LocalLifecycleOwner.current
     val profileScreenViewModel: ProfileScreenViewModel = koinViewModel()
     DisposableEffect(key1 = lifecycleOwner) {
@@ -46,14 +43,12 @@ fun Home(
                 navigator.navigate(
                     PostDetailDestination(
                         it.postId,
-                        currentUserId.value,
-                        token.value
                     )
                 )
 
             },
             onProfileClick = { userId ->
-                navigator.navigate(ProfileDestination(userId, currentUserId.value, token.value))
+                navigator.navigate(ProfileDestination(userId))
             },
             onLikeClick = { postId ->
 
@@ -65,15 +60,13 @@ fun Home(
 
             },
             onUserClick = { userId ->
-                navigator.navigate(ProfileDestination(userId, currentUserId.value, token.value))
+                navigator.navigate(ProfileDestination(userId))
             },
 
             onFollowClick = {
-                currentUserId.value
+
             },
             profileScreenViewModel = profileScreenViewModel,
-            currentUserId = currentUserId.value,
-            token = token.value,
             newPostsAvailable = viewModel.newPostsAvailable,
             onDismiss = {
                 viewModel.newPostsAvailable = false

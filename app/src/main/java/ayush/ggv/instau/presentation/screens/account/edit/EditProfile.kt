@@ -9,7 +9,6 @@ import org.koin.androidx.compose.koinViewModel
 @Destination
 fun EditProfile(
     userId: Long,
-    token : String,
     navigator: DestinationsNavigator,
 
     ) {
@@ -20,10 +19,10 @@ fun EditProfile(
         onNameChange = viewModel::onNameChange,
         bioTextFieldValue = viewModel.bioTextFieldValue,
         onBioChange = viewModel::onBioChange,
-        onUploadButtonClick = { viewModel.updateProfile( token)},
+        onUploadButtonClick = { viewModel.updateProfile()},
         onUploadSuccess = { navigator.navigateUp()},
         fetchProfile = {
-            viewModel.fetchProfile( userId , userId ,token )
+            viewModel.fetchProfile( userId , userId )
         }
     )
 }

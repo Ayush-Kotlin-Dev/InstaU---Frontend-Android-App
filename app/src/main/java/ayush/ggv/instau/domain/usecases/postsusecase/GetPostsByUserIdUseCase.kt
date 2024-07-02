@@ -11,11 +11,9 @@ class getPostsByuserIdUseCase : KoinComponent {
 
     suspend operator fun invoke(
         userId : Long,
-        currentUserId: Long,
         page: Int,
         limit: Int,
-        token: String
     ): Result<PostsResponse> {
-        return repository.getPostByUser(userId, currentUserId, page , limit, token)
+        return repository.getPostByUser(userId, page , limit)
     }
 }

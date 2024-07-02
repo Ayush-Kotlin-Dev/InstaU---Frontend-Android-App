@@ -1,5 +1,6 @@
 package ayush.ggv.instau.data.profile.data
 
+import ayush.ggv.instau.common.datastore.UserPreferences
 import ayush.ggv.instau.data.posts.data.PostService
 import ayush.ggv.instau.data.profile.domain.model.ProfileResponse
 import ayush.ggv.instau.data.profile.domain.model.UpdateUserParams
@@ -9,18 +10,19 @@ import instaU.ayush.com.model.FollowUserData
 import instaU.ayush.com.model.GetFollowsResponse
 
 class ProfileRepositoryImpl(
-    private val profileService: ProfileService
+    private val profileService: ProfileService,
+    private val userPreferences: UserPreferences
+
 ) : ProfileRepository {
 
     override suspend fun getUserById(
         userId: Long,
-        currentUserId: Long,
-        token: String
     ): Result<ProfileResponse> {
         return try {
-            val response = profileService.getUserProfile(userId, currentUserId, token)
+            val userData  = userPreferences.getUserData()
+            val response = profileService.getUserProfile(userId, userData.id, userData.token)
 
-            if (response.success ==  true) {
+            if (response.success) {
                 Result.Success(response)
             } else {
                 Result.Error(Exception("Error: ${response.message}").toString())
@@ -33,9 +35,9 @@ class ProfileRepositoryImpl(
 
     override suspend fun updateUserProfile(
         updateUserParams: UpdateUserParams,
-        token: String
     ): Result<ProfileResponse> {
         return try {
+            val token = userPreferences.getUserData().token
             val response = profileService.updateUserProfile(updateUserParams, token)
 
             if (response.success) {

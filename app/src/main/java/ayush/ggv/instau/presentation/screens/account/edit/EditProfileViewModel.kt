@@ -33,12 +33,12 @@ class EditProfileViewModel(
     var bioTextFieldValue: TextFieldValue by mutableStateOf(TextFieldValue())
         private set
 
-    fun fetchProfile(userId: Long, currentUserId: Long, token: String) {
+    fun fetchProfile(userId: Long, currentUserId: Long) {
         viewModelScope.launch {
             uiState = uiState.copy(
                 isLoading = true
             )
-            val Profileresult = profileUseCase(userId, currentUserId, token)
+            val Profileresult = profileUseCase(userId)
 
             when (Profileresult) {
                 is Result.Success -> {
@@ -65,7 +65,7 @@ class EditProfileViewModel(
         }
     }
 
-    fun updateProfile(  token: String) {
+    fun updateProfile() {
 
         viewModelScope.launch {
             uiState = uiState.copy(
@@ -77,8 +77,7 @@ class EditProfileViewModel(
                     name = uiState.profile?.name ?: "",
                     bio = bioTextFieldValue.text,
                     imageUrl = uiState.profile?.imageUrl
-                ),
-                token = token
+                )
             )
 
             when (result) {

@@ -11,24 +11,18 @@ interface FollowRepository {
 
     suspend fun followUser(
         followsParams: FollowsParams,
-        token: String
     ): Result<FollowsAndUnfollowsResponse>
 
     suspend fun getFollowers(
         userId: Long,
         pageNumber: Int,
         pageSize: Int,
-        token : String
     ): Result<GetFollowsResponse>
     suspend fun getFollowing(
         userId: Long,
         pageNumber: Int,
         pageSize: Int,
-        token : String
     ): Result<GetFollowsResponse>
 
-    suspend fun getSuggestions(
-        userId: Long,
-        token: String
-    ): Result<GetFollowsResponse>
+    suspend fun getSuggestions(): Result<GetFollowsResponse>
 }

@@ -72,10 +72,8 @@ fun HomeScreen(
     //onboarding
     onBoardingFinish: () -> Unit,
     onUserClick: (Long) -> Unit,
-    onFollowClick: (Long) -> Unit,
+    onFollowClick: () -> Unit,
     profileScreenViewModel: ProfileScreenViewModel,
-    currentUserId: Long,
-    token: String,
     newPostsAvailable: Boolean,
     onDismiss: () -> Unit
 ) {
@@ -107,9 +105,7 @@ fun HomeScreen(
                             onBoardingFinish = onBoardingFinish,
                             onUserClick = onUserClick,
                             onFollowButtonClick = {},
-                            profileScreenViewModel = profileScreenViewModel,
-                            currentUserId = currentUserId,
-                            token = token
+                            profileScreenViewModel = profileScreenViewModel
                         )
                     }
 

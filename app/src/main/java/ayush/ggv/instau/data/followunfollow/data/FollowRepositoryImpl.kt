@@ -1,5 +1,8 @@
 package ayush.ggv.instau.data.followunfollow.data
 
+import androidx.datastore.core.DataStore
+import ayush.ggv.instau.common.datastore.UserPreferences
+import ayush.ggv.instau.common.datastore.UserSettings
 import ayush.ggv.instau.data.followunfollow.domain.FollowRepository
 import ayush.ggv.instau.data.profile.domain.model.ProfileResponse
 import ayush.ggv.instau.util.Result
@@ -8,14 +11,15 @@ import instaU.ayush.com.model.FollowsParams
 import instaU.ayush.com.model.GetFollowsResponse
 
 class FollowRepositoryImpl(
-   private val followService: FollowService
+   private val followService: FollowService,
+   private val userPreferences: UserPreferences
 ): FollowRepository {
     override suspend fun followUser(
         followsParams: FollowsParams,
-        token: String
     ): Result<FollowsAndUnfollowsResponse> {
         return try {
-            val response = followService.followUser(followsParams, token)
+            val userData = userPreferences.getUserData()
+            val response = followService.followUser(followsParams.copy(follower = userData.id ), userData.token)
             if (response.success) {
                 Result.Success(response)
             } else {
@@ -31,10 +35,10 @@ class FollowRepositoryImpl(
         userId: Long,
         pageNumber: Int,
         pageSize: Int,
-        token: String
     ): Result<GetFollowsResponse> {
         return try {
-            val response = followService.getFollowers(userId, pageNumber, pageSize, token)
+            val token = userPreferences.getUserData().token
+            val response = followService.getFollowers(userId, pageNumber, pageSize , token)
             if (response.success) {
                 Result.Success(response)
             } else {
@@ -48,10 +52,10 @@ class FollowRepositoryImpl(
     override suspend fun getFollowing(
         userId: Long,
         pageNumber: Int,
-        pageSize: Int,
-        token: String
+        pageSize: Int
     ): Result<GetFollowsResponse> {
         return try {
+            val token = userPreferences.getUserData().token
             val response = followService.getFollowing(userId, pageNumber, pageSize , token )
             if (response.success) {
                 Result.Success(response)
@@ -63,9 +67,10 @@ class FollowRepositoryImpl(
         }
     }
 
-    override suspend fun getSuggestions(userId: Long, token: String): Result<GetFollowsResponse> {
+    override suspend fun getSuggestions(): Result<GetFollowsResponse> {
         return try {
-            val response = followService.getSuggestions(userId, token)
+            val userData = userPreferences.getUserData()
+            val response = followService.getSuggestions( userData.id, userData.token)
             if (response.success) {
                 Result.Success(response)
             } else {

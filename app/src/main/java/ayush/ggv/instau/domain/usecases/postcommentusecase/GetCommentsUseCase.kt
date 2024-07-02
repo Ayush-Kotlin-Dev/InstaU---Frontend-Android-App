@@ -12,9 +12,8 @@ class GetCommentsUseCase : KoinComponent {
     suspend operator fun invoke(
         postId : Long,
         pageNumber : Int,
-        pageSize : Int,
-        token : String
+        pageSize : Int
     ) : Result<GetCommentsResponse> {
-        return repository.getComments(postId , pageNumber , pageSize ,token)
+        return repository.getComments(postId , pageNumber , pageSize )
     }
 }

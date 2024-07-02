@@ -29,14 +29,14 @@ class PostDetailScreenViewModel(
 
     var commentsUiState by mutableStateOf(CommentsUiState())
 
-    fun fetchData(postId : Long , currentUserId : Long , token : String){
+    fun fetchData(postId : Long ){
         viewModelScope.launch {
             postUiState = postUiState.copy(isLoading = true)
             commentsUiState = commentsUiState.copy(isLoading = true)
 
 
-            val postResult = getPostByIdUseCase(postId, currentUserId, token)
-            val comment = getCommentsUseCase(postId, 1 , 10, token)
+            val postResult = getPostByIdUseCase(postId)
+            val comment = getCommentsUseCase(postId, 1 , 10)
 
             when(postResult){
                 is Result.Success -> {
@@ -77,9 +77,9 @@ class PostDetailScreenViewModel(
 
     }
 
-    fun addComment(newCommentParams: NewCommentParams, token : String){
+    fun addComment(newCommentParams: NewCommentParams){
         viewModelScope.launch {
-            val result = commentUseCase(newCommentParams, token)
+            val result = commentUseCase(newCommentParams)
             when(result){
                 is Result.Success -> {
                     val newComment = result.data?.comment
@@ -97,9 +97,9 @@ class PostDetailScreenViewModel(
         }
     }
 
-    fun deleteComment(removeCommentParams: RemoveCommentParams,  token: String){
+    fun deleteComment(removeCommentParams: RemoveCommentParams){
         viewModelScope.launch {
-            val result = deleteCommentUseCase(removeCommentParams , token)
+            val result = deleteCommentUseCase(removeCommentParams)
             when(result){
                 is Result.Success -> {
                     val deletedComment = result.data?.comment

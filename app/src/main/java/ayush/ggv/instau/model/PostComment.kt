@@ -6,14 +6,14 @@ import kotlinx.serialization.Serializable
 data class NewCommentParams(
     val content: String,
     val postId: Long,
-    val userId: Long
+    val userId: Long ?= null
 )
 
 @Serializable
 data class RemoveCommentParams(
     val postId: Long,
     val commentId: Long,
-    val userId: Long
+    val userId: Long ?= null
 )
 
 @Serializable

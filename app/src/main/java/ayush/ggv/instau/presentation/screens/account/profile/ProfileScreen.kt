@@ -78,7 +78,6 @@ fun ProfileScreen(
     onCommentClick: (Long) -> Unit,
     fetchData: () -> Unit,
     navigator: DestinationsNavigator,
-    token: String,
     isFollowing: Boolean
 ) {
 
@@ -108,7 +107,6 @@ fun ProfileScreen(
                                 navigator.navigate(
                                     EditProfileDestination(
                                         userInfoUiState.profile.id,
-                                        token
                                     )
                                 ) // Navigate to EditProfileDestination if the profile belongs to the current user
                             } else {

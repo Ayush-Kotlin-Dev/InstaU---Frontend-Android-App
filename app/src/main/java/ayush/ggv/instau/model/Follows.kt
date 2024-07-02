@@ -10,7 +10,7 @@ data class FollowsAndUnfollowsResponse(
 
 @Serializable
 data class FollowsParams(
-    val follower : Long ,
+    val follower : Long ? = null,
     val following : Long,
     val isFollowing : Boolean
 )

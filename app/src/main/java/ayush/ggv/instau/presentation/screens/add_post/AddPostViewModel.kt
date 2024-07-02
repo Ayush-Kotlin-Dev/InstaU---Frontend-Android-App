@@ -49,8 +49,7 @@ class AddPostViewModel(
                 PostParams(
                     userId = userId,
                     caption = caption,
-                ),
-                token = token
+                )
             )
             when (createPostResult) {
                 is Result.Error -> {

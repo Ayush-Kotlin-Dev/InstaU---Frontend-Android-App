@@ -11,10 +11,9 @@ class GetPostByIdUseCase :KoinComponent{
     private val repository: PostRepository by inject()
 
     suspend operator fun invoke(
-        postId: Long,
-        currentUserId: Long?,
-        token: String)
+        postId: Long
+    )
     : Result<PostResponse> {
-        return repository.getPost(postId, currentUserId, token)
+        return repository.getPost(postId)
     }
 }

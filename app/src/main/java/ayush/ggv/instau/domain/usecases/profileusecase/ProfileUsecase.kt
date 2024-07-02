@@ -11,9 +11,7 @@ class ProfileUseCase : KoinComponent {
 
     suspend operator fun invoke(
         userId: Long,
-        currentUserId: Long,
-        token: String
     ): Result<ProfileResponse> {
-        return repository.getUserById(userId, currentUserId, token)
+        return repository.getUserById(userId)
     }
 }

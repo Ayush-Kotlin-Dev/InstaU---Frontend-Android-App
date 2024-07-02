@@ -1,6 +1,8 @@
 package ayush.ggv.instau.common.datastore
 
 import androidx.datastore.core.Serializer
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import java.io.InputStream
 import java.io.OutputStream
@@ -22,13 +24,15 @@ object UserSettingsSerializer : Serializer<UserSettings> {
     }
 
     override suspend fun writeTo(t: UserSettings, output: OutputStream) {
-        output.write(
-            Json.encodeToString(
-                UserSettings.serializer(),
-                t
-            ).toByteArray(
+        withContext(Dispatchers.IO) {
+            output.write(
+                Json.encodeToString(
+                    UserSettings.serializer(),
+                    t
+                ).toByteArray(
+                )
             )
-        )
+        }
     }
 
 }

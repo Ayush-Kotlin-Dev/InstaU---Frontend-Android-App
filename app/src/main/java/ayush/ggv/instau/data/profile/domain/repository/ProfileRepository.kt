@@ -6,9 +6,9 @@ import ayush.ggv.instau.util.Result
 import instaU.ayush.com.model.GetFollowsResponse
 
 interface ProfileRepository {
-    suspend fun getUserById(userId: Long , currentUserId : Long , token : String  ): Result<ProfileResponse>
+    suspend fun getUserById(userId: Long ): Result<ProfileResponse>
 
-    suspend fun updateUserProfile(updateUserParams: UpdateUserParams, token: String): Result<ProfileResponse>
+    suspend fun updateUserProfile(updateUserParams: UpdateUserParams): Result<ProfileResponse>
 
     suspend fun searchUsersByName(name: String, token: String): Result<GetFollowsResponse>
 

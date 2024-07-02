@@ -13,11 +13,10 @@ class AddPostUseCase : KoinComponent {
 
     suspend operator fun invoke(
         imageUri : ByteArray,
-        postTextParams: PostParams,
-        token: String
+        postTextParams: PostParams
     ): Result<PostResponse> {
         Log.d("PostService", "createPost: Called USecase")
 
-        return repository.createPost(imageUri ,postTextParams, token)
+        return repository.createPost(imageUri ,postTextParams)
     }
 }

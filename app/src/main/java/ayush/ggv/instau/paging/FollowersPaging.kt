@@ -15,15 +15,14 @@ enum class ListType {
 class FollowPagingSource(
     private val repository: FollowRepository,
     private val userId: Long,
-    private val token: String,
     private val listType: ListType
 ) : PagingSource<Int, FollowUserData>() {
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, FollowUserData> {
         val page = params.key ?: 1
         return try {
             val response = when (listType) {
-                ListType.FOLLOWERS -> repository.getFollowers(userId, page, params.loadSize, token)
-                ListType.FOLLOWING -> repository.getFollowing(userId, page, params.loadSize, token)
+                ListType.FOLLOWERS -> repository.getFollowers(userId, page, params.loadSize)
+                ListType.FOLLOWING -> repository.getFollowing(userId, page, params.loadSize)
             }
             Log.d("FollowPagingSource", "load: $response for page: $page")
 

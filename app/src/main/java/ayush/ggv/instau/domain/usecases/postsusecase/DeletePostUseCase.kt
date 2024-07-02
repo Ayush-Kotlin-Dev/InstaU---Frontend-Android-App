@@ -10,9 +10,8 @@ class DeletePostUseCase : KoinComponent {
     private val repository: PostRepository by inject()
 
     suspend operator fun invoke(
-        postId: Long,
-        token: String
+        postId: Long
     ): Result<PostResponse> {
-        return repository.deletePost(postId, token)
+        return repository.deletePost(postId)
     }
 }

@@ -11,9 +11,8 @@ class PostUnLikeUseCase : KoinComponent {
 
     private val repository: PostLikesRepository by inject()
     suspend operator fun invoke(
-        likeParams: LikeParams,
-        token : String
+        likeParams: LikeParams
     ) : Result<LikeResponse> {
-        return repository.removeLike(likeParams ,token)
+        return repository.removeLike(likeParams)
     }
 }

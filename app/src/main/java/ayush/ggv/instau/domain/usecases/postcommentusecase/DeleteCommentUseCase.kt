@@ -12,8 +12,7 @@ class DeleteCommentUseCase  : KoinComponent {
     private val repository: PostCommentsRepository by inject()
     suspend operator fun invoke(
         params  : RemoveCommentParams,
-        token : String
     ) : Result<CommentResponse> {
-        return repository.removeComment(params ,token)
+        return repository.removeComment(params)
     }
 }

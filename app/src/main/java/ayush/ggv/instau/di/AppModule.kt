@@ -5,6 +5,8 @@ import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
 import androidx.room.Room
 import ayush.ggv.instau.MainActivityViewModel
+import ayush.ggv.instau.common.datastore.UserPreferences
+import ayush.ggv.instau.common.datastore.UserPreferencesImpl
 import ayush.ggv.instau.presentation.screens.auth.signup.SignUpViewModel
 import ayush.ggv.instau.presentation.screens.auth.login.LoginViewModel
 import ayush.ggv.instau.common.datastore.UserSettingsSerializer
@@ -86,14 +88,15 @@ val appModule = module {
         ).fallbackToDestructiveMigration()
             .build()
     }
-    single <PostRepository> { PostsRepositoryImpl(get() ,  get()) }
-    single  <ProfileRepository>{ProfileRepositoryImpl(get()) }
-    single  <PostCommentsRepository> {PostCommentsRepositoryImpl(get()) }
+    single<UserPreferences> { UserPreferencesImpl(get()) }
+    single <PostRepository> { PostsRepositoryImpl(get() ,  get() , get()) }
+    single  <ProfileRepository>{ProfileRepositoryImpl(get(),get()) }
+    single  <PostCommentsRepository> {PostCommentsRepositoryImpl(get(), get() ) }
     single { FollowsUseCase() }
     single { GetFollowersUseCase() }
     single { GetFollowingUseCase() }
-    single <FollowRepository>{ FollowRepositoryImpl(get()) }
-    single <PostLikesRepository>{PostLikesRepositoryImpl(get())  }
+    single <FollowRepository>{ FollowRepositoryImpl(get(),get()) }
+    single <PostLikesRepository>{PostLikesRepositoryImpl(get(),get())  }
     single <ChatRepository>{ChatRepositoryImpl(get()) }
     single <QnaRepository>{ QnaRepositoryImpl(get()) }
     factory { ChatService() }
@@ -131,7 +134,7 @@ val appModule = module {
     viewModel { SignUpViewModel(get() , get(), get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
     viewModel { LoginViewModel(get() , get() , get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
     viewModel { MainActivityViewModel(get()) }
-    viewModel{ HomeScreenViewModel(get(),get () , get()  ,get()  ) }
+    viewModel{ HomeScreenViewModel(get(),get () , get()   ) }
     viewModel { PostDetailScreenViewModel(get(), get(), get(), get()  ) }
     viewModel{ ProfileScreenViewModel( get() , get()  , get() , get() ) }
     viewModel { EditProfileViewModel(get() ,get()) }

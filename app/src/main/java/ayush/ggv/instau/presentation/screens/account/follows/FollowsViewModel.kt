@@ -30,7 +30,7 @@ class FollowsViewModel(
 
     var uiState by mutableStateOf(FollowsUiState())
         private set
-    private fun fetchFollowers(userId: Long, token: String): Flow<PagingData<FollowUserData>> {
+    private fun fetchFollowers(userId: Long): Flow<PagingData<FollowUserData>> {
         Log.d("FollowsViewModel", "Creating Pager for followers")
         return Pager(
             config = PagingConfig(
@@ -38,12 +38,12 @@ class FollowsViewModel(
                 enablePlaceholders = false
             ),
             pagingSourceFactory = {
-                FollowPagingSource(followersUseCase.repository, userId, token, listType = ListType.FOLLOWERS)
+                FollowPagingSource(followersUseCase.repository, userId, listType = ListType.FOLLOWERS)
             }
         ).flow.cachedIn(viewModelScope)
     }
 
-    private fun fetchFollowing(userId: Long, token: String): Flow<PagingData<FollowUserData>> {
+    private fun fetchFollowing(userId: Long): Flow<PagingData<FollowUserData>> {
         Log.d("FollowsViewModel", "Creating Pager for following")
         return Pager(
             config = PagingConfig(
@@ -51,15 +51,15 @@ class FollowsViewModel(
                 enablePlaceholders = false
             ),
             pagingSourceFactory = {
-                FollowPagingSource(followingUseCase.repository, userId, token , listType = ListType.FOLLOWING)
+                FollowPagingSource(followingUseCase.repository, userId , listType = ListType.FOLLOWING)
             }
         ).flow.cachedIn(viewModelScope)
     }
 
-    fun fetchFollows(userId: Long, token: String) {
+    fun fetchFollows(userId: Long) {
         viewModelScope.launch {
-            val followers = fetchFollowers(userId, token)
-            val following = fetchFollowing(userId, token)
+            val followers = fetchFollowers(userId)
+            val following = fetchFollowing(userId )
             uiState = uiState.copy(
                 followUsers = followers,
                 followingUsers = following

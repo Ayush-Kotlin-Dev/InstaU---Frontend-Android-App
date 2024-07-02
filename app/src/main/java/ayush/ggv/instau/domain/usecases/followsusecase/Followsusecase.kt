@@ -14,8 +14,7 @@ class FollowsUseCase : KoinComponent{
     private val repository: FollowRepository by inject()
     suspend operator fun invoke(
         followsParams: FollowsParams,
-        token : String
     ) : Result<FollowsAndUnfollowsResponse> {
-        return repository.followUser(followsParams ,token)
+        return repository.followUser(followsParams)
     }
 }

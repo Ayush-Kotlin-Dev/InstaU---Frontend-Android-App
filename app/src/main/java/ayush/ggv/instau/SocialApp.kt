@@ -181,7 +181,7 @@ fun SocialApp(
                                                 NavigationBarItems.HOME -> navHostController.navigate(HomeDestination.route)
                                                 NavigationBarItems.SEARCH -> navHostController.navigate(SearchDestination(userId!!, token!!).route)
                                                 NavigationBarItems.ADD -> navHostController.navigate(AddPostDestination(userId = userId!!, token).route)
-                                                NavigationBarItems.PROFILE -> navHostController.navigate(ProfileDestination(userId!!, userId, token!!).route)
+                                                NavigationBarItems.PROFILE -> navHostController.navigate(ProfileDestination(userId!!).route)
                                             }
                                         }
                                         .fillMaxSize(),

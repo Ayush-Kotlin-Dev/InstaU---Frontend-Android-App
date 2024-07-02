@@ -14,9 +14,8 @@ class GetFollowersUseCase : KoinComponent {
     suspend operator fun invoke(
         userId: Long,
         pageNumber: Int,
-        pageSize: Int,
-        token: String
+        pageSize: Int
     ): Result<GetFollowsResponse> {
-        return repository.getFollowers(userId, pageNumber, pageSize, token)
+        return repository.getFollowers(userId, pageNumber, pageSize)
     }
 }

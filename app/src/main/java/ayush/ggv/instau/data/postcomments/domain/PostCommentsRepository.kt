@@ -9,14 +9,11 @@ import ayush.ggv.instau.util.Result
 
 interface PostCommentsRepository {
 
-    suspend fun addComment(
-        params : NewCommentParams,
-        token : String
-    ): Result<CommentResponse>
+    suspend fun addComment(params : NewCommentParams): Result<CommentResponse>
 
-    suspend fun removeComment(params : RemoveCommentParams , token: String): Result<CommentResponse>
+    suspend fun removeComment(params : RemoveCommentParams): Result<CommentResponse>
 
-    suspend fun getComments(postId : Long , pageNumber : Int , pageSize : Int , token: String ): Result<GetCommentsResponse>
+    suspend fun getComments(postId : Long , pageNumber : Int , pageSize : Int ): Result<GetCommentsResponse>
 
 
 

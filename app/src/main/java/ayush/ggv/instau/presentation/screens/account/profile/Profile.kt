@@ -11,7 +11,6 @@ import ayush.ggv.instau.presentation.screens.destinations.EditProfileDestination
 import ayush.ggv.instau.presentation.screens.destinations.FollowersDestination
 import ayush.ggv.instau.presentation.screens.destinations.FollowingDestination
 import ayush.ggv.instau.presentation.screens.home.HomeScreenViewModel
-import ayush.ggv.instau.util.Utils
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import instaU.ayush.com.model.FollowsParams
@@ -22,8 +21,6 @@ import org.koin.androidx.compose.koinViewModel
 @Destination
 fun Profile(
     userId : Long ,
-    currentUserId : Long,
-    token : String,
     navigator: DestinationsNavigator,
 ) {
     val viewModel : ProfileScreenViewModel = koinViewModel()
@@ -34,21 +31,18 @@ fun Profile(
         onButtonClick = {
             viewModel.followUnfollowUser(
                 FollowsParams(
-                    follower = currentUserId,
                     following = userId,
                     isFollowing = viewModel.isFollowing
-                ),
-                token
+                )
             )
         },
-        onFollowersClick = {navigator.navigate(FollowersDestination(userId , currentUserId , token)) },
-        onFollowingClick = {navigator.navigate(FollowingDestination(userId , currentUserId ,token)) },
+        onFollowersClick = {navigator.navigate(FollowersDestination(userId)) },
+        onFollowingClick = {navigator.navigate(FollowingDestination(userId)) },
         onPostClick = { },
         onLikeClick = { },
         onCommentClick = { },
-        fetchData = {viewModel.fetchProfile(userId , currentUserId , token )},
+        fetchData = {viewModel.fetchProfile(userId )},
         navigator = navigator,
-        token = token,
         isFollowing = viewModel.isFollowing
     )
 }

@@ -9,10 +9,7 @@ import org.koin.core.component.inject
 class SuggestionsUseCase : KoinComponent {
     private val repository: FollowRepository by inject()
 
-    suspend operator fun invoke(
-        userId: Long,
-        token: String
-    ): Result<GetFollowsResponse> {
-        return repository.getSuggestions(userId,  token)
+    suspend operator fun invoke(): Result<GetFollowsResponse> {
+        return repository.getSuggestions()
     }
 }

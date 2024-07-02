@@ -12,8 +12,6 @@ import org.koin.androidx.compose.koinViewModel
 fun PostDetail(
     navigator: DestinationsNavigator,
     postId: Long,
-    currentUserId: Long,
-    token: String
 ) {
     val viewModel: PostDetailScreenViewModel = koinViewModel()
 
@@ -25,23 +23,19 @@ fun PostDetail(
             viewModel.addComment(
                 newCommentParams = NewCommentParams(
                     postId = postId,
-                    content = it,
-                    userId = currentUserId
-                ),
-                token
+                    content = it
+                )
             )
         },
         fetchData = {
-            viewModel.fetchData(postId, currentUserId, token)
+            viewModel.fetchData(postId)
         },
         onDeleteClick = {
             viewModel.deleteComment(
                 RemoveCommentParams(
                     postId = postId,
-                    commentId = it,
-                    userId = currentUserId
-                ),
-                token
+                    commentId = it
+                )
             )
         }
     )

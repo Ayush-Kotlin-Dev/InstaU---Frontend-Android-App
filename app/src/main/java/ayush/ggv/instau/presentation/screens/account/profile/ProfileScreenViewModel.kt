@@ -40,8 +40,6 @@ class ProfileScreenViewModel(
 
     fun fetchProfile(
         userId: Long,
-        currentUserId: Long,
-        token: String
     ) {
         userInfoUiState = userInfoUiState.copy(
             isLoading = true
@@ -50,8 +48,8 @@ class ProfileScreenViewModel(
         viewModelScope.launch {
 
             try {
-                val profileResult = profileUseCase(userId, currentUserId, token)
-                val postResult = getPostsbyUserIdUseCase(userId, currentUserId, 1, 10, token)
+                val profileResult = profileUseCase(userId)
+                val postResult = getPostsbyUserIdUseCase(userId, 1, 10)
 
                 when (profileResult) {
                     is Result.Success -> {
@@ -108,10 +106,10 @@ class ProfileScreenViewModel(
         }
     }
 
-    fun followUnfollowUser(followsParams: FollowsParams, token: String) {
+    fun followUnfollowUser(followsParams: FollowsParams) {
         viewModelScope.launch {
             try {
-                val followResult = followsUseCase(followsParams, token)
+                val followResult = followsUseCase(followsParams)
                 when (followResult) {
                     is Result.Success -> {
                         userInfoUiState = userInfoUiState.copy(

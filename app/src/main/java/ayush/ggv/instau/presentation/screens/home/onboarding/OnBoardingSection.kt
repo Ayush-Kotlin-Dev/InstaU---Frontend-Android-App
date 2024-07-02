@@ -36,8 +36,6 @@ fun OnBoardingSection(
     onFollowButtonClick: () -> Unit,
     onBoardingFinish: () -> Unit,
     profileScreenViewModel: ProfileScreenViewModel,
-    currentUserId: Long,
-    token : String
 ) {
 
 
@@ -69,11 +67,9 @@ fun OnBoardingSection(
             onFollowButtonClick = {
                 profileScreenViewModel.followUnfollowUser(
                 FollowsParams(
-                    follower = currentUserId,
                     following =  it,
                     isFollowing = profileScreenViewModel.isFollowing
-                ),
-                token
+                )
             ) }
         )
         OutlinedButton(

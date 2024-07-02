@@ -42,7 +42,7 @@ class PostListItemViewModel(
 
     fun deletePost(postId: Long, imageUrl: String) {
         viewModelScope.launch {
-            deletePostUseCase(postId, tokenString!!)
+            deletePostUseCase(postId)
             // Delete the image from Firebase Storage
             val imageRef = firebaseStorage.getReferenceFromUrl(imageUrl)
             imageRef.delete().addOnSuccessListener {
@@ -52,9 +52,9 @@ class PostListItemViewModel(
             }
         }
     }
-    fun likePost(likeParams: LikeParams , token : String) {
+    fun likePost(likeParams: LikeParams) {
         viewModelScope.launch {
-            val result = postLikeUseCase(likeParams, token)
+            val result = postLikeUseCase(likeParams)
             likeResult.value = result
             if (result is Result.Success) {
                 isPostLiked.value = result.data?.success

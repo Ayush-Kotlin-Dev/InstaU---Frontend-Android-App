@@ -33,7 +33,7 @@ fun Search(
             navigator.popBackStack()
         },
         onItemClick = { userId ->
-            navigator.navigate(ProfileDestination(userId, currentUserId, token))
+            navigator.navigate(ProfileDestination(userId))
         }
 
     )

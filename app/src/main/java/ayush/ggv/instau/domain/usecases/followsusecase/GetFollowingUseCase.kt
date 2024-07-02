@@ -13,8 +13,7 @@ class GetFollowingUseCase : KoinComponent {
         userId: Long,
         pageNumber: Int,
         pageSize: Int,
-        token: String
     ): Result<GetFollowsResponse> {
-        return repository.getFollowing(userId, pageNumber, pageSize, token)
+        return repository.getFollowing(userId, pageNumber, pageSize)
     }
 }

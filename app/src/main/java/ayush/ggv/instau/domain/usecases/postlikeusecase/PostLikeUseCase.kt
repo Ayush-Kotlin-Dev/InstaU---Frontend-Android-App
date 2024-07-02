@@ -14,9 +14,8 @@ class PostLikeUseCase : KoinComponent {
 
     private val repository: PostLikesRepository by inject()
     suspend operator fun invoke(
-        likeParams: LikeParams,
-        token : String
+        likeParams: LikeParams
     ) : Result<LikeResponse> {
-        return repository.addLike(likeParams ,token)
+        return repository.addLike(likeParams)
     }
 }

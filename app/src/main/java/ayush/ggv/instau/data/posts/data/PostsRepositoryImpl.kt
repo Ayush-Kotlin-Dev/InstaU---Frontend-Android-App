@@ -5,6 +5,7 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import ayush.ggv.instau.common.datastore.UserPreferences
 import ayush.ggv.instau.dao.post.PostsDatabase
 import ayush.ggv.instau.dao.post.PostsRemoteMediator
 import ayush.ggv.instau.data.posts.domain.repository.PostRepository
@@ -14,27 +15,40 @@ import ayush.ggv.instau.model.PostParams
 import ayush.ggv.instau.model.PostsResponse
 import ayush.ggv.instau.util.ResponseResource
 import ayush.ggv.instau.util.Result
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flattenConcat
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 
 class PostsRepositoryImpl(
     private val postService: PostService,
-    private val database: PostsDatabase
+    private val database: PostsDatabase,
+    private val userPreferences: UserPreferences
 ) : PostRepository {
 
 
-    @OptIn(ExperimentalPagingApi::class)
-    override fun getPostsStream(pagerConfig: PagingConfig , userId: Long, token: String): Flow<PagingData<Post>> {
-        val pagingSourceFactory = { database.postsDao().getAllPosts() }
-        return Pager(
-            config =  PagingConfig(pageSize = 6,  prefetchDistance = 1  , initialLoadSize = 10),
-            pagingSourceFactory =pagingSourceFactory,
-            remoteMediator = PostsRemoteMediator(postService, database , userId , token)
-        ).flow
+    @OptIn(ExperimentalPagingApi::class, ExperimentalCoroutinesApi::class)
+    override fun getPostsStream(pagerConfig: PagingConfig): Flow<PagingData<Post>> {
+        return flow {
+            val userData = userPreferences.getUserData()
+            emit(userData)
+        }.map { userData ->
+            val pagingSourceFactory = { database.postsDao().getAllPosts() }
+            Pager(
+                config = PagingConfig(pageSize = 6, prefetchDistance = 1, initialLoadSize = 10),
+                pagingSourceFactory = pagingSourceFactory,
+                remoteMediator = PostsRemoteMediator(postService, database, userData.id, userData.token)
+            ).flow
+        }.flattenConcat()
     }
 
-    override suspend fun connectToSocket(sender: Long, token: String): ResponseResource<String> {
+    override suspend fun connectToSocket(): ResponseResource<String> {
+        val userData = userPreferences.getUserData()
+
         return when (val response =
-            postService.connectToSocket(sender,token)) {
+            postService.connectToSocket(userData.id, userData.token)) {
             is ResponseResource.Error -> ResponseResource.error(response.errorMessage)
             is ResponseResource.Success -> ResponseResource.success(response.data)
         }
@@ -47,12 +61,11 @@ class PostsRepositoryImpl(
 
     override suspend fun createPost(
         image: ByteArray,
-        postTextParams: PostParams,
-        token: String
+        postTextParams: PostParams
     ): Result<PostResponse> {
         return try {
-            Log.d("PostService", "createPost: Called Repo")
-            val response = postService.createPost(image , postTextParams, token)
+            val userData = userPreferences.getUserData()
+            val response = postService.createPost(image , postTextParams,userData.token)
             if (response.success) {
                 Result.Success(response)
             } else {
@@ -64,13 +77,12 @@ class PostsRepositoryImpl(
     }
 
     // In PostsRepositoryImpl.kt
-    override suspend fun getPost(
-        postId: Long,
-        currentUserId: Long?,
-        token: String
-    ): Result<PostResponse> {
+    override suspend fun getPost(postId: Long): Result<PostResponse> {
+
         return try {
-            val response = postService.getPost(postId, currentUserId, token)
+            val userData = userPreferences.getUserData()
+
+            val response = postService.getPost(postId , userData.id, userData.token)
             if (response.success) {
                 Result.Success(response)
             } else {
@@ -83,15 +95,14 @@ class PostsRepositoryImpl(
 
     override suspend fun getPostByUser(
         userId: Long,
-        currentUserId: Long,
         pageNumber: Int,
         pageSize: Int,
-        token: String
     ): Result<PostsResponse> {
-
+        val userData = userPreferences.getUserData()
+        Log.d("PostService", "getPostsByUser: Called Repo with data $userData")
         return try {
             val response =
-                postService.getPostsByUser(userId, currentUserId, pageNumber, pageSize, token)
+                postService.getPostsByUser(userId, userData.id, pageNumber, pageSize, userData.token)
             if (response.success) {
                 Result.Success(response)
             } else {
@@ -103,9 +114,10 @@ class PostsRepositoryImpl(
 
     }
 
-    override suspend fun deletePost(postId: Long, token: String): Result<PostResponse> {
+    override suspend fun deletePost(postId: Long): Result<PostResponse> {
         return try {
-            val response = postService.deletePost(postId, token)
+            val userData = userPreferences.getUserData()
+            val response = postService.deletePost(postId , userData.token)
             if (response.success) {
                 Result.Success(response)
             } else {
