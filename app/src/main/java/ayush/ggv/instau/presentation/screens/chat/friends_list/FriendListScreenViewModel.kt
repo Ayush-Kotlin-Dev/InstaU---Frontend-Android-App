@@ -22,7 +22,7 @@ class FriendListScreenViewModel(
     private val useCase: FriendListUseCase
 ) : ViewModel() {
 
-    val token = mutableStateOf("")
+
     val currentUserId = mutableLongStateOf(-1L)
     val userAvatar = mutableStateOf("")
 
@@ -40,8 +40,7 @@ class FriendListScreenViewModel(
         viewModelScope.launch {
             // Fetch token and currentUserId
             dataStore.data.map { it.toAuthResultData() }.collect { userSettings ->
-                currentUserId.value = userSettings.id
-                token.value = userSettings.token
+                currentUserId.longValue = userSettings.id
                 userAvatar.value = userSettings.avatar.orEmpty()
                 // Once token and currentUserId are fetched, call useCase
                 fetchFriendList()
@@ -52,7 +51,7 @@ class FriendListScreenViewModel(
     private fun fetchFriendList() {
         viewModelScope.launch {
             _friendListState.value = FriendListState(isLoading = true)
-            useCase(currentUserId.value, token.value).onEach {
+            useCase(currentUserId.value).onEach {
                 when (it) {
                     is ResponseResource.Error ->
                         _friendListState.value =

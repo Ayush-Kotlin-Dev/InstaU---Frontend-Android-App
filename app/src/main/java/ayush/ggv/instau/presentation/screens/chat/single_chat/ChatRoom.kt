@@ -18,8 +18,7 @@ fun ChatRoom(
     friendName: String,
     friendAvatar: String,
     userAvatar: String,
-    userId: Long,
-    token: String,
+    userId: Long
     ) {
 
     val viewModel: ChatRoomViewModel = koinViewModel()
@@ -27,7 +26,7 @@ fun ChatRoom(
     val lifecycleOwner = LocalLifecycleOwner.current
 
     LaunchedEffect(key1 = true) {
-        viewModel.getChatHistory(userId , friendId , token)
+        viewModel.getChatHistory(userId , friendId )
     }
 
 
@@ -37,7 +36,6 @@ fun ChatRoom(
                 viewModel.connectToSocket(
                     sender = userId,
                     receiver = friendId,
-                    token = token
                 )
             else if (event == Lifecycle.Event.ON_STOP)
                 viewModel.disconnectSocket()

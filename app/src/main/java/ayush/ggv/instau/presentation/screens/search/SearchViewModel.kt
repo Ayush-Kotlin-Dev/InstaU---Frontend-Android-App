@@ -31,11 +31,11 @@ class SearchViewModel(
         _searchQuery.value = query
     }
 
-    fun searchHeroes(query: String, token: String) {
+    fun searchHeroes(query: String) {
         viewModelScope.launch(Dispatchers.IO) {
             searchedHeroes = searchedHeroes.copy(isLoading = true)
             searchedHeroes = searchedHeroes.copy(error = null)
-            val result = useCase(query, token)
+            val result = useCase(query)
             when (result) {
                 is Result.Success -> {
                     val convertedUser = result.data?.follows?.map {

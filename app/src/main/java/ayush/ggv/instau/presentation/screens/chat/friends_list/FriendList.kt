@@ -43,7 +43,6 @@ fun FriendList(
                 friendAvatar,
                 viewModel.userAvatar.value,
                 viewModel.currentUserId.longValue,
-                viewModel.token.value
             ).route)
         },
         onGroupChatClick = { navigator.navigate(TestChatScreenDestination) }

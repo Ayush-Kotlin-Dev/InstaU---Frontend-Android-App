@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import ayush.ggv.instau.presentation.screens.destinations.EditProfileDestination
 import ayush.ggv.instau.presentation.screens.destinations.FollowersDestination
 import ayush.ggv.instau.presentation.screens.destinations.FollowingDestination
+import ayush.ggv.instau.presentation.screens.destinations.PostDetailDestination
 import ayush.ggv.instau.presentation.screens.home.HomeScreenViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -38,7 +39,12 @@ fun Profile(
         },
         onFollowersClick = {navigator.navigate(FollowersDestination(userId)) },
         onFollowingClick = {navigator.navigate(FollowingDestination(userId)) },
-        onPostClick = { },
+        onPostClick = {navigator.navigate(
+            PostDetailDestination(
+                it.postId,
+            )
+        )
+        },
         onLikeClick = { },
         onCommentClick = { },
         fetchData = {viewModel.fetchProfile(userId )},

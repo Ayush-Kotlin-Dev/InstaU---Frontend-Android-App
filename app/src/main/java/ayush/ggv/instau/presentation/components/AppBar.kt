@@ -47,6 +47,7 @@ import ayush.ggv.instau.presentation.screens.destinations.HomeDestination
 import ayush.ggv.instau.presentation.screens.destinations.LoginDestination
 import ayush.ggv.instau.presentation.screens.destinations.PostDetailDestination
 import ayush.ggv.instau.presentation.screens.destinations.ProfileDestination
+import ayush.ggv.instau.presentation.screens.destinations.QnaDestination
 import ayush.ggv.instau.presentation.screens.destinations.SearchDestination
 import ayush.ggv.instau.presentation.screens.destinations.SignUpNDestination
 import ayush.ggv.instau.ui.theme.SmallElevation
@@ -183,6 +184,7 @@ fun getAppBarTitle(currentDestinationRoute: String?): Int {
         EditProfileDestination.route -> R.string.edit_profile_destination_title
         FollowingDestination.route -> R.string.following_text
         FollowersDestination.route -> R.string.followers_text
+        QnaDestination.route -> R.string.qna_destination_title
         else -> R.string.app_name
 
     }

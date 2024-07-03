@@ -13,8 +13,6 @@ import ayush.ggv.instau.util.Result
 @com.ramcosta.composedestinations.annotation.Destination
 fun Search(
     navigator: DestinationsNavigator,
-    currentUserId:Long,
-    token: String
 ) {
     val searchViewModel: SearchViewModel = koinViewModel()
     val searchQuery by searchViewModel.searchQuery
@@ -24,10 +22,10 @@ fun Search(
         searchQuery = searchQuery,
         onTextChange = {newValue ->
             searchViewModel.updateSearchQuery(newValue)
-            searchViewModel.searchHeroes(searchQuery, token)
+            searchViewModel.searchHeroes(searchQuery)
         },
         onSearchClicked = {
-            searchViewModel.searchHeroes(searchQuery, token)
+            searchViewModel.searchHeroes(searchQuery)
         },
         onCloseClicked = {
             navigator.popBackStack()

@@ -11,8 +11,6 @@ import org.koin.androidx.compose.koinViewModel
 @Destination
 fun AddPost(
     navigator: DestinationsNavigator,
-    userId: Long?,
-    token : String?
 ) {
     val viewModel: AddPostViewModel = koinViewModel()
     val homeScreenViewModel: HomeScreenViewModel = koinViewModel()
@@ -21,12 +19,10 @@ fun AddPost(
         captionText = viewModel.captionTextFieldValue.text,
         onCaptionChange = viewModel::onCaptionChange,
         onUploadPost = viewModel::onUploadPost,
-        userId = userId!!,
         initialSelectedImageUri = "",
         onUploadSuccess = {
             homeScreenViewModel.fetchData()
             navigator.navigate(HomeDestination)
-        },
-        token = token!!
+        }
     )
 }

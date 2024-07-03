@@ -12,9 +12,8 @@ import org.koin.core.component.inject
 class SearchUserUseCase : KoinComponent {
     private val repository: ProfileRepository by inject()
     suspend operator fun invoke(
-        query: String ,
-        token: String
+        query: String
     ): Result<GetFollowsResponse> {
-        return repository.searchUsersByName(query, token)
+        return repository.searchUsersByName(query)
     }
 }

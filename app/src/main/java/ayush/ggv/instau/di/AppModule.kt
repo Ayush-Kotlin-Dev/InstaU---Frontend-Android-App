@@ -97,7 +97,7 @@ val appModule = module {
     single { GetFollowingUseCase() }
     single <FollowRepository>{ FollowRepositoryImpl(get(),get()) }
     single <PostLikesRepository>{PostLikesRepositoryImpl(get(),get())  }
-    single <ChatRepository>{ChatRepositoryImpl(get()) }
+    single <ChatRepository>{ChatRepositoryImpl(get(), get()) }
     single <QnaRepository>{ QnaRepositoryImpl(get()) }
     factory { ChatService() }
 

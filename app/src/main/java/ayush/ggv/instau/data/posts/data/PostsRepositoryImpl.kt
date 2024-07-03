@@ -65,7 +65,7 @@ class PostsRepositoryImpl(
     ): Result<PostResponse> {
         return try {
             val userData = userPreferences.getUserData()
-            val response = postService.createPost(image , postTextParams,userData.token)
+            val response = postService.createPost(image , postTextParams.copy(userId = userData.id),userData.token)
             if (response.success) {
                 Result.Success(response)
             } else {
@@ -76,7 +76,6 @@ class PostsRepositoryImpl(
         }
     }
 
-    // In PostsRepositoryImpl.kt
     override suspend fun getPost(postId: Long): Result<PostResponse> {
 
         return try {

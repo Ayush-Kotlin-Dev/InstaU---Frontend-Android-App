@@ -3,6 +3,7 @@ package ayush.ggv.instau.presentation.screens.post
 import androidx.compose.runtime.Composable
 import ayush.ggv.instau.model.NewCommentParams
 import ayush.ggv.instau.model.RemoveCommentParams
+import ayush.ggv.instau.presentation.screens.destinations.ProfileDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
@@ -18,7 +19,9 @@ fun PostDetail(
     PostDetailScreen(
         postUiState = viewModel.postUiState,
         commentsUiState = viewModel.commentsUiState,
-        onProfileClick = {},
+        onProfileClick = { userId ->
+            navigator.navigate(ProfileDestination(userId))
+        },
         onAddCommentClick = {
             viewModel.addComment(
                 newCommentParams = NewCommentParams(

@@ -47,10 +47,10 @@ class ChatRoomViewModel(
         }
     }
 
-    fun getChatHistory(sender : Long ,  receiver: Long , token : String) {
+    fun getChatHistory(sender : Long ,  receiver: Long ) {
         _chatState.value = ChatRoomHistoryState(loading = true)
         viewModelScope.launch {
-            getRoomHistoryUseCase(sender,receiver,token).collect {
+            getRoomHistoryUseCase(sender,receiver).collect {
                 when (it) {
                     is ResponseResource.Error -> _chatState.value =
                         ChatRoomHistoryState(error = it.errorMessage.errorMessage.orEmpty())
@@ -61,9 +61,9 @@ class ChatRoomViewModel(
             }
         }
     }
-    fun connectToSocket(sender: Long, receiver: Long , token : String) {
+    fun connectToSocket(sender: Long, receiver: Long ) {
         viewModelScope.launch {
-            when (val result = repository.connectToSocket(sender, receiver , token)) {
+            when (val result = repository.connectToSocket(sender, receiver )) {
                 is ResponseResource.Error -> _chatState.value =
                     ChatRoomHistoryState(error = result.errorMessage)
                 is ResponseResource.Success -> {

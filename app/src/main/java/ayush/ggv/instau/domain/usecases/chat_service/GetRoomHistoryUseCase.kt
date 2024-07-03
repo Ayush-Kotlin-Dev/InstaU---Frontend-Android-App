@@ -14,9 +14,9 @@ import org.koin.core.component.inject
 class GetRoomHistoryUseCase : KoinComponent {
     private val repository: ChatRepository by inject()
 
-    suspend operator fun invoke(sender : Long , receiver: Long , token : String):
+    suspend operator fun invoke(sender : Long , receiver: Long):
             Flow<ResponseResource<RoomHistoryList>> = flow {
-        repository.getRoomHistory(sender,receiver,token).collect {
+        repository.getRoomHistory(sender,receiver).collect {
             val responseResource = when (it) {
                 is ResponseResource.Error -> ResponseResource.error(it.errorMessage.toRoomHistoryList())
                 is ResponseResource.Success -> ResponseResource.success(it.data.toRoomHistoryList())

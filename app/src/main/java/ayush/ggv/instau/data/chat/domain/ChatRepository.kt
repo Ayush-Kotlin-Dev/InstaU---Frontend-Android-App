@@ -12,15 +12,13 @@ import kotlinx.coroutines.flow.Flow
 interface ChatRepository {
     suspend fun getFriendList(
         userId: Long,
-        token: String
-    ): Flow<ResponseResource<FriendListResponseDto>>
+        ): Flow<ResponseResource<FriendListResponseDto>>
 
     suspend fun getRoomHistory(
         sender : Long,
-        receiver : Long,
-        token : String
+        receiver : Long
     ): Flow<ResponseResource<ChatRoomResponseDto>>
-    suspend fun connectToSocket(sender: Long, receiver: Long , token : String): ResponseResource<String>
+    suspend fun connectToSocket(sender: Long, receiver: Long): ResponseResource<String>
 
     suspend fun sendMessage(message: String)
     fun receiveMessage(): Flow<MessageResponseDto>

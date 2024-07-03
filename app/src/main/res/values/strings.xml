@@ -28,6 +28,7 @@
     <string name="followers_text">"Followers"</string>
     <string name="following_text">"Following"</string>
     <string name="profile_destination_title">Profile</string>
+    <string name="qna_destination_title">QnA</string>
     <string name="user_bio_hint">Type your bio</string>
     <string name="upload_changes_text">Upload changes</string>
     <string name="could_not_load_profile">Oops, we could not load your profile!</string>

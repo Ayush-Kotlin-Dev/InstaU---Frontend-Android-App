@@ -15,10 +15,9 @@ class FriendListUseCase : KoinComponent {
     private val repository: ChatRepository by inject()
 
     suspend operator fun invoke(
-        userId: Long,
-        token: String
+        userId: Long
     ): Flow<ResponseResource<FriendList>> = flow {
-        repository.getFriendList( userId , token).collect {
+        repository.getFriendList( userId).collect {
             val responseResource = when (it) {
                 is ResponseResource.Error -> ResponseResource.error(it.errorMessage.toFriendList())
                 is ResponseResource.Success -> ResponseResource.success(it.data.toFriendList())

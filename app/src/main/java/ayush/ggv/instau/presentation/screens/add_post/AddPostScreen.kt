@@ -57,10 +57,8 @@ fun AddPostScreen(
     captionText: String,
     onCaptionChange: (String) -> Unit,
     initialSelectedImageUri: String,
-    userId: Long,
-    onUploadPost: (ByteArray, String, String, Long) -> Unit,
+    onUploadPost: (ByteArray, String) -> Unit,
     onUploadSuccess: () -> Unit,
-    token: String
 ) {
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -159,7 +157,7 @@ fun AddPostScreen(
                     if (imageBytes != null) {
                         isLoading = true
                         try {
-                            onUploadPost(imageBytes, captionText, token, userId)
+                            onUploadPost(imageBytes, captionText)
                             isLoading = false
                         } catch (e: Exception) {
                             isLoading = false

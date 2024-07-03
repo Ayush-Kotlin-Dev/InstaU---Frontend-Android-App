@@ -26,9 +26,6 @@ class AddPostViewModel(
     var captionTextFieldValue: TextFieldValue by mutableStateOf(TextFieldValue())
         private set
 
-
-    val userId = mutableStateOf(-1L)
-
     fun onCaptionChange(inputCaption: String) {
         captionTextFieldValue = captionTextFieldValue.copy(
             text = inputCaption,
@@ -36,7 +33,7 @@ class AddPostViewModel(
         )
     }
 
-    fun onUploadPost(imageUri: ByteArray, caption: String, token: String, userId: Long) {
+    fun onUploadPost(imageUri: ByteArray, caption: String) {
 
         viewModelScope.launch {
             uiState = uiState.copy(
@@ -47,7 +44,7 @@ class AddPostViewModel(
             val createPostResult = addPostUseCase(
                 imageUri = imageUri,
                 PostParams(
-                    userId = userId,
+                    userId = null,
                     caption = caption,
                 )
             )

@@ -1,6 +1,7 @@
 package ayush.ggv.instau.data.chat.data
 
 import ChatService
+import ayush.ggv.instau.common.datastore.UserPreferences
 import ayush.ggv.instau.data.chat.domain.ChatRepository
 import ayush.ggv.instau.model.FriendListResponseDto
 import ayush.ggv.instau.model.chatRoom.ChatRoomResponseDto
@@ -10,11 +11,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class ChatRepositoryImpl(
-    private val chatService: ChatService
+    private val chatService: ChatService,
+    private val userPreferences: UserPreferences
 ) : ChatRepository {
-    override suspend fun getFriendList(userId: Long, token: String): Flow<ResponseResource<FriendListResponseDto>> =
+    override suspend fun getFriendList(userId: Long): Flow<ResponseResource<FriendListResponseDto>> =
         flow {
-            val response = chatService.getFriendList(userId, token)
+            val userData = userPreferences.getUserData()
+            val response = chatService.getFriendList(userId, userData.token)
             when (response) {
                 is ResponseResource.Error -> ResponseResource.error(response.errorMessage)
                 is ResponseResource.Success -> ResponseResource.success(response.data)
@@ -24,11 +27,11 @@ class ChatRepositoryImpl(
 
     override suspend fun getRoomHistory(
         sender: Long,
-        receiver: Long,
-        token : String
+        receiver: Long
     ): Flow<ResponseResource<ChatRoomResponseDto>> = flow {
+        val userData = userPreferences.getUserData()
         val responseResource =
-            when (val response = chatService.getRoomHistory(sender, receiver , token)) {
+            when (val response = chatService.getRoomHistory(sender, receiver , userData.token)) {
                 is ResponseResource.Error -> ResponseResource.error(response.errorMessage)
                 is ResponseResource.Success -> ResponseResource.success(response.data)
             }
@@ -38,11 +41,12 @@ class ChatRepositoryImpl(
 
     override suspend fun connectToSocket(
         sender: Long,
-        receiver: Long,
-        token: String
+        receiver: Long
     ): ResponseResource<String> {
-        return when (val response =
-            chatService.connectToSocket(sender, receiver, token)) {
+        val userData = userPreferences.getUserData()
+        return when (
+            val response =
+            chatService.connectToSocket(sender, receiver, userData.token)) {
             is ResponseResource.Error -> ResponseResource.error(response.errorMessage)
             is ResponseResource.Success -> ResponseResource.success(response.data)
         }

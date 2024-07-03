@@ -51,9 +51,10 @@ class ProfileRepositoryImpl(
 
     }
 
-    override suspend fun searchUsersByName(name: String, token: String): Result<GetFollowsResponse> {
+    override suspend fun searchUsersByName(name: String): Result<GetFollowsResponse> {
         return try {
-            val response = profileService.searchUsersByName(name, token)
+            val userToken = userPreferences.getUserData().token
+            val response = profileService.searchUsersByName(name, userToken)
 
             if(response.success){
                 Result.Success(response)

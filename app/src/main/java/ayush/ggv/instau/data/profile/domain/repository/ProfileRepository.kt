@@ -10,6 +10,6 @@ interface ProfileRepository {
 
     suspend fun updateUserProfile(updateUserParams: UpdateUserParams): Result<ProfileResponse>
 
-    suspend fun searchUsersByName(name: String, token: String): Result<GetFollowsResponse>
+    suspend fun searchUsersByName(name: String): Result<GetFollowsResponse>
 
 }

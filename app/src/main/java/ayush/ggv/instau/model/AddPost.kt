@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PostParams(
     val caption: String,
-    val userId: Long,
+    val userId: Long ?= null,
 )

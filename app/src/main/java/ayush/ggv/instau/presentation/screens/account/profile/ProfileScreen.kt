@@ -56,6 +56,7 @@ import ayush.ggv.instau.presentation.components.FollowsButton
 import ayush.ggv.instau.presentation.components.PostListItem
 import ayush.ggv.instau.presentation.components.ShimmerProfileScreenPlaceholder
 import ayush.ggv.instau.presentation.screens.destinations.EditProfileDestination
+import ayush.ggv.instau.presentation.screens.destinations.ProfileDestination
 import ayush.ggv.instau.ui.theme.LargeSpacing
 import ayush.ggv.instau.ui.theme.MediumSpacing
 import ayush.ggv.instau.ui.theme.SmallSpacing
@@ -139,7 +140,7 @@ fun ProfileScreen(
                     PostListItem(
                         post = post,
                         onPostClick = onPostClick,
-                        onProfileClick = {},
+                        onProfileClick = { navigator.navigate(ProfileDestination(post.userId)) },
                         onLikeClick = onLikeClick,
                         onCommentClick = onCommentClick
                     )

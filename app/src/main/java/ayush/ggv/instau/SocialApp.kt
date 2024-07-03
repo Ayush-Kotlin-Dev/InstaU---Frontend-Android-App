@@ -179,8 +179,8 @@ fun SocialApp(
                                             selectedIndex = item.ordinal
                                             when (item) {
                                                 NavigationBarItems.HOME -> navHostController.navigate(HomeDestination.route)
-                                                NavigationBarItems.SEARCH -> navHostController.navigate(SearchDestination(userId!!, token!!).route)
-                                                NavigationBarItems.ADD -> navHostController.navigate(AddPostDestination(userId = userId!!, token).route)
+                                                NavigationBarItems.SEARCH -> navHostController.navigate(SearchDestination.route)
+                                                NavigationBarItems.ADD -> navHostController.navigate(AddPostDestination().route)
                                                 NavigationBarItems.PROFILE -> navHostController.navigate(ProfileDestination(userId!!).route)
                                             }
                                         }
