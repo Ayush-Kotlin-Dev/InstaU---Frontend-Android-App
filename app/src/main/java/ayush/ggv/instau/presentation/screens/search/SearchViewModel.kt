@@ -15,6 +15,11 @@ import kotlinx.coroutines.launch
 import ayush.ggv.instau.util.Result
 import instaU.ayush.com.model.FollowUserData
 
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+
 class SearchViewModel(
     private val useCase: SearchUserUseCase
 ) : ViewModel() {
@@ -23,18 +28,38 @@ class SearchViewModel(
 
     val searchQuery = _searchQuery
 
-
     var searchedHeroes by mutableStateOf(UsersUiState())
         private set
 
+    private var searchJob: Job? = null
+
     fun updateSearchQuery(query: String) {
-        _searchQuery.value = query
+        _searchQuery.value = query.trim()
+
+        // Cancel any previous search job
+        searchJob?.cancel()
+
+        // Start a new search job with debounce
+        searchJob = viewModelScope.launch {
+            delay(300)  // debounce time in milliseconds
+            if (_searchQuery.value.isNotEmpty()) {
+                searchHeroes(_searchQuery.value)
+            } else {
+                searchedHeroes = UsersUiState()  // Clear the results if the query is empty
+            }
+        }
     }
 
-    fun searchHeroes(query: String) {
+     fun searchHeroes(query: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            searchedHeroes = searchedHeroes.copy(isLoading = true)
-            searchedHeroes = searchedHeroes.copy(error = null)
+            if (query.isEmpty()) {
+                searchedHeroes = UsersUiState(
+                    error = "Search query cannot be empty."
+                )
+                return@launch
+            }
+
+            searchedHeroes = searchedHeroes.copy(isLoading = true, error = null)
             val result = useCase(query)
             when (result) {
                 is Result.Success -> {
@@ -64,11 +89,8 @@ class SearchViewModel(
                 is Result.Loading -> TODO()
             }
         }
-
-
     }
 }
-
 
 data class UsersUiState(
     val isLoading: Boolean = false,

@@ -2,6 +2,7 @@ package ayush.ggv.instau.presentation.screens.search
 
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,6 +29,10 @@ import coil.compose.AsyncImage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import instaU.ayush.com.model.FollowUserData
 import io.ktor.http.HttpStatusCode
+import androidx.activity.compose.BackHandler
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 
 @Composable
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnusedMaterialScaffoldPaddingParameter")
@@ -39,8 +44,6 @@ fun SearchScreen(
     onCloseClicked: () -> Unit,
     onItemClick: (Long) -> Unit
 ) {
-
-
     val systemUiController = rememberSystemUiController()
     systemUiController.setStatusBarColor(
         color = if (isSystemInDarkTheme()) Color.Black else Purple700
@@ -54,9 +57,15 @@ fun SearchScreen(
         topBar = {
             SearchTopBar(
                 text = searchQuery,
-                onTextChange = onTextChange,
-                onCloseClicked = onCloseClicked,
-                onSearchClicked = onSearchClicked,
+                onTextChange = {
+                    onTextChange(it)
+                },
+                onCloseClicked = {
+                    onCloseClicked()
+                },
+                onSearchClicked = {
+                    onSearchClicked()
+                },
             )
         },
         content = {
@@ -72,11 +81,18 @@ fun SearchScreen(
                         Column (
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center
-                        ){
-                            AsyncImage(model = R.drawable.network_error, contentDescription = "No Users" , modifier = Modifier.size(200.dp).alpha(0.3f) )
-                            Text(text = "${heroes.error}", style = MaterialTheme.typography.button , modifier = Modifier.padding(8.dp).alpha(0.3f)  )
+                        ) {
+                            AsyncImage(
+                                model = R.drawable.network_error,
+                                contentDescription = "No Users",
+                                modifier = Modifier.size(200.dp).alpha(0.3f)
+                            )
+                            Text(
+                                text = "${heroes.error}",
+                                style = MaterialTheme.typography.button,
+                                modifier = Modifier.padding(8.dp).alpha(0.3f)
+                            )
                         }
-
                     }
                 }
 

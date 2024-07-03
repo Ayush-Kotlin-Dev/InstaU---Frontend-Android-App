@@ -22,7 +22,6 @@ fun Search(
         searchQuery = searchQuery,
         onTextChange = {newValue ->
             searchViewModel.updateSearchQuery(newValue)
-            searchViewModel.searchHeroes(searchQuery)
         },
         onSearchClicked = {
             searchViewModel.searchHeroes(searchQuery)
