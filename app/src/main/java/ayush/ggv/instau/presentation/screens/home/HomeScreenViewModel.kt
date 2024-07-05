@@ -1,12 +1,11 @@
-package ayush.ggv.instau.presentation.screens.home
 
+package ayush.ggv.instau.presentation.screens.home
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.LoadType
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import ayush.ggv.instau.data.onboarding.domain.OnboardingRepository
@@ -31,28 +30,43 @@ class HomeScreenViewModel(
 
     var postsUiState by mutableStateOf(PostsUiState())
         private set
-
     var onBoardingUiState by mutableStateOf(OnBoardingUiState())
         private set
 
-    private val _onBoardingCompleted = MutableStateFlow(false)
-    val onBoardingCompleted: StateFlow<Boolean> = _onBoardingCompleted
+    private val _onBoardingCompleted = MutableStateFlow<Boolean?>(null)
+    val onBoardingCompleted: StateFlow<Boolean?> = _onBoardingCompleted
 
     var newPostsAvailable by mutableStateOf(false)
 
     init {
         initializeOnBoardingState()
-        fetchInitialData()
+        observeOnboardingState()
     }
 
     private fun initializeOnBoardingState() {
         viewModelScope.launch(Dispatchers.IO) {
             onboardingRepository.getOnBoardingState()
-                .stateIn(viewModelScope)
                 .collect { state ->
                     _onBoardingCompleted.value = state
+                    Log.d("HomeScreenViewModel", "Onboarding state initialized: $state")
                 }
         }
+    }
+
+    private fun observeOnboardingState() {
+        viewModelScope.launch {
+            onBoardingCompleted.filterNotNull().collect { completed ->
+                fetchInitialData(completed)
+            }
+        }
+    }
+
+    private fun fetchInitialData(completed: Boolean) {
+        Log.d("HomeScreenViewModel", "Onboarding state in fetchInitialData: $completed")
+        if (!completed) {
+            fetchOnboardingSuggestions()
+        }
+        fetchData()
     }
 
     fun getPosts(): Flow<PagingData<Post>> {
@@ -78,20 +92,10 @@ class HomeScreenViewModel(
         }
     }
 
-    private fun fetchInitialData() {
-        fetchData()
-        Log.d("HomeScreenViewModel", "Onboarding state: ${_onBoardingCompleted.value}")
-        if (!_onBoardingCompleted.value) {
-            Log.d("HomeScreenViewModel", "Onboarding state called : ${_onBoardingCompleted.value}")
-            fetchOnboardingSuggestions()
-        }
-    }
-
     fun fetchData() {
         viewModelScope.launch {
             postsUiState = postsUiState.copy(isLoading = true)
             delay(500)
-
             getPosts().collect { pagingData ->
                 postsUiState = postsUiState.copy(
                     currentPostResult = flowOf(pagingData),
@@ -102,7 +106,7 @@ class HomeScreenViewModel(
     }
 
     private fun fetchOnboardingSuggestions() {
-        Log.d("HomeScreenViewModel", "Onboarding state Suggestions fn : ${_onBoardingCompleted.value}")
+        Log.d("HomeScreenViewModel", "Fetching onboarding suggestions")
         viewModelScope.launch {
             when (val resultSuggestions = suggestionsUseCase()) {
                 is Result.Success -> {
@@ -132,7 +136,9 @@ class HomeScreenViewModel(
     }
 
     fun disconnectSocket() {
-        viewModelScope.launch { repository.disconnectSocket() }
+        viewModelScope.launch {
+            repository.disconnectSocket()
+        }
     }
 
     override fun onCleared() {
