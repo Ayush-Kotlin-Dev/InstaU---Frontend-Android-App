@@ -22,7 +22,7 @@ fun EditProfile(
         onUploadButtonClick = { viewModel.updateProfile()},
         onUploadSuccess = { navigator.navigateUp()},
         fetchProfile = {
-            viewModel.fetchProfile( userId , userId )
+            viewModel.fetchProfile( userId )
         }
     )
 }

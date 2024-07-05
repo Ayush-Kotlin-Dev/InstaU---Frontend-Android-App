@@ -42,7 +42,7 @@ abstract class KtorApi {
     }
     fun HttpRequestBuilder.webSocketEndPoint(path: String) {
         url {
-            takeFrom("wss://instau-backend-server.onrender.com")
+            takeFrom("wss://instau-backend-server-z7e1.onrender.com")
             path(path)
             contentType(ContentType.Application.Json)
         }

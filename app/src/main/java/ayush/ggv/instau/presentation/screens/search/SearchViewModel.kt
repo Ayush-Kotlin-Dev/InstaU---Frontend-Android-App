@@ -1,21 +1,14 @@
 package ayush.ggv.instau.presentation.screens.search
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ayush.ggv.instau.domain.usecases.profileusecase.SearchUserUseCase
-import ayush.ggv.instau.model.Post
-import instaU.ayush.com.model.GetFollowsResponse
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
 import ayush.ggv.instau.util.Result
 import instaU.ayush.com.model.FollowUserData
-
-import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

@@ -1,9 +1,11 @@
 package ayush.ggv.instau.data.profile.data
 
+import android.util.Log
 import ayush.ggv.instau.common.datastore.UserPreferences
 import ayush.ggv.instau.data.posts.data.PostService
 import ayush.ggv.instau.data.profile.domain.model.ProfileResponse
 import ayush.ggv.instau.data.profile.domain.model.UpdateUserParams
+import ayush.ggv.instau.data.profile.domain.model.toDomainProfile
 import ayush.ggv.instau.data.profile.domain.repository.ProfileRepository
 import ayush.ggv.instau.util.Result
 import instaU.ayush.com.model.FollowUserData
@@ -20,6 +22,9 @@ class ProfileRepositoryImpl(
     ): Result<ProfileResponse> {
         return try {
             val userData  = userPreferences.getUserData()
+            if(userData.id== userId){
+                return Result.Success(ProfileResponse(true,userData.toDomainProfile()))
+            }
             val response = profileService.getUserProfile(userId, userData.id, userData.token)
 
             if (response.success) {

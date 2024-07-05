@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
@@ -122,6 +123,26 @@ fun HomeScreen(
                             onLikeClick = { onLikeClick(it.postId.toString()) },
                             onCommentClick = { },
                         )
+                    }
+                }
+                item {
+                    when (post.loadState.append) {
+                        is LoadState.Loading -> {
+                            Box(modifier = Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
+                                CircularProgressIndicator()
+                            }
+                        }
+
+                        is LoadState.NotLoading -> {
+                            Spacer(modifier = Modifier.height(LargeSpacing))
+                        }
+                        is LoadState.Error -> {
+                            Box(modifier = Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
+                                Button(onClick = { post.retry() }) {
+                                    Text(text = "Retry")
+                                }
+                            }
+                        }
                     }
                 }
 

@@ -1,5 +1,6 @@
 package ayush.ggv.instau.data.profile.domain.model
 
+import ayush.ggv.instau.common.datastore.UserSettings
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -28,3 +29,27 @@ data class ProfileResponse(
     val profile: Profile? = null,
     val message: String? = null
 )
+
+fun UserSettings.toDomainProfile():Profile{
+    return Profile(
+        id = this.id,
+        name = this.name,
+        bio = this.bio,
+        imageUrl = this.avatar,
+        followersCount = this.followersCount,
+        followingCount = this.followingCount,
+        isFollowing = false,
+        isOwnProfile = true
+    )
+}
+
+fun Profile.toUserSettings():UserSettings{
+    return UserSettings(
+        id = this.id,
+        name = this.name,
+        bio = this.bio,
+        avatar = this.imageUrl,
+        followersCount = this.followersCount,
+        followingCount = this.followingCount,
+    )
+}
