@@ -4,16 +4,12 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.LoadType
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import androidx.room.withTransaction
-import ayush.ggv.instau.common.datastore.UserSettings
-import ayush.ggv.instau.common.datastore.toAuthResultData
-import ayush.ggv.instau.dao.post.PostsDatabase
+import ayush.ggv.instau.data.onboarding.domain.OnboardingRepository
 import ayush.ggv.instau.data.posts.domain.repository.PostRepository
 import ayush.ggv.instau.domain.usecases.followsusecase.SuggestionsUseCase
 import ayush.ggv.instau.domain.usecases.postsusecase.GetPostsStreamUseCase
@@ -23,60 +19,57 @@ import ayush.ggv.instau.util.ResponseResource
 import ayush.ggv.instau.util.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class HomeScreenViewModel(
     private val suggestionsUseCase: SuggestionsUseCase,
     private val postsStreamUseCase: GetPostsStreamUseCase,
     private val repository: PostRepository,
-) : ViewModel(
-
-) {
+    private val onboardingRepository: OnboardingRepository
+) : ViewModel() {
 
     var postsUiState by mutableStateOf(PostsUiState())
         private set
 
-
     var onBoardingUiState by mutableStateOf(OnBoardingUiState())
         private set
+
+    private val _onBoardingCompleted = MutableStateFlow(false)
+    val onBoardingCompleted: StateFlow<Boolean> = _onBoardingCompleted
+
     var newPostsAvailable by mutableStateOf(false)
 
     init {
-        fetchData()
+        initializeOnBoardingState()
+        fetchInitialData()
+    }
+
+    private fun initializeOnBoardingState() {
+        viewModelScope.launch(Dispatchers.IO) {
+            onboardingRepository.getOnBoardingState()
+                .stateIn(viewModelScope)
+                .collect { state ->
+                    _onBoardingCompleted.value = state
+                }
+        }
     }
 
     fun getPosts(): Flow<PagingData<Post>> {
-        val newResult =
-            postsStreamUseCase().flowOn(Dispatchers.IO).cachedIn(viewModelScope)
-        return newResult
+        return postsStreamUseCase().flowOn(Dispatchers.IO).cachedIn(viewModelScope)
     }
 
     fun connectToSocket() {
         viewModelScope.launch {
-            Log.d("HomeScreen", "connectToSocket: ")
-            val result = repository.connectToSocket()
-            Log.d("HomeScreen", "connectToSocket: $result")
-            when (result) {
+            when (val result = repository.connectToSocket()) {
                 is ResponseResource.Error -> {
                     onBoardingUiState = onBoardingUiState.copy(
                         error = result.errorMessage
                     )
-                    Log.d("HomeScreen", "connectToSocket: ${result.errorMessage}")
-
                 }
-                //TODO i will also get details of the post (DELETED OR ADDED) from the server ,
-                // and directly manipulate the database with that post details rather than deleting the whole database
-
                 is ResponseResource.Success -> {
                     repository.receiveMessage().onEach {
-                        Log.d("HomeScreen", "connectToSocket: $it")
                         if (it == "added" || it == "deleted") {
-                            //how can i refresh the posts here ?
                             newPostsAvailable = true
                         }
                     }.flowOn(Dispatchers.IO).launchIn(viewModelScope)
@@ -85,45 +78,57 @@ class HomeScreenViewModel(
         }
     }
 
-    fun fetchData() {
-        onBoardingUiState = onBoardingUiState.copy(isLoading = true)
-        postsUiState = postsUiState.copy(isLoading = true)
+    private fun fetchInitialData() {
+        fetchData()
+        Log.d("HomeScreenViewModel", "Onboarding state: ${_onBoardingCompleted.value}")
+        if (!_onBoardingCompleted.value) {
+            Log.d("HomeScreenViewModel", "Onboarding state called : ${_onBoardingCompleted.value}")
+            fetchOnboardingSuggestions()
+        }
+    }
 
+    fun fetchData() {
         viewModelScope.launch {
+            postsUiState = postsUiState.copy(isLoading = true)
             delay(500)
 
-            // Fetch posts
-            val newResult = getPosts()
-            postsUiState = postsUiState.copy(
-                currentPostResult = newResult,
-                isLoading = false
-            )
+            getPosts().collect { pagingData ->
+                postsUiState = postsUiState.copy(
+                    currentPostResult = flowOf(pagingData),
+                    isLoading = false
+                )
+            }
+        }
+    }
 
-
-            val resultSuggestions = suggestionsUseCase()
-            when (resultSuggestions) {
+    private fun fetchOnboardingSuggestions() {
+        Log.d("HomeScreenViewModel", "Onboarding state Suggestions fn : ${_onBoardingCompleted.value}")
+        viewModelScope.launch {
+            when (val resultSuggestions = suggestionsUseCase()) {
                 is Result.Success -> {
                     onBoardingUiState = onBoardingUiState.copy(
-                        users = resultSuggestions.data?.follows ?: listOf(),
+                        users = resultSuggestions.data?.follows.orEmpty(),
                         isLoading = false,
-                        shouldShowOnBoarding = resultSuggestions.data?.follows?.isNotEmpty()
-                            ?: false
+                        shouldShowOnBoarding = resultSuggestions.data?.follows?.isNotEmpty() ?: false
                     )
                 }
-
                 is Result.Error -> {
                     onBoardingUiState = onBoardingUiState.copy(
                         error = resultSuggestions.message,
                         isLoading = false
                     )
                 }
-
                 is Result.Loading -> {
                     onBoardingUiState = onBoardingUiState.copy(isLoading = true)
                 }
             }
         }
+    }
 
+    fun saveOnBoardingState(completed: Boolean) {
+        viewModelScope.launch {
+            onboardingRepository.saveOnBoardingState(completed)
+        }
     }
 
     fun disconnectSocket() {
@@ -135,7 +140,6 @@ class HomeScreenViewModel(
         disconnectSocket()
     }
 }
-
 
 data class PostsUiState(
     val isLoading: Boolean = false,

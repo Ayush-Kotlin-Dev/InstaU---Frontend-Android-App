@@ -21,6 +21,10 @@ import ayush.ggv.instau.data.followunfollow.data.FollowRepositoryImpl
 import ayush.ggv.instau.data.followunfollow.data.FollowService
 import ayush.ggv.instau.data.followunfollow.domain.FollowRepository
 import ayush.ggv.instau.data.notification.NotificationService
+import ayush.ggv.instau.data.onboarding.data.DataStoreOperationImpl
+import ayush.ggv.instau.data.onboarding.data.OnboardingRepositoryImpl
+import ayush.ggv.instau.data.onboarding.domain.DataStoreOperations
+import ayush.ggv.instau.data.onboarding.domain.OnboardingRepository
 import ayush.ggv.instau.data.postcomments.data.PostCommentService
 import ayush.ggv.instau.data.postcomments.data.PostCommentsRepositoryImpl
 import ayush.ggv.instau.data.postcomments.domain.PostCommentsRepository
@@ -78,8 +82,10 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val appModule = module {
+    single<DataStoreOperations> { DataStoreOperationImpl(androidContext()) }
+    single<OnboardingRepository>{ OnboardingRepositoryImpl(get()) }
     single<KtorApi> { AuthService() } // Provide AuthService as an instance of KtorApi
-    single<AuthRepository> { AuthRepositoryImpl(get()) }
+    single<AuthRepository> { AuthRepositoryImpl(get(),get(),get()) }
     single {
         Room.databaseBuilder(
             androidContext(),
@@ -134,7 +140,7 @@ val appModule = module {
     viewModel { SignUpViewModel(get() , get(), get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
     viewModel { LoginViewModel(get() , get() , get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
     viewModel { MainActivityViewModel(get()) }
-    viewModel{ HomeScreenViewModel(get(),get () , get()   ) }
+    viewModel{ HomeScreenViewModel(get(),get () , get() ,get()  ) }
     viewModel { PostDetailScreenViewModel(get(), get(), get(), get()  ) }
     viewModel{ ProfileScreenViewModel( get() , get()  , get() , get() ) }
     viewModel { EditProfileViewModel(get() ,get()) }

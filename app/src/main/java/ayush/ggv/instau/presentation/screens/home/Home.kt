@@ -57,6 +57,7 @@ fun Home(
 
             },
             onBoardingFinish = {
+                 viewModel.saveOnBoardingState(true)
 
             },
             onUserClick = { userId ->
