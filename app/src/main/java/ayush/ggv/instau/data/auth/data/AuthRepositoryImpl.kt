@@ -34,12 +34,9 @@ class AuthRepositoryImpl(
                 )
             } else {
                 val authResultData = authResponse.data.toAuthResultData()
-                Log.d("HomeScreenViewModel", "Onboarding state Followers count : ${authResultData.followingCount}")
 
                 if(authResultData.followingCount!=0 || authResultData.followersCount!=0){
-                    Log.d("HomeScreenViewModel", "Onboarding state: ${onboardingRepository.getOnBoardingState()}")
                     onboardingRepository.saveOnBoardingState(true)
-                    Log.d("HomeScreenViewModel", "Onboarding state after true: ${onboardingRepository.getOnBoardingState()}")
 
                 }
                 Result.Success(authResultData)
@@ -63,12 +60,8 @@ override suspend fun signIn(
                 )
             } else {
                 val authResultData = authResponse.data.toAuthResultData()
-                Log.d("HomeScreenViewModel", "Onboarding state Followers count : ${authResultData.followingCount}")
-
                 if(authResultData.followingCount!=0 || authResultData.followersCount!=0){
-                    Log.d("HomeScreenViewModel", "Onboarding state: ${onboardingRepository.getOnBoardingState()}")
                     onboardingRepository.saveOnBoardingState(true)
-                    Log.d("HomeScreenViewModel", "Onboarding state after true: ${onboardingRepository.getOnBoardingState()}")
 
                 }
                 Result.Success(authResultData)

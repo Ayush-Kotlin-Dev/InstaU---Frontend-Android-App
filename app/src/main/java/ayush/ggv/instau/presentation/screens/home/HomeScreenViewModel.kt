@@ -1,5 +1,5 @@
-
 package ayush.ggv.instau.presentation.screens.home
+
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,7 +48,6 @@ class HomeScreenViewModel(
             onboardingRepository.getOnBoardingState()
                 .collect { state ->
                     _onBoardingCompleted.value = state
-                    Log.d("HomeScreenViewModel", "Onboarding state initialized: $state")
                 }
         }
     }
@@ -62,7 +61,6 @@ class HomeScreenViewModel(
     }
 
     private fun fetchInitialData(completed: Boolean) {
-        Log.d("HomeScreenViewModel", "Onboarding state in fetchInitialData: $completed")
         if (!completed) {
             fetchOnboardingSuggestions()
         }
@@ -106,7 +104,6 @@ class HomeScreenViewModel(
     }
 
     private fun fetchOnboardingSuggestions() {
-        Log.d("HomeScreenViewModel", "Fetching onboarding suggestions")
         viewModelScope.launch {
             when (val resultSuggestions = suggestionsUseCase()) {
                 is Result.Success -> {

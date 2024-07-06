@@ -2,13 +2,9 @@ package ayush.ggv.instau.presentation.screens.account.edit
 
 import android.net.Uri
 import android.widget.Toast
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,7 +17,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -40,26 +35,23 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import ayush.ggv.instau.R
 import ayush.ggv.instau.presentation.components.CircleImage
 import ayush.ggv.instau.presentation.components.CustomTextFields
-import ayush.ggv.instau.ui.theme.ButtonHeight
 import ayush.ggv.instau.ui.theme.ExtraLargeSpacing
 import ayush.ggv.instau.ui.theme.LargeSpacing
+import ayush.ggv.instau.ui.theme.SmallSpacing
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import org.koin.androidx.compose.koinViewModel
-import java.time.format.TextStyle
 
 @Composable
 fun EditProfileScreen(
@@ -77,120 +69,111 @@ fun EditProfileScreen(
     val storage = FirebaseStorage.getInstance()
     val coroutineScope = rememberCoroutineScope()
 
-    // State variable to hold the selected image URI
     var selectedImageUri by remember { mutableStateOf<String?>(null) }
 
-    // Gallery launcher
-    val galleryLauncher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
-            // Set the selected image URI to the state variable
-            selectedImageUri = uri?.toString()
-        }
+    val galleryLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        selectedImageUri = uri?.toString()
+    }
 
     Box(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         when {
-            editProfileUiState.isLoading -> {
-                // Loading UI
-                CircularProgressIndicator()
-            }
+
 
             editProfileUiState.profile != null -> {
                 Column(
-                    modifier = modifier.fillMaxSize(),
+                    modifier = modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(LargeSpacing)
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    Box() {
-                        // Profile Image
+                    Box {
                         CircleImage(
                             modifier = modifier.size(100.dp),
-                            imageUrl = selectedImageUri ?: editProfileUiState.profile.imageUrl ?: "",
+                            imageUrl = selectedImageUri ?: editProfileUiState.profile.imageUrl
+                            ?: "",
                             onClick = {}
                         )
                         IconButton(
                             onClick = { galleryLauncher.launch("image/*") },
-                            modifier = modifier
+                            modifier = Modifier
                                 .align(Alignment.BottomEnd)
-                                .size(40.dp)
+                                .size(35.dp)
                                 .background(
                                     color = MaterialTheme.colors.primary,
                                     shape = CircleShape
-                                )
-                                .shadow(elevation = 5.dp, shape = RoundedCornerShape(percent = 25))
-                                .background(
-                                    color = MaterialTheme.colors.surface,
-                                    shape = RoundedCornerShape(percent = 25)
-                                )
+                                ),
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.Edit,
                                 contentDescription = null,
-                                tint = MaterialTheme.colors.primary
+                                tint = MaterialTheme.colors.onPrimary
                             )
                         }
                     }
-
-                    Spacer(modifier = modifier.height(LargeSpacing))
-
-                    CustomTextFields(
-                        value = editProfileUiState.profile.name ?: "",
-                        onValueChange = onNameChange,
-                        hint = R.string.username_hint
+                    Text(
+                        text = "Update Profile Picture",
+                        style = MaterialTheme.typography.body2,
+                        textAlign = TextAlign.Center
                     )
+                    Spacer(modifier = Modifier.height(SmallSpacing))
+
+                    Text(text = stringResource(id = R.string.username_text),modifier= Modifier.align(Alignment.Start), style = MaterialTheme.typography.subtitle2)
+                    CustomTextFields(
+                        value = editProfileUiState.profile.name,
+                        onValueChange = onNameChange,
+                        hint = R.string.username_hint,
+                        modifier = Modifier.clip(RoundedCornerShape(8.dp))
+                    )
+                    Spacer(modifier = Modifier.height(SmallSpacing))
+
+                    Text(text = stringResource(id = R.string.bio_text) ,modifier= Modifier.align(Alignment.Start), style = MaterialTheme.typography.subtitle2)
                     BioTextField(
                         value = bioTextFieldValue,
-                        onValueChange = onBioChange
+                        onValueChange = onBioChange,
+                        modifier = Modifier.clip(RoundedCornerShape(8.dp))
                     )
 
                     Button(
                         onClick = {
                             viewModel.setLoadingState(true)
-                            // Check if an image is selected
                             if (selectedImageUri != null) {
                                 val imageUri = Uri.parse(selectedImageUri)
-                                val storageRef = storage.reference.child("Profile_Images/${editProfileUiState.profile.name}_${imageUri.lastPathSegment}")
+                                val storageRef =
+                                    storage.reference.child("Profile_Images/${editProfileUiState.profile.name}_${imageUri.lastPathSegment}")
 
-                                // Start a new coroutine scope
                                 coroutineScope.launch {
                                     try {
-                                        // Launch the upload task in a separate coroutine
                                         val uploadTask = storageRef.putFile(imageUri).await()
                                         val downloadUri = uploadTask.storage.downloadUrl.await()
-                                        viewModel.updateImageUrl(downloadUri.toString()) // Call the function on the ViewModel instance
+                                        viewModel.updateImageUrl(downloadUri.toString())
                                     } catch (e: Exception) {
-                                        // Handle exceptions
                                         viewModel.setLoadingState(false)
-                                        Toast.makeText(context, "Failed to upload image: ${e.message}", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(
+                                            context,
+                                            "Failed to upload image: ${e.message}",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                         return@launch
                                     }
-
-                                    // Call the onUploadButtonClick function after the upload task has completed
                                     onUploadButtonClick()
                                 }
                             } else {
-                                // No image selected, proceed with other changes
-                                viewModel.setLoadingState(true)
-                                // Call the onUploadButtonClick function directly
                                 onUploadButtonClick()
                             }
                         },
-                        modifier = modifier
+                        modifier = Modifier
                             .fillMaxWidth()
-                            .height(ButtonHeight),
-                        enabled = !editProfileUiState.isLoading, // Disable button when loading
-                        elevation = ButtonDefaults.elevation(
-                            defaultElevation = 0.dp,
-                            pressedElevation = 0.dp
-                        ),
-                        shape = MaterialTheme.shapes.medium,
+                            .height(50.dp)
+                            .clip(RoundedCornerShape(8.dp))
+//                        enabled = !editProfileUiState.isLoading
                     ) {
-                        Text(
-                            text = stringResource(id = R.string.upload_changes_text),
-                            style = MaterialTheme.typography.button
-                        )
+                        Text(text = stringResource(id = R.string.upload_changes_text))
                     }
                 }
             }
@@ -207,24 +190,16 @@ fun EditProfileScreen(
                             textAlign = TextAlign.Center
                         )
                     )
-                    Spacer(modifier = modifier.height(LargeSpacing))
+                    Spacer(modifier = Modifier.height(16.dp))
                     Button(
-                        onClick = {
-                            fetchProfile()
-                        },
-                        modifier = modifier
+                        onClick = fetchProfile,
+                        modifier = Modifier
                             .fillMaxWidth()
-                            .height(ButtonHeight),
-                        elevation = ButtonDefaults.elevation(
-                            defaultElevation = 0.dp,
-                            pressedElevation = 0.dp
-                        ),
-                        shape = MaterialTheme.shapes.medium
+                            .height(50.dp)
+                            .clip(RoundedCornerShape(8.dp))
+
                     ) {
-                        Text(
-                            text = stringResource(id = R.string.retry_button_text),
-                            style = MaterialTheme.typography.button
-                        )
+                        Text(text = stringResource(id = R.string.retry_button_text))
                     }
                 }
             }
@@ -232,7 +207,7 @@ fun EditProfileScreen(
 
         if (editProfileUiState.isLoading) {
             Box(
-                modifier = modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator()
@@ -240,12 +215,10 @@ fun EditProfileScreen(
         }
     }
 
-    // Effect to fetch profile on initial load
     LaunchedEffect(Unit) {
         fetchProfile()
     }
 
-    // Effect to show toast messages for upload success and error
     LaunchedEffect(editProfileUiState.uploadSuccess, editProfileUiState.errorMessage) {
         if (editProfileUiState.uploadSuccess) {
             Toast.makeText(context, "Profile Updated", Toast.LENGTH_SHORT).show()
@@ -270,7 +243,7 @@ fun BioTextField(
             .fillMaxWidth()
             .height(90.dp),
         colors = TextFieldDefaults.textFieldColors(
-            backgroundColor = if (isSystemInDarkTheme()) MaterialTheme.colors.surface else MaterialTheme.colors.onSurface.copy(alpha = 0.1f),
+            backgroundColor = MaterialTheme.colors.surface,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent
         ),
@@ -282,6 +255,6 @@ fun BioTextField(
                 color = MaterialTheme.colors.onSurface.copy(alpha = 0.5f)
             )
         },
-        shape = MaterialTheme.shapes.medium,
+        shape = MaterialTheme.shapes.medium
     )
 }

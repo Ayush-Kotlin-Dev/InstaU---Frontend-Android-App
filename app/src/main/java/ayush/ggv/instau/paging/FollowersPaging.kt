@@ -47,7 +47,6 @@ class FollowPagingSource(
                 }
             }
         } catch (e: Exception) {
-            Log.e("FollowPagingSource", "Exception: $e")
             LoadResult.Error(e)
         }
     }

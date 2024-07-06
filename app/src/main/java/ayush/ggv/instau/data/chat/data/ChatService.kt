@@ -142,6 +142,5 @@ class ChatService : KtorApi() {
         webSocket?.close()
         println("WebSocket: CLOSED")
     }
-
 }
 

@@ -2,6 +2,7 @@ package ayush.ggv.instau.data.profile.data
 
 import android.util.Log
 import ayush.ggv.instau.common.datastore.UserPreferences
+import ayush.ggv.instau.common.datastore.UserSettings
 import ayush.ggv.instau.data.posts.data.PostService
 import ayush.ggv.instau.data.profile.domain.model.ProfileResponse
 import ayush.ggv.instau.data.profile.domain.model.UpdateUserParams
@@ -46,6 +47,17 @@ class ProfileRepositoryImpl(
             val response = profileService.updateUserProfile(updateUserParams, token)
 
             if (response.success) {
+                // Convert UpdateUserParams to UserSettings and save it
+                val updatedUserSettings = UserSettings(
+                    id = updateUserParams.userId,
+                    name = updateUserParams.name,
+                    bio = updateUserParams.bio,
+                    avatar = updateUserParams.imageUrl,
+                    followersCount = userPreferences.getUserData().followersCount, // Assuming these values remain unchanged
+                    followingCount = userPreferences.getUserData().followingCount,
+                    token = userPreferences.getUserData().token
+                )
+                userPreferences.setUserData(updatedUserSettings)
                 Result.Success(response)
             } else {
                 Result.Error(Exception("Error: ${response.message}").toString())
@@ -53,7 +65,6 @@ class ProfileRepositoryImpl(
         } catch (e: Exception) {
             Result.Error(e.toString())
         }
-
     }
 
     override suspend fun searchUsersByName(name: String): Result<GetFollowsResponse> {

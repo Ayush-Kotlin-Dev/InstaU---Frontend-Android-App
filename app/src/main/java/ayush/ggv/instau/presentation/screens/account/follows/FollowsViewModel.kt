@@ -31,7 +31,6 @@ class FollowsViewModel(
     var uiState by mutableStateOf(FollowsUiState())
         private set
     private fun fetchFollowers(userId: Long): Flow<PagingData<FollowUserData>> {
-        Log.d("FollowsViewModel", "Creating Pager for followers")
         return Pager(
             config = PagingConfig(
                 pageSize = 10,
@@ -44,7 +43,6 @@ class FollowsViewModel(
     }
 
     private fun fetchFollowing(userId: Long): Flow<PagingData<FollowUserData>> {
-        Log.d("FollowsViewModel", "Creating Pager for following")
         return Pager(
             config = PagingConfig(
                 pageSize = 10,
@@ -64,7 +62,6 @@ class FollowsViewModel(
                 followUsers = followers,
                 followingUsers = following
             )
-            Log.d("FollowsViewModel", "Updated uiState with followers flow")
         }
     }
 }
