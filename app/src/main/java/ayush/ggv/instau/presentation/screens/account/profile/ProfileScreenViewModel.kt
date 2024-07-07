@@ -31,6 +31,7 @@ class ProfileScreenViewModel(
         private set
     var userInfoUiState by mutableStateOf(UserInfoUiState())
 
+    var postsCount by mutableStateOf(0)
     fun logout() {
         viewModelScope.launch {
             val newSettings = UserSettings() // Create a new instance with default values
@@ -74,9 +75,11 @@ class ProfileScreenViewModel(
 
                 when (postResult) {
                     is Result.Success -> {
+                        postsCount = postResult.data?.posts?.size ?: 0
                         profilePostUiState = profilePostUiState.copy(
                             posts = postResult.data?.posts ?: emptyList(),
-                            isLoading = false
+                            isLoading = false,
+                            postsCount = postsCount
                         )
                     }
 
@@ -157,5 +160,6 @@ data class UserInfoUiState(
 data class ProfilePostUiState(
     val isLoading: Boolean = false,
     val posts: List<Post> = emptyList(),
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val postsCount: Int = 0
 )

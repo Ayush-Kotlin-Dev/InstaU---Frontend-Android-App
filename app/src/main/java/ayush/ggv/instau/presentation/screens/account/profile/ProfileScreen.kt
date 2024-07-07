@@ -103,6 +103,7 @@ fun ProfileScreen(
                         bio = userInfoUiState.profile?.bio ?: "Stay Tuned... ",
                         followersCount = userInfoUiState.profile?.followersCount ?: 0,
                         followingCount = userInfoUiState.profile?.followingCount ?: 0,
+                        postsCount = profilePostsUiState.posts.size,
                         onButtonClick = {
                             if (userInfoUiState.profile?.isOwnProfile == true) {
                                 navigator.navigate(
@@ -166,6 +167,7 @@ fun ProfileHeaderSection(
     bio: String,
     followersCount: Int,
     followingCount: Int,
+    postsCount: Int,
     isCurrentUser: Boolean = false,
     isFollowing: Boolean = false,
     onButtonClick: () -> Unit,  //Edit Button for Admin , and Follow Button for other users
@@ -250,6 +252,12 @@ fun ProfileHeaderSection(
                 )
             }
         }
+        Spacer(modifier = modifier.height(SmallSpacing))
+        FollowText(
+            count = postsCount,
+            text = R.string.posts_count_text,
+            onClick = {}
+        )
     }
     if (showDialog) {
         Dialog(
@@ -303,26 +311,5 @@ fun FollowText(
             }
         },
         modifier = modifier.clickable(onClick = onClick)
-
     )
-}
-
-@Composable
-fun ProfileHeaderSectionPreview() {
-    SocialAppTheme {
-        Surface(color = MaterialTheme.colors.surface) {
-            ProfileHeaderSection(
-                imageUrl = "",
-                name = "Ayush",
-                bio = "Android Developer at GGV , Studying BCA at GGV Bilaspur ",
-                followersCount = 100,
-                followingCount = 200,
-                isCurrentUser = false,
-                isFollowing = false,
-                onButtonClick = {},
-                onFollowersClick = {},
-                onFollowingClick = {}
-            )
-        }
-    }
 }

@@ -116,7 +116,5 @@ dependencies {
     implementation("com.exyte:animated-navigation-bar:1.0.0")
     implementation ("androidx.compose.runtime:runtime-livedata:1.6.8")
     implementation("io.ktor:ktor-client-websockets:$ktorVersion")
-    implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
-
-
+    implementation(platform("com.google.firebase:firebase-bom:33.1.1"))
 }

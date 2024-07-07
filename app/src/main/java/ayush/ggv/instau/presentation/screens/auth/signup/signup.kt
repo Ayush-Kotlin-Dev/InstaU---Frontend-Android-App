@@ -75,7 +75,11 @@ fun SignUpScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(LargeSpacing)
         ) {
-
+            Text(
+                text = stringResource(id = R.string.signup_title),
+                style = MaterialTheme.typography.h5,
+                modifier = Modifier.align(Alignment.Start)
+            )
             CustomTextFields(
                 value = uiState.username,
                 onValueChange = onUsernameChange,
