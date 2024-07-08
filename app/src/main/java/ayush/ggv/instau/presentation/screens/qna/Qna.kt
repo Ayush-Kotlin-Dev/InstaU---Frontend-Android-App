@@ -3,6 +3,8 @@ package ayush.ggv.instau.presentation.screens.qna
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import ayush.ggv.instau.model.qna.QuestionWithAnswer
 import ayush.ggv.instau.presentation.screens.destinations.QnaDetailDestination
 import com.ramcosta.composedestinations.annotation.Destination
@@ -18,10 +20,10 @@ fun Qna(
 ) {
     Log.d("Qna", "Qna: $token")
     val viewModel: QnaViewModel = koinViewModel()
-    val qnaUiState = viewModel.qnaUiState.value
-    LaunchedEffect(key1 = Unit ) {
-        viewModel.fetchQuestionsWithAnswers(token)
-    }
+    val qnaUiState by remember { viewModel.qnaUiState }
+    val questionText by remember { viewModel.questionText }
+
+
     QnaScreen(
         qnaUiState = qnaUiState,
         onQuestionClick = { questionWithAnswer ->
@@ -36,9 +38,7 @@ fun Qna(
         onQuestionAddClick = { content ->
             viewModel.addQuestion(content)
         },
-        questionText = viewModel.questionText.value,
+        questionText = questionText,
         onTextChange = viewModel::setQuestionText
     )
-
-
 }

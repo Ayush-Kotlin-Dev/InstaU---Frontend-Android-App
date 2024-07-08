@@ -25,10 +25,13 @@ fun Profile(
     navigator: DestinationsNavigator,
 ) {
     val viewModel : ProfileScreenViewModel = koinViewModel()
+    val userInfoUiState by remember { viewModel.userInfoUiState }
+    val profilePostUiState by remember { viewModel.profilePostUiState }
+
 
     ProfileScreen(
-        userInfoUiState = viewModel.userInfoUiState,
-        profilePostsUiState = viewModel.profilePostUiState,
+        userInfoUiState = userInfoUiState,
+        profilePostsUiState = profilePostUiState,
         onButtonClick = {
             viewModel.followUnfollowUser(
                 FollowsParams(

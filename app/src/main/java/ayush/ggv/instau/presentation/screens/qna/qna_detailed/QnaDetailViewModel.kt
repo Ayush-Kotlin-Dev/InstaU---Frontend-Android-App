@@ -35,16 +35,11 @@ class QnaDetailViewModel(
 
             try {
                 // Simulate a network call or fetch from repository
-                val answers = qnaUseCase(token, questionId , 1 , 10)
-                when (answers) {
+                when (val answers = qnaUseCase(token, questionId , 1 , 10)) {
                     is Result.Success -> {
                         _answersUiState.value = _answersUiState.value.copy(
                             isLoading = false,
                             answers = answers.data?.answers
-                        )
-                        Log.d(
-                            "QnaViewModel",
-                            "fetchQuestionsWithhhhAnswers: Success - ${answers.data?.answers}"
                         )
                     }
 
@@ -53,15 +48,9 @@ class QnaDetailViewModel(
                             isLoading = false,
                             errorMessage = answers.message
                         )
-                        Log.e(
-                            "QnaViewModel",
-                            "fetchQuestionsWithhhhAnswers: Error - ${answers.message}"
-                        )
                     }
-
                     is Result.Loading -> {
                         // Handle loading state if needed
-                        Log.d("QnaViewModel", "fetchQuestionsWithAnswers: Loading")
                     }
                 }
             } catch (e: Exception) {

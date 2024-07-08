@@ -14,7 +14,7 @@ class QnaRepositoryImpl(
     private val qnaService: QnaService,
     private val userPreferences: UserPreferences
 ) : QnaRepository {
-    override suspend fun getQuestions(token: String): Result<QuestionsResponse> {
+    override suspend fun getQuestions(): Result<QuestionsResponse> {
         return try {
             val userToken = userPreferences.getUserData().token
 

@@ -1,5 +1,6 @@
 package ayush.ggv.instau.presentation.screens.account.profile
 
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -27,9 +28,11 @@ class ProfileScreenViewModel(
 
     var isFollowing: Boolean = false
         private set
-    var profilePostUiState by mutableStateOf(ProfilePostUiState())
-        private set
-    var userInfoUiState by mutableStateOf(UserInfoUiState())
+    private val _profilePostUiState = mutableStateOf(ProfilePostUiState())
+    var profilePostUiState: State<ProfilePostUiState> = _profilePostUiState
+
+    private val _userInfoUiState = mutableStateOf(UserInfoUiState())
+    val userInfoUiState: State<UserInfoUiState> = _userInfoUiState
 
     var postsCount by mutableStateOf(0)
     fun logout() {
@@ -42,9 +45,7 @@ class ProfileScreenViewModel(
     fun fetchProfile(
         userId: Long,
     ) {
-        userInfoUiState = userInfoUiState.copy(
-            isLoading = true
-        )
+        _userInfoUiState.value = _userInfoUiState.value.copy(isLoading = true)
 
         viewModelScope.launch {
 
@@ -54,7 +55,7 @@ class ProfileScreenViewModel(
 
                 when (profileResult) {
                     is Result.Success -> {
-                        userInfoUiState = userInfoUiState.copy(
+                        _userInfoUiState.value = _userInfoUiState.value.copy(
                             profile = profileResult.data?.profile,
                             isLoading = false
                         )
@@ -62,46 +63,48 @@ class ProfileScreenViewModel(
                     }
 
                     is Result.Error -> {
-                        userInfoUiState = userInfoUiState.copy(
+                        _userInfoUiState.value = _userInfoUiState.value.copy(
                             errorMessage = profileResult.message,
                             isLoading = false
                         )
                     }
 
                     is Result.Loading -> {
-                        // Optionally handle loading state
+                        _userInfoUiState.value = _userInfoUiState.value.copy(
+                            isLoading = true
+                        )
                     }
                 }
 
                 when (postResult) {
                     is Result.Success -> {
                         postsCount = postResult.data?.posts?.size ?: 0
-                        profilePostUiState = profilePostUiState.copy(
+                        _profilePostUiState.value = _profilePostUiState.value.copy(
                             posts = postResult.data?.posts ?: emptyList(),
-                            isLoading = false,
-                            postsCount = postsCount
+                            postsCount = postsCount,
+                            isLoading = false
                         )
                     }
 
                     is Result.Error -> {
-                        profilePostUiState = profilePostUiState.copy(
+                        _profilePostUiState.value = _profilePostUiState.value.copy(
                             errorMessage = postResult.message,
                             isLoading = false
                         )
                     }
 
                     is Result.Loading -> {
-                        profilePostUiState = profilePostUiState.copy(
+                        _profilePostUiState.value = _profilePostUiState.value.copy(
                             isLoading = true
                         )
                     }
                 }
             } catch (e: Exception) {
-                userInfoUiState = userInfoUiState.copy(
+                _userInfoUiState.value = _userInfoUiState.value.copy(
                     errorMessage = e.message,
                     isLoading = false
                 )
-                profilePostUiState = profilePostUiState.copy(
+                _profilePostUiState.value = _profilePostUiState.value.copy(
                     errorMessage = e.message,
                     isLoading = false
                 )
@@ -115,34 +118,36 @@ class ProfileScreenViewModel(
                 val followResult = followsUseCase(followsParams)
                 when (followResult) {
                     is Result.Success -> {
-                        userInfoUiState = userInfoUiState.copy(
+                        _userInfoUiState.value = _userInfoUiState.value.copy(
                             isLoading = false
                         )
                         isFollowing = !followsParams.isFollowing
 
-                        userInfoUiState.profile?.let { profile ->
+                        _userInfoUiState.value.profile?.let { profile ->
                             val updatedFollowersCount =
                                 if (isFollowing) profile.followersCount + 1 else profile.followersCount - 1
                             val updatedProfile =
                                 profile.copy(followersCount = updatedFollowersCount)
-                            userInfoUiState = userInfoUiState.copy(profile = updatedProfile)
+                            _userInfoUiState.value = _userInfoUiState.value.copy(profile = updatedProfile)
                         }
 
                     }
 
                     is Result.Error -> {
-                        userInfoUiState = userInfoUiState.copy(
+                        _userInfoUiState.value = _userInfoUiState.value.copy(
                             errorMessage = followResult.message,
                             isLoading = false
                         )
                     }
 
                     is Result.Loading -> {
-                        userInfoUiState = userInfoUiState.copy(isLoading = true)
+                        _userInfoUiState.value = _userInfoUiState.value.copy(
+                            isLoading = true
+                        )
                     }
                 }
             } catch (e: Exception) {
-                userInfoUiState = userInfoUiState.copy(
+                _userInfoUiState.value = _userInfoUiState.value.copy(
                     errorMessage = e.message,
                     isLoading = false
                 )

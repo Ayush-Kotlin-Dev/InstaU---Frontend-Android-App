@@ -10,8 +10,7 @@ class QnaUseCase : KoinComponent{
     private val repository: QnaRepository by inject()
 
     suspend operator fun invoke(
-        token: String
     ): Result<QuestionsResponse> {
-        return repository.getQuestions(token)
+        return repository.getQuestions()
     }
 }

@@ -79,12 +79,13 @@ fun ProfileScreen(
     onCommentClick: (Long) -> Unit,
     fetchData: () -> Unit,
     navigator: DestinationsNavigator,
-    isFollowing: Boolean
+    isFollowing: Boolean,
 ) {
-
     val pullRefreshState = rememberPullRefreshState(
         refreshing = userInfoUiState.isLoading && profilePostsUiState.isLoading,
-        onRefresh = { fetchData() })
+        onRefresh = { fetchData() }
+    )
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -110,10 +111,9 @@ fun ProfileScreen(
                                     EditProfileDestination(
                                         userInfoUiState.profile.id,
                                     )
-                                ) // Navigate to EditProfileDestination if the profile belongs to the current user
+                                )
                             } else {
                                 onButtonClick()
-//                            isFollowing = !isFollowing
                             }
                         },
                         onFollowersClick = onFollowersClick,
@@ -170,13 +170,13 @@ fun ProfileHeaderSection(
     postsCount: Int,
     isCurrentUser: Boolean = false,
     isFollowing: Boolean = false,
-    onButtonClick: () -> Unit,  //Edit Button for Admin , and Follow Button for other users
+    onButtonClick: () -> Unit,
     onFollowersClick: () -> Unit,
     onFollowingClick: () -> Unit
-
 ) {
     val context = LocalContext.current
     var showDialog by remember { mutableStateOf(false) }
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -196,17 +196,16 @@ fun ProfileHeaderSection(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
-
         Text(
             text = bio,
             style = MaterialTheme.typography.body2,
-            maxLines = 2, overflow = TextOverflow.Ellipsis
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
         )
         Spacer(modifier = modifier.height(SmallSpacing))
 
         Row(
-            modifier = modifier
-                .fillMaxWidth(),
+            modifier = modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(
@@ -225,6 +224,7 @@ fun ProfileHeaderSection(
                     onClick = onFollowingClick
                 )
             }
+
             if (isCurrentUser) {
                 FollowsButton(
                     text = R.string.editProfileLabel,
@@ -252,6 +252,7 @@ fun ProfileHeaderSection(
                 )
             }
         }
+
         Spacer(modifier = modifier.height(SmallSpacing))
         FollowText(
             count = postsCount,
@@ -268,7 +269,7 @@ fun ProfileHeaderSection(
                 modifier = Modifier
                     .size(300.dp)
                     .padding(10.dp)
-                    .clip(RoundedCornerShape(16.dp)) // Change the shape of the dialog box
+                    .clip(RoundedCornerShape(16.dp))
             ) {
                 Image(
                     painter = rememberAsyncImagePainter(model = imageUrl),
@@ -279,7 +280,6 @@ fun ProfileHeaderSection(
             }
         }
     }
-
 }
 
 @Composable

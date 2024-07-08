@@ -34,6 +34,7 @@ import ayush.ggv.instau.data.dateTimeFormat
 import ayush.ggv.instau.presentation.components.AnswerBubble
 import ayush.ggv.instau.presentation.components.FollowsButton
 import kotlinx.coroutines.delay
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
@@ -46,14 +47,19 @@ fun QnaDetailedPage(
     fetchData: () -> Unit,
     onAddAnswer: (String) -> Unit,
     addAnswer: addAnsweruiState,
-    onTextChange: (String) -> Unit
+    onTextChange: (String) -> Unit,
+    questionId: Long // Add questionId as a parameter
 ) {
     var isDialogOpen by remember { mutableStateOf(false) }
     var simulatedProgress by remember { mutableStateOf(0f) }
     val dateTime = dateTimeFormat(askedAt)
+    val viewModel: QnaDetailViewModel = koinViewModel()
 
-    LaunchedEffect(key1 = Unit) {
-        fetchData()
+    // Only fetch data if it hasn't been fetched yet
+    LaunchedEffect(key1 = questionId, key2 = viewModel.answersUiState.value.answers) {
+        if (viewModel.answersUiState.value.answers.isNullOrEmpty()) {
+            fetchData()
+        }
     }
 
     LaunchedEffect(key1 = answers.isLoading || addAnswer.isLoading) {
@@ -164,8 +170,9 @@ fun QnaDetailedPage(
                 confirmButton = {
                     Button(
                         onClick = {
-                            onAddAnswer(addAnswer.answer); onTextChange(""); isDialogOpen =
-                            false
+                            onAddAnswer(addAnswer.answer)
+                            onTextChange("")
+                            isDialogOpen = false
                         },
                         enabled = (addAnswer.answer.isNotEmpty())
                     ) {
@@ -181,4 +188,3 @@ fun QnaDetailedPage(
         }
     }
 }
-
