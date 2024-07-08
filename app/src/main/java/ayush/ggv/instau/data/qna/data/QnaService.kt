@@ -1,5 +1,6 @@
 package ayush.ggv.instau.data.qna.data
 
+import android.util.Log
 import ayush.ggv.instau.data.KtorApi
 import ayush.ggv.instau.model.qna.AnswerTextParams
 import ayush.ggv.instau.model.qna.AnswersResponse
@@ -30,13 +31,14 @@ class QnaService : KtorApi() {
         qnaTextParams: QnaTextParams
     ): QuestionResponse {
         val response = client.post {
-            endPoint(path = "/qna/question/create")
+            endPoint(path = "/qna/create")
             headers {
                 append("Authorization", "Bearer $token")
                 setBody(qnaTextParams)
             }
         }
-        return response.body<QuestionResponse>()
+        Log.d("QnaService", "addQuestion: ${response.body<QuestionResponse>()}")
+            return response.body<QuestionResponse>()
     }
     suspend fun getAnswers(
         token: String,

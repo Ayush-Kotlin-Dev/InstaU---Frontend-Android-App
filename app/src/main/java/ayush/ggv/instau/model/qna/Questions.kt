@@ -32,4 +32,3 @@ data class QuestionResponse(
     val question: QuestionWithAnswer? = null,
     val message: String? = null
 )
-

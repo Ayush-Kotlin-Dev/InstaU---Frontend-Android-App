@@ -1,5 +1,6 @@
 package ayush.ggv.instau.data.qna.data
 
+import android.util.Log
 import ayush.ggv.instau.common.datastore.UserPreferences
 import ayush.ggv.instau.data.qna.domain.QnaRepository
 import ayush.ggv.instau.model.qna.AnswerTextParams
@@ -28,6 +29,7 @@ class QnaRepositoryImpl(
     override suspend fun addQuestion(content: String): Result<QuestionResponse> {
         val userData = userPreferences.getUserData()
         return try {
+            Log.d("QnaService", "addQuestion: $content")
             val response = qnaService.addQuestion(userData.token, QnaTextParams(content, userData.id))
             Result.Success(response)
         } catch (e: Exception) {

@@ -32,7 +32,12 @@ fun Qna(
                     token = token
                 )
             )
-        }
+        },
+        onQuestionAddClick = { content ->
+            viewModel.addQuestion(content)
+        },
+        questionText = viewModel.questionText.value,
+        onTextChange = viewModel::setQuestionText
     )
 
 

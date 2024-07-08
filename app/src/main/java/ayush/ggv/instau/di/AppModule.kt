@@ -59,6 +59,7 @@ import ayush.ggv.instau.domain.usecases.profileusecase.ProfileUseCase
 import ayush.ggv.instau.domain.usecases.profileusecase.SearchUserUseCase
 import ayush.ggv.instau.domain.usecases.profileusecase.UpdateProfileUseCase
 import ayush.ggv.instau.domain.usecases.qnausecase.AddAnswerUseCase
+import ayush.ggv.instau.domain.usecases.qnausecase.AddQuestionUseCase
 import ayush.ggv.instau.domain.usecases.qnausecase.QnaDetailUseCase
 import ayush.ggv.instau.domain.usecases.qnausecase.QnaUseCase
 import ayush.ggv.instau.domain.usecases.signinusecase.SignInuseCase
@@ -104,7 +105,7 @@ val appModule = module {
     single <FollowRepository>{ FollowRepositoryImpl(get(),get()) }
     single <PostLikesRepository>{PostLikesRepositoryImpl(get(),get())  }
     single <ChatRepository>{ChatRepositoryImpl(get(), get()) }
-    single <QnaRepository>{ QnaRepositoryImpl(get()) }
+    single <QnaRepository>{ QnaRepositoryImpl(get(),get()) }
     factory { ChatService() }
 
     factory { AuthService() }
@@ -137,6 +138,7 @@ val appModule = module {
     factory { QnaUseCase() }
     factory { QnaDetailUseCase() }
     factory { AddAnswerUseCase() }
+    factory { AddQuestionUseCase() }
     viewModel { SignUpViewModel(get() , get(), get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
     viewModel { LoginViewModel(get() , get() , get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
     viewModel { MainActivityViewModel(get()) }
@@ -150,7 +152,7 @@ val appModule = module {
     viewModel{SearchViewModel(get())}
     viewModel{FriendListScreenViewModel(get() ,  get() )}
     viewModel{ChatRoomViewModel(get() , get() )}
-    viewModel{QnaViewModel(get())}
+    viewModel{QnaViewModel(get(),get())}
     viewModel{QnaDetailViewModel(get() , get())}
 
     single{

@@ -19,17 +19,21 @@ class QnaViewModel(
     private val addQuestionUseCase: AddQuestionUseCase
 ) : ViewModel() {
 
-    // Combined UI state for questions and answers
-
     private val _qnaUiState = mutableStateOf(QnaUiState())
     val qnaUiState: State<QnaUiState> = _qnaUiState
 
+    private val _questionText = mutableStateOf("")
+    val questionText: State<String> = _questionText
+
+    fun setQuestionText(content: String) {
+        _questionText.value = content
+    }
 
     fun addQuestion(content: String) {
         viewModelScope.launch {
             try {
                 _qnaUiState.value = _qnaUiState.value.copy(isLoading = true)
-
+                Log.d("QnaService", "addQuestion: $content")
                 val result = addQuestionUseCase(content)
                 when (result) {
                     is Result.Success -> {
@@ -37,6 +41,7 @@ class QnaViewModel(
                             isLoading = false,
                             errorMessage = null
                         )
+                        Log.d("QnaService", "addQuestion: Success")
                     }
 
                     is Result.Error -> {
@@ -44,6 +49,8 @@ class QnaViewModel(
                             isLoading = false,
                             errorMessage = result.message
                         )
+                        Log.d("QnaService", "addQuestion: Error - ${result.message}")
+
                     }
 
                     is Result.Loading -> {
@@ -116,5 +123,11 @@ class QnaViewModel(
 data class QnaUiState(
     val isLoading: Boolean = false,
     val questionsWithAnswers: List<QuestionWithAnswer>? = emptyList(),
+    val errorMessage: String? = null
+)
+
+data class AddQuestionUiState(
+    val content : String = "",
+    val isLoading: Boolean = false,
     val errorMessage: String? = null
 )
