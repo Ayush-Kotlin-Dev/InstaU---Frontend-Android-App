@@ -1,6 +1,5 @@
 package ayush.ggv.instau.model.qna
 
-import ayush.ggv.instau.model.Post
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -21,8 +20,16 @@ data class QuestionWithAnswer(
 )
 
 @Serializable
-data class QuestionResponse(
+data class QuestionsResponse(
     val success: Boolean,
     val questions: List<QuestionWithAnswer> = emptyList(),
     val message: String? = null
 )
+
+@Serializable
+data class QuestionResponse(
+    val success: Boolean,
+    val question: QuestionWithAnswer? = null,
+    val message: String? = null
+)
+

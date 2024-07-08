@@ -1,24 +1,22 @@
 package ayush.ggv.instau.presentation.screens.qna
 
 import android.util.Log
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import ayush.ggv.instau.domain.usecases.qnausecase.AddQuestionUseCase
 import ayush.ggv.instau.domain.usecases.qnausecase.QnaUseCase
-import ayush.ggv.instau.model.qna.QuestionResponse
+import ayush.ggv.instau.model.qna.QuestionsResponse
 import ayush.ggv.instau.model.qna.QuestionWithAnswer
 import ayush.ggv.instau.util.Result
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class QnaViewModel(
-   private val qnaUseCase: QnaUseCase
+    private val qnaUseCase: QnaUseCase,
+    private val addQuestionUseCase: AddQuestionUseCase
 ) : ViewModel() {
 
     // Combined UI state for questions and answers
@@ -27,6 +25,40 @@ class QnaViewModel(
     val qnaUiState: State<QnaUiState> = _qnaUiState
 
 
+    fun addQuestion(content: String) {
+        viewModelScope.launch {
+            try {
+                _qnaUiState.value = _qnaUiState.value.copy(isLoading = true)
+
+                val result = addQuestionUseCase(content)
+                when (result) {
+                    is Result.Success -> {
+                        _qnaUiState.value = _qnaUiState.value.copy(
+                            isLoading = false,
+                            errorMessage = null
+                        )
+                    }
+
+                    is Result.Error -> {
+                        _qnaUiState.value = _qnaUiState.value.copy(
+                            isLoading = false,
+                            errorMessage = result.message
+                        )
+                    }
+
+                    is Result.Loading -> {
+                        // Handle loading state if needed
+                    }
+                }
+            } catch (e: Exception) {
+                _qnaUiState.value = _qnaUiState.value.copy(
+                    isLoading = false,
+                    errorMessage = "Error adding question: ${e.message}"
+                )
+
+            }
+        }
+    }
 
     fun fetchQuestionsWithAnswers(token: String) {
         viewModelScope.launch {
@@ -73,7 +105,7 @@ class QnaViewModel(
         }
     }
 
-    suspend fun getQuestionsFromApi(token:String): Result<QuestionResponse> {
+    suspend fun getQuestionsFromApi(token: String): Result<QuestionsResponse> {
         return withContext(Dispatchers.IO) {
             // Simulated delay to mimic network call
             qnaUseCase(token)

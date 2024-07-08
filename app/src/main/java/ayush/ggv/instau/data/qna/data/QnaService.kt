@@ -3,7 +3,9 @@ package ayush.ggv.instau.data.qna.data
 import ayush.ggv.instau.data.KtorApi
 import ayush.ggv.instau.model.qna.AnswerTextParams
 import ayush.ggv.instau.model.qna.AnswersResponse
+import ayush.ggv.instau.model.qna.QnaTextParams
 import ayush.ggv.instau.model.qna.QuestionResponse
+import ayush.ggv.instau.model.qna.QuestionsResponse
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.headers
@@ -14,16 +16,28 @@ import io.ktor.client.request.setBody
 class QnaService : KtorApi() {
     suspend fun getQuestions(
         token: String
-    ): QuestionResponse {
+    ): QuestionsResponse {
         val response = client.get {
             endPoint(path = "/qna/questions")
             headers {
                 append("Authorization", "Bearer $token")
             }
         }
+        return response.body<QuestionsResponse>()
+    }
+    suspend fun addQuestion(
+        token: String,
+        qnaTextParams: QnaTextParams
+    ): QuestionResponse {
+        val response = client.post {
+            endPoint(path = "/qna/question/create")
+            headers {
+                append("Authorization", "Bearer $token")
+                setBody(qnaTextParams)
+            }
+        }
         return response.body<QuestionResponse>()
     }
-
     suspend fun getAnswers(
         token: String,
         questionId: Long,

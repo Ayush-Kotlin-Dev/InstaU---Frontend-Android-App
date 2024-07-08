@@ -1,11 +1,9 @@
 package ayush.ggv.instau.domain.usecases.qnausecase
 
-import ayush.ggv.instau.data.profile.domain.model.ProfileResponse
 import ayush.ggv.instau.data.qna.domain.QnaRepository
-import ayush.ggv.instau.model.qna.QuestionResponse
+import ayush.ggv.instau.model.qna.QuestionsResponse
 import ayush.ggv.instau.util.Result
 import org.koin.core.component.KoinComponent
-import org.koin.java.KoinJavaComponent.inject
 import org.koin.core.component.inject
 
 class QnaUseCase : KoinComponent{
@@ -13,7 +11,7 @@ class QnaUseCase : KoinComponent{
 
     suspend operator fun invoke(
         token: String
-    ): Result<QuestionResponse> {
+    ): Result<QuestionsResponse> {
         return repository.getQuestions(token)
     }
 }

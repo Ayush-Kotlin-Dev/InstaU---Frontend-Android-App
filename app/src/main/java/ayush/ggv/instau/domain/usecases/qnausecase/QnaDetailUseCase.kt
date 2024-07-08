@@ -2,7 +2,6 @@ package ayush.ggv.instau.domain.usecases.qnausecase
 
 import ayush.ggv.instau.data.qna.domain.QnaRepository
 import ayush.ggv.instau.model.qna.AnswersResponse
-import ayush.ggv.instau.model.qna.QuestionResponse
 import ayush.ggv.instau.util.Result
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
