@@ -36,10 +36,17 @@ class AddPostViewModel(
     fun onUploadPost(imageUri: ByteArray, caption: String) {
 
         viewModelScope.launch {
+            //check caption is not empty
+            if (caption.isEmpty()) {
+                uiState = uiState.copy(
+                    error = "Caption cannot be empty"
+                )
+                return@launch
+            }
             uiState = uiState.copy(
                 isLoading = true
             )
-            Log.d("PostService", "createPost: Called VM ")
+
 
             val createPostResult = addPostUseCase(
                 imageUri = imageUri,

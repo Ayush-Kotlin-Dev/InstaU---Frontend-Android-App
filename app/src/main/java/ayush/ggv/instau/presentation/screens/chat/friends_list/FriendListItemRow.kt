@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.darkColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -102,18 +103,3 @@ fun FriendListItemRow(
         }
     }
 }
-//@Preview
-//@Composable
-//fun FriendListItemRowPreview() {
-//    FriendListItemRow(
-//        friendData = FriendList.FriendInfo(
-//            email = "",
-//            username = "John Doe",
-//            avatar = "",
-//            lastMessage = FriendList.FriendInfo.LastMessage(
-//                textMessage = "Hello",
-//                timestamp = "2021-09-01T12:00:00Z"
-//            )
-//        )
-//    )
-//}
