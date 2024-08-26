@@ -63,6 +63,7 @@ import ayush.ggv.instau.ui.theme.LargeSpacing
 import ayush.ggv.instau.ui.theme.LightGray
 import ayush.ggv.instau.ui.theme.MediumSpacing
 import ayush.ggv.instau.ui.theme.SocialAppTheme
+import ayush.ggv.instau.util.formatTimeAgo
 import coil.compose.AsyncImage
 import com.ramcosta.composedestinations.utils.currentDestinationAsState
 import instaU.ayush.com.model.LikeParams
@@ -92,23 +93,6 @@ fun PostListItem(
 
     val isPostLiked by viewModel.isPostLiked.observeAsState(initial = post.isLiked)
     val likesCount by viewModel.likesCount.observeAsState(initial = post.likesCount)
-
-    fun formatTimeAgo(time: String): String {
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
-        val dateTime = LocalDateTime.parse(time, formatter)
-        val zonedDateTime = dateTime.atZone(ZoneId.systemDefault())
-        val now = ZonedDateTime.now()
-
-        val diff = ChronoUnit.SECONDS.between(zonedDateTime, now)
-
-        return when {
-            diff < 60 -> "$diff seconds ago"
-            diff < 3600 -> "${diff / 60} minutes ago"
-            diff < 86400 -> "${diff / 3600} hours ago"
-            diff < 604800 -> "${diff / 86400} days ago"
-            else -> "${diff / 604800} weeks ago"
-        }
-    }
 
 
     // Format the LocalDateTime object into a "time ago" string

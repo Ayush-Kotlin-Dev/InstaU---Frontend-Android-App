@@ -15,7 +15,7 @@ enum class NavigationItem(
         icon = R.drawable.baseline_whatshot_24,
         title = "QNA"
     ),
-    Premium(
+    Events(
         icon = R.drawable.person_circle_icon,
         title = "Events"
     ),

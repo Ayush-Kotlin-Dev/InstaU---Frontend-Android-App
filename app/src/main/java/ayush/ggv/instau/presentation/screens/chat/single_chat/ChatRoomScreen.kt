@@ -2,25 +2,32 @@ package ayush.ggv.instau.presentation.screens.chat.single_chat
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -40,35 +47,17 @@ fun ChatRoomScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+
     ) {
 
-        Box(Modifier.fillMaxWidth()) {
-
-            OutlinedButton(
-                modifier = Modifier.align(Alignment.CenterStart),
-                onClick = { onBackClick()},
-                shape = RoundedCornerShape(8.dp),
-            ) {
-                Icon(
-                    modifier = Modifier.padding(start = 8.dp),
-                    imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                    contentDescription = "Back button"
-                )
-            }
-
-            Text(
-                modifier = Modifier.align(Alignment.Center),
-                text = friendName,
-                style = MaterialTheme.typography.h6.copy(fontWeight = FontWeight.Bold)
-            )
-        }
+        EnhancedAppBar(friendName, friendAvatar, onBackClick)
 
         Spacer(modifier = Modifier.height(16.dp))
 
         LazyColumn(
             modifier = Modifier
                 .weight(1f)
+                .padding(16.dp)
                 .fillMaxSize(),
             reverseLayout = true
         ) {
@@ -108,20 +97,44 @@ fun ChatRoomScreen(
                 }
             }
         }
+        MessageInput(
+            messageText = messageText,
+            onMessageChange = onMessageChange,
+            onSendClick = onSendClick
+        )
 
-        OutlinedCard(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
-            border = BorderStroke(
-                width = 0.5.dp,
-                color = MaterialTheme.colors.onBackground.copy(alpha = 0.2f)
-            ),
-            backgroundColor = MaterialTheme.colors.background
+
+
+    }
+}
+
+@Composable
+fun MessageInput(
+    messageText: String,
+    onMessageChange: (String) -> Unit,
+    onSendClick: () -> Unit
+) {
+    OutlinedCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(8.dp)
+            .shadow(4.dp, shape = RoundedCornerShape(8.dp)),
+        border = BorderStroke(
+            width = 0.5.dp,
+            color = MaterialTheme.colors.onBackground.copy(alpha = 0.2f)
+        ),
+        backgroundColor = MaterialTheme.colors.surface,
+        shape = RoundedCornerShape(8.dp) // Rounded corners for a modern look
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             TextField(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .weight(1f)
+                    .padding(end = 8.dp),
                 value = messageText,
                 onValueChange = onMessageChange,
                 placeholder = {
@@ -132,28 +145,56 @@ fun ChatRoomScreen(
                 },
                 singleLine = false,
                 maxLines = 4,
-                colors = TextFieldDefaults.textFieldColors(
-                    disabledTextColor = MaterialTheme.colors.background,
-                    focusedIndicatorColor = MaterialTheme.colors.background,
-                    unfocusedIndicatorColor = MaterialTheme.colors.background,
-                    disabledIndicatorColor = MaterialTheme.colors.background,
-                    backgroundColor = MaterialTheme.colors.background
-                ),
-                trailingIcon = {
-                    Icon(
-                        modifier = Modifier
-                            .clickable { onSendClick()}
-                            .rotate(-45f),
-                        imageVector = Icons.AutoMirrored.Filled.Send,
-                        contentDescription = "Send message",
-                        tint = MaterialTheme.colors.onBackground.copy(alpha = 0.3f)
-                    )
-                }
+                shape = RoundedCornerShape(8.dp), // Rounded corners for TextField
+
             )
+
+            IconButton(
+                onClick = onSendClick,
+                modifier = Modifier
+                    .size(48.dp) // Increase the size of the button for better touch area
+                    .clip(CircleShape) // Circular shape for the button
+                    .background(MaterialTheme.colors.primary) // Background color for the button
+                    .padding(8.dp) // Padding inside the button
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Send,
+                    contentDescription = "Send message",
+                    tint = MaterialTheme.colors.onPrimary
+                )
+            }
         }
     }
 }
 
+@Composable
+fun EnhancedAppBar(friendName: String, friendAvatar: String, onBackClick: () -> Unit) {
+    TopAppBar(
+        title = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Image(
+                    painter = rememberAsyncImagePainter(model = friendAvatar),
+                    contentDescription = "Friend avatar",
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(text = friendName)
+            }
+        },
+        navigationIcon = {
+            IconButton(onClick = onBackClick) {
+                Icon(Icons.AutoMirrored.Default.ArrowBack, contentDescription = "Back")
+            }
+        },
+        actions = {
+            IconButton(onClick = { /* Implement more options */ }) {
+                Icon(Icons.Default.MoreVert, contentDescription = "More options")
+            }
+        }
+    )
+}
 @Composable
 fun OutlinedCard(
     modifier: Modifier = Modifier,

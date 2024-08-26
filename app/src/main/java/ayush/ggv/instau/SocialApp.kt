@@ -1,6 +1,7 @@
 package ayush.ggv.instau
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -38,6 +39,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.navigation.Navigator
@@ -76,6 +78,7 @@ fun SocialApp(
 ) {
     val navHostController = rememberNavController()
     val systemUiController = rememberSystemUiController()
+    val context = LocalContext.current
 
     val isSystemInDark = isSystemInDarkTheme()
     val statusBarColor = if (isSystemInDark) {
@@ -131,10 +134,10 @@ fun SocialApp(
                 selectedNavigationItem = it
                 drawerState = CustomDrawerState.Closed
                 when(it){
-                    NavigationItem.Home -> TODO()
+                    NavigationItem.Home -> Toast.makeText(context, "Home", Toast.LENGTH_SHORT).show()
                     NavigationItem.Profile -> navHostController.navigate(QnaDestination(currentUserId = userId!! , token!!).route)
-                    NavigationItem.Premium -> TODO()
-                    NavigationItem.Settings -> TODO()
+                    NavigationItem.Events ->  Toast.makeText(context, "Events", Toast.LENGTH_SHORT).show()
+                    NavigationItem.Settings -> Toast.makeText(context, "Settings", Toast.LENGTH_SHORT).show()
                 }
             },
             onCloseClick = { drawerState = CustomDrawerState.Closed }

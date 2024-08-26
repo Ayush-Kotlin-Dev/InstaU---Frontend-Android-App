@@ -55,7 +55,7 @@ class LoginViewModel(
                         Log.d("Token", "Token stored failed")
                     }
                     dataStore.updateData {
-                        authResultData.data!!.toUserSettings()
+                        authResultData.data.toUserSettings()
                     }
                     uiState.copy(
                         isAuthenticating = false,

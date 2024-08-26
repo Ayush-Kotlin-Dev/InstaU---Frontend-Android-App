@@ -1,49 +1,34 @@
 package ayush.ggv.instau.util
 
+import android.util.Log
+import java.text.ParseException
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import java.util.*
+import kotlin.math.log
 
-private const val SECOND_MILLIS = 1000
+private const val SECOND_MILLIS = 1000L
 private const val MINUTE_MILLIS = 60 * SECOND_MILLIS
 private const val HOUR_MILLIS = 60 * MINUTE_MILLIS
 private const val DAY_MILLIS = 24 * HOUR_MILLIS
 
-private fun currentDate(): Date {
-    val calendar = Calendar.getInstance()
-    return calendar.time
-}
+fun formatTimeAgo(time: String): String {
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
+    val dateTime = LocalDateTime.parse(time, formatter)
+    val zonedDateTime = dateTime.atZone(ZoneId.systemDefault())
+    val now = ZonedDateTime.now()
 
-fun getTimeAgo(timestamp: Long): String {
-    val date = Date(timestamp)
-    var time = date.time
-    if (time < 1000000000000L) {
-        time *= 1000
-    }
+    val diff = ChronoUnit.SECONDS.between(zonedDateTime, now)
 
-    val now = currentDate().time
-    if (time > now || time <= 0) {
-        return "in the future"
-    }
-
-    val diff = now - time
     return when {
-        diff < MINUTE_MILLIS -> "Seconds ago"
-        diff < 2 * MINUTE_MILLIS -> "Minute ago"
-        diff < 60 * MINUTE_MILLIS -> "${diff / MINUTE_MILLIS} minutes ago"
-        diff < 2 * HOUR_MILLIS -> "Hour ago"
-        diff < 24 * HOUR_MILLIS -> "${diff / HOUR_MILLIS} hours ago"
-        diff < 48 * HOUR_MILLIS -> "Yesterday"
-        else -> "${diff / DAY_MILLIS} days ago"
-    }
-}
-
-
-fun parseTimestampToMillis(timestamp: String?): Long {
-    return try {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
-        val date: Date = dateFormat.parse(timestamp ?: "") ?: Date(0L)
-        date.time
-    } catch (e: Exception) {
-        0L
+        diff < 60 -> "$diff seconds ago"
+        diff < 3600 -> "${diff / 60} minutes ago"
+        diff < 86400 -> "${diff / 3600} hours ago"
+        diff < 604800 -> "${diff / 86400} days ago"
+        else -> "${diff / 604800} weeks ago"
     }
 }

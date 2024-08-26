@@ -140,7 +140,7 @@ class ChatService : KtorApi() {
     }
      suspend fun disconnectSocket() {
         webSocket?.close()
-        println("WebSocket: CLOSED")
+        Log.d("ChatService", "Socket disconnected")
     }
 }
 

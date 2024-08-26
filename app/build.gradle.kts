@@ -117,4 +117,7 @@ dependencies {
     implementation ("androidx.compose.runtime:runtime-livedata:1.6.8")
     implementation("io.ktor:ktor-client-websockets:$ktorVersion")
     implementation(platform("com.google.firebase:firebase-bom:33.1.1"))
+//    implementation("dev.chrisbanes.haze:haze:0.6.0")
+//    implementation("dev.chrisbanes.haze:haze-materials:0.6.0")
+
 }
