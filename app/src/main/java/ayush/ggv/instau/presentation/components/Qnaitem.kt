@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
@@ -16,6 +17,8 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowForward
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,59 +42,83 @@ fun QuestionItem(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(205.dp)
             .coloredShadow(
                 color = Color.Black,
                 alpha = 0.1f,
                 shadowRadius = 25.dp
             )
-        .clickable(onClick = { onItemClick(questionWithAnswer) })
-            .padding(8.dp)
-            .clip(RoundedCornerShape(7.dp)),
-        elevation = 4.dp
+            .clickable(onClick = { onItemClick(questionWithAnswer) })
+            .clip(RoundedCornerShape(12.dp)),
+        elevation = 4.dp,
+        backgroundColor = MaterialTheme.colors.surface
     ) {
         Column(
             modifier = Modifier
                 .padding(16.dp)
         ) {
-            Text(
-                text = "Asked by: $questionRaiser",
-                style = MaterialTheme.typography.caption,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            Spacer(modifier = Modifier.height(4.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = null,
+                    tint = MaterialTheme.colors.primary,
+                    modifier = Modifier.size(16.dp)
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = questionRaiser,
+                    style = MaterialTheme.typography.subtitle2,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = question,
                 style = MaterialTheme.typography.h6,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(12.dp))
             if (recentAnswer != null) {
                 Text(
                     text = "Answer: $recentAnswer",
-                    style = MaterialTheme.typography.body1,
+                    style = MaterialTheme.typography.body2,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
             } else {
-                Text(
-                    text = "No answers yet , be the first to answer!",
-                    style = MaterialTheme.typography.body1,
-                    color = Color.Gray
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = null,
+                        tint = MaterialTheme.colors.primary,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = "No answers yet - Be the first!",
+                        style = MaterialTheme.typography.body2,
+                        color = MaterialTheme.colors.primary
+                    )
+                }
             }
+            Spacer(modifier = Modifier.height(8.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = "View details",
+                    style = MaterialTheme.typography.button,
+                    color = MaterialTheme.colors.primary
+                )
+                Spacer(modifier = Modifier.width(4.dp))
                 Icon(
                     imageVector = Icons.AutoMirrored.Rounded.ArrowForward,
                     contentDescription = "Expand",
                     tint = MaterialTheme.colors.primary,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(16.dp)
                 )
             }
         }

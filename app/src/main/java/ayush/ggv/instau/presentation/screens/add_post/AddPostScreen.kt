@@ -155,22 +155,26 @@ fun AddPostScreen(
 
             Button(
                 onClick = {
-                    coroutineScope.launch {
-                        val resolver = context.contentResolver
-                        val imageBytes = resolver.openInputStream(Uri.parse(selectedImageUri))?.readBytes()
+                    if (imageSelected) {
+                        coroutineScope.launch {
+                            val resolver = context.contentResolver
+                            val imageBytes = resolver.openInputStream(Uri.parse(selectedImageUri))?.readBytes()
 
-                        if (imageBytes != null) {
-                            isLoading = true
-                            try {
-                                onUploadPost(imageBytes, captionText)
-                                isLoading = false
-                            } catch (e: Exception) {
-                                isLoading = false
-                                Toast.makeText(context, "Upload failed. Please try again.", Toast.LENGTH_LONG).show()
+                            if (imageBytes != null) {
+                                isLoading = true
+                                try {
+                                    onUploadPost(imageBytes, captionText)
+                                    isLoading = false
+                                } catch (e: Exception) {
+                                    isLoading = false
+                                    Toast.makeText(context, "Upload failed. Please try again.", Toast.LENGTH_LONG).show()
+                                }
+                            } else {
+                                Toast.makeText(context, "Failed to read image data.", Toast.LENGTH_LONG).show()
                             }
-                        } else {
-                            Toast.makeText(context, "Failed to read image data.", Toast.LENGTH_LONG).show()
                         }
+                    } else {
+                        Toast.makeText(context, "Please select an image before sharing.", Toast.LENGTH_LONG).show()
                     }
                 },
                 modifier = Modifier

@@ -1,10 +1,12 @@
 package ayush.ggv.instau.presentation.screens.qna
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import ayush.ggv.instau.model.qna.QuestionWithAnswer
 import ayush.ggv.instau.presentation.screens.destinations.QnaDetailDestination
 import com.ramcosta.composedestinations.annotation.Destination
@@ -22,7 +24,7 @@ fun Qna(
     val viewModel: QnaViewModel = koinViewModel()
     val qnaUiState by remember { viewModel.qnaUiState }
     val questionText by remember { viewModel.questionText }
-
+    val context = LocalContext.current
 
     QnaScreen(
         qnaUiState = qnaUiState,
@@ -39,6 +41,7 @@ fun Qna(
             viewModel.addQuestion(content)
         },
         questionText = questionText,
-        onTextChange = viewModel::setQuestionText
+        onTextChange = viewModel::setQuestionText,
+        onRefresh = { Toast.makeText(context, "Refreshed", Toast.LENGTH_SHORT).show() }
     )
 }
