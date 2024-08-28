@@ -42,6 +42,10 @@ fun Qna(
         },
         questionText = questionText,
         onTextChange = viewModel::setQuestionText,
-        onRefresh = { Toast.makeText(context, "Refreshed", Toast.LENGTH_SHORT).show() }
+        onRefresh = {
+            viewModel.fetchQuestionsWithAnswers()
+            Toast.makeText(context, "Refreshed", Toast.LENGTH_SHORT).show()
+
+        }
     )
 }

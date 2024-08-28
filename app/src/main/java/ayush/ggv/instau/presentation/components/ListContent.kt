@@ -35,16 +35,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
-import androidx.paging.LoadState
-import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.items
+
 import ayush.ggv.instau.R
 import ayush.ggv.instau.model.Post
-import ayush.ggv.instau.presentation.screens.account.profile.FollowText
 import ayush.ggv.instau.presentation.screens.search.UsersUiState
 import ayush.ggv.instau.ui.theme.HERO_ITEM_HEIGHT
 import ayush.ggv.instau.ui.theme.LARGE_PADDING
