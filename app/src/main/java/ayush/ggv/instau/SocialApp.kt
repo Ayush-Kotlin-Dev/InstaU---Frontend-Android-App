@@ -75,6 +75,8 @@ import kotlin.math.roundToInt
 fun SocialApp(
     token: String? = null,
     userId: Long? = null,
+    imageUrl: String? = null,
+    name: String? = null
 ) {
     val navHostController = rememberNavController()
     val systemUiController = rememberSystemUiController()
@@ -140,7 +142,9 @@ fun SocialApp(
                     NavigationItem.Settings -> Toast.makeText(context, "Settings", Toast.LENGTH_SHORT).show()
                 }
             },
-            onCloseClick = { drawerState = CustomDrawerState.Closed }
+            onCloseClick = { drawerState = CustomDrawerState.Closed },
+            profileImageUrl = imageUrl,
+            userName = name,
         )
         Scaffold(
             modifier = Modifier

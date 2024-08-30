@@ -12,4 +12,6 @@ class MainActivityViewModel(
 
     val authState = datastore.data.map { it.toAuthResultData().token }
     val userId = datastore.data.map { it.toAuthResultData().id }
+    val imageUrl = datastore.data.map { it.toAuthResultData().avatar }
+    val name = datastore.data.map { it.toAuthResultData().name }
 }

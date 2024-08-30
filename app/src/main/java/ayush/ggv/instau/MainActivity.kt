@@ -36,7 +36,13 @@ class MainActivity : ComponentActivity() {
                     val userId = viewModel.userId.collectAsStateWithLifecycle(
                         initialValue = null
                     )
-                    SocialApp(token = token.value, userId = userId.value)
+                    val imageUrl = viewModel.imageUrl.collectAsStateWithLifecycle(
+                        initialValue = null
+                    )
+                    val name = viewModel.name.collectAsStateWithLifecycle(
+                        initialValue = null
+                    )
+                    SocialApp(token = token.value, userId = userId.value , imageUrl = imageUrl.value, name = name.value)
                 }
             }
         }

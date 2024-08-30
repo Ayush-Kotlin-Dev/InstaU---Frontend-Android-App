@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,32 +30,42 @@ fun NavigationItemView(
     selected: Boolean,
     onClick: () -> Unit
 ) {
-    Row(
+    val backgroundColor = if (selected) {
+        MaterialTheme.colors.primary.copy(alpha = 0.12f)
+    } else {
+        Color.Transparent
+    }
+
+    val contentColor = if (selected) {
+        MaterialTheme.colors.primary
+    } else {
+        MaterialTheme.colors.onSurface.copy(alpha = 0.6f)
+    }
+
+    Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(size = 99.dp))
-            .clickable { onClick() }
-            .background(
-                color = if (selected) MaterialTheme.colors.surface
-                else Color.Unspecified,
-                shape = RoundedCornerShape(99.dp)
-            )
-            .padding(horizontal = 12.dp, vertical = 10.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(horizontal = 12.dp, vertical = 4.dp),
+        color = backgroundColor,
+        shape = RoundedCornerShape(8.dp)
     ) {
-        Icon(
-            painter = painterResource(id = navigationItem.icon),
-            contentDescription = "Navigation Item Icon",
-            tint = if (selected) MaterialTheme.colors.primary
-            else MaterialTheme.colors.onSurface
-        )
-        Spacer(modifier = Modifier.width(12.dp))
-        Text(
-            text = navigationItem.title,
-            color = if (selected) MaterialTheme.colors.primary
-            else MaterialTheme.colors.onSurface,
-            fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
-            lineHeight = 20.sp
-        )
+        Row(
+            modifier = Modifier
+                .clickable(onClick = onClick)
+                .padding(vertical = 12.dp, horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(id = navigationItem.icon),
+                contentDescription = navigationItem.title,
+                tint = contentColor
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                text = navigationItem.title,
+                style = MaterialTheme.typography.subtitle1,
+                color = contentColor
+            )
+        }
     }
 }
