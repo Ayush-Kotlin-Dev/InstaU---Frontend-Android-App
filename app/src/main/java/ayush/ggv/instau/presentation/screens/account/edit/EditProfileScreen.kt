@@ -1,5 +1,6 @@
 package ayush.ggv.instau.presentation.screens.account.edit
 
+import android.content.Context
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -8,23 +9,31 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,6 +50,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ayush.ggv.instau.R
 import ayush.ggv.instau.presentation.components.CircleImage
@@ -49,6 +59,7 @@ import ayush.ggv.instau.ui.theme.ExtraLargeSpacing
 import ayush.ggv.instau.ui.theme.LargeSpacing
 import ayush.ggv.instau.ui.theme.SmallSpacing
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import org.koin.androidx.compose.koinViewModel
@@ -70,6 +81,7 @@ fun EditProfileScreen(
     val coroutineScope = rememberCoroutineScope()
 
     var selectedImageUri by remember { mutableStateOf<String?>(null) }
+    var showDeleteConfirmDialog by remember { mutableStateOf(false) }
 
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -82,87 +94,44 @@ fun EditProfileScreen(
         contentAlignment = Alignment.Center
     ) {
         when {
-
-
             editProfileUiState.profile != null -> {
                 Column(
-                    modifier = modifier
+                    modifier = Modifier
                         .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
                         .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    Box {
-                        CircleImage(
-                            modifier = modifier.size(100.dp),
-                            imageUrl = selectedImageUri ?: editProfileUiState.profile.imageUrl
-                            ?: "",
-                            onClick = {}
-                        )
-                        IconButton(
-                            onClick = { galleryLauncher.launch("image/*") },
-                            modifier = Modifier
-                                .align(Alignment.BottomEnd)
-                                .size(35.dp)
-                                .background(
-                                    color = MaterialTheme.colors.primary,
-                                    shape = CircleShape
-                                ),
-                        ) {
-                            Icon(
-                                imageVector = Icons.Rounded.Edit,
-                                contentDescription = null,
-                                tint = MaterialTheme.colors.onPrimary
-                            )
-                        }
-                    }
-                    Text(
-                        text = "Update Profile Picture",
-                        style = MaterialTheme.typography.body2,
-                        textAlign = TextAlign.Center
+                    ProfilePictureSection(
+                        imageUrl = selectedImageUri ?: editProfileUiState.profile.imageUrl ?: "",
+                        onGalleryClick = { galleryLauncher.launch("image/*") },
+                        onDeleteClick = { showDeleteConfirmDialog = true }
                     )
-                    Spacer(modifier = Modifier.height(SmallSpacing))
 
-                    Text(text = stringResource(id = R.string.username_text),modifier= Modifier.align(Alignment.Start), style = MaterialTheme.typography.subtitle2)
-                    CustomTextFields(
-                        value = editProfileUiState.profile.name,
-                        onValueChange = onNameChange,
-                        hint = R.string.username_hint,
-                        modifier = Modifier.clip(RoundedCornerShape(8.dp))
+                    NameSection(
+                        name = editProfileUiState.profile.name,
+                        onNameChange = onNameChange
                     )
-                    Spacer(modifier = Modifier.height(SmallSpacing))
 
-                    Text(text = stringResource(id = R.string.bio_text) ,modifier= Modifier.align(Alignment.Start), style = MaterialTheme.typography.subtitle2)
-                    BioTextField(
-                        value = bioTextFieldValue,
-                        onValueChange = onBioChange,
-                        modifier = Modifier.clip(RoundedCornerShape(8.dp))
+                    BioSection(
+                        bioTextFieldValue = bioTextFieldValue,
+                        onBioChange = onBioChange
                     )
 
                     Button(
                         onClick = {
                             viewModel.setLoadingState(true)
                             if (selectedImageUri != null) {
-                                val imageUri = Uri.parse(selectedImageUri)
-                                val storageRef =
-                                    storage.reference.child("Profile_Images/${editProfileUiState.profile.name}_${imageUri.lastPathSegment}")
-
-                                coroutineScope.launch {
-                                    try {
-                                        val uploadTask = storageRef.putFile(imageUri).await()
-                                        val downloadUri = uploadTask.storage.downloadUrl.await()
-                                        viewModel.updateImageUrl(downloadUri.toString())
-                                    } catch (e: Exception) {
-                                        viewModel.setLoadingState(false)
-                                        Toast.makeText(
-                                            context,
-                                            "Failed to upload image: ${e.message}",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                        return@launch
-                                    }
-                                    onUploadButtonClick()
-                                }
+                                uploadImage(
+                                    selectedImageUri!!,
+                                    storage,
+                                    editProfileUiState.profile.name,
+                                    viewModel,
+                                    context,
+                                    coroutineScope,
+                                    onUploadButtonClick
+                                )
                             } else {
                                 onUploadButtonClick()
                             }
@@ -171,47 +140,31 @@ fun EditProfileScreen(
                             .fillMaxWidth()
                             .height(50.dp)
                             .clip(RoundedCornerShape(8.dp))
-//                        enabled = !editProfileUiState.isLoading
                     ) {
                         Text(text = stringResource(id = R.string.upload_changes_text))
                     }
                 }
             }
-
             editProfileUiState.errorMessage != null -> {
-                Column(
-                    modifier = modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.could_not_load_profile),
-                        style = MaterialTheme.typography.caption.copy(
-                            textAlign = TextAlign.Center
-                        )
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Button(
-                        onClick = fetchProfile,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(50.dp)
-                            .clip(RoundedCornerShape(8.dp))
-
-                    ) {
-                        Text(text = stringResource(id = R.string.retry_button_text))
-                    }
-                }
+                ErrorSection(
+                    message = stringResource(id = R.string.could_not_load_profile),
+                    onRetry = fetchProfile
+                )
             }
         }
 
         if (editProfileUiState.isLoading) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
+            CircularProgressIndicator()
+        }
+
+        if (showDeleteConfirmDialog) {
+            DeleteConfirmationDialog(
+                onConfirm = {
+                    // TODO: Implement delete profile picture logic
+                    showDeleteConfirmDialog = false
+                },
+                onDismiss = { showDeleteConfirmDialog = false }
+            )
         }
     }
 
@@ -231,30 +184,193 @@ fun EditProfileScreen(
 }
 
 @Composable
+fun ProfilePictureSection(
+    imageUrl: String,
+    onGalleryClick: () -> Unit,
+    onDeleteClick: () -> Unit
+) {
+    Box {
+        CircleImage(
+            modifier = Modifier.size(100.dp),
+            imageUrl = imageUrl,
+            onClick = {}
+        )
+        Row(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .offset(y = 8.dp)
+        ) {
+            IconButton(
+                onClick = onGalleryClick,
+                modifier = Modifier
+                    .size(35.dp)
+                    .background(
+                        color = MaterialTheme.colors.primary,
+                        shape = CircleShape
+                    )
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Edit,
+                    contentDescription = "Change picture",
+                    tint = MaterialTheme.colors.onPrimary
+                )
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            IconButton(
+                onClick = onDeleteClick,
+                modifier = Modifier
+                    .size(35.dp)
+                    .background(
+                        color = MaterialTheme.colors.error,
+                        shape = CircleShape
+                    )
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Delete,
+                    contentDescription = "Delete picture",
+                    tint = MaterialTheme.colors.onError
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun NameSection(
+    name: String,
+    onNameChange: (String) -> Unit
+) {
+    Text(
+        text = stringResource(id = R.string.username_text),
+        modifier = Modifier.fillMaxWidth(),
+        style = MaterialTheme.typography.subtitle2
+    )
+    CustomTextFields(
+        value = name,
+        onValueChange = onNameChange,
+        hint = R.string.username_hint,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(8.dp))
+    )
+}
+
+@Composable
+fun BioSection(
+    bioTextFieldValue: TextFieldValue,
+    onBioChange: (TextFieldValue) -> Unit
+) {
+    Text(
+        text = stringResource(id = R.string.bio_text),
+        modifier = Modifier.fillMaxWidth(),
+        style = MaterialTheme.typography.subtitle2
+    )
+    BioTextField(
+        value = bioTextFieldValue,
+        onValueChange = onBioChange,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(120.dp)
+            .clip(RoundedCornerShape(8.dp))
+    )
+
+}
+
+@Composable
+fun ErrorSection(
+    message: String,
+    onRetry: () -> Unit
+) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = message,
+            style = MaterialTheme.typography.caption.copy(
+                textAlign = TextAlign.Center
+            )
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(
+            onClick = onRetry,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+                .clip(RoundedCornerShape(8.dp))
+        ) {
+            Text(text = stringResource(id = R.string.retry_button_text))
+        }
+    }
+}
+
+@Composable
+fun DeleteConfirmationDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Delete Profile Picture") },
+        text = { Text("Are you sure you want to delete your profile picture?") },
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text("Delete")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
+}
+
+private fun uploadImage(
+    imageUri: String,
+    storage: FirebaseStorage,
+    userName: String,
+    viewModel: EditProfileViewModel,
+    context: Context,
+    coroutineScope: CoroutineScope,
+    onUploadButtonClick: () -> Unit
+) {
+    val uri = Uri.parse(imageUri)
+    val storageRef = storage.reference.child("Profile_Images/${userName}_${uri.lastPathSegment}")
+
+    coroutineScope.launch {
+        try {
+            val uploadTask = storageRef.putFile(uri).await()
+            val downloadUri = uploadTask.storage.downloadUrl.await()
+            viewModel.updateImageUrl(downloadUri.toString())
+            onUploadButtonClick()
+        } catch (e: Exception) {
+            viewModel.setLoadingState(false)
+            Toast.makeText(
+                context,
+                "Failed to upload image: ${e.message}",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+}
+
+@Composable
 fun BioTextField(
-    modifier: Modifier = Modifier,
     value: TextFieldValue,
-    onValueChange: (TextFieldValue) -> Unit
+    onValueChange: (TextFieldValue) -> Unit,
+    modifier: Modifier
 ) {
     TextField(
         value = value,
         onValueChange = onValueChange,
-        modifier = modifier
-            .fillMaxWidth()
-            .height(90.dp),
+        textStyle = MaterialTheme.typography.body1,
         colors = TextFieldDefaults.textFieldColors(
-            backgroundColor = MaterialTheme.colors.surface,
+            backgroundColor = Color.Transparent,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent
         ),
-        textStyle = MaterialTheme.typography.body2,
-        placeholder = {
-            Text(
-                text = stringResource(id = R.string.user_bio_hint),
-                style = MaterialTheme.typography.body2,
-                color = MaterialTheme.colors.onSurface.copy(alpha = 0.5f)
-            )
-        },
-        shape = MaterialTheme.shapes.medium
+        modifier = modifier
     )
 }

@@ -114,7 +114,7 @@ fun ProfileScreen(
     val headerHeight by animateDpAsState(
         targetValue = max(
             100.dp, // minHeaderHeight
-            250.dp - remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset.dp } }.value
+            300.dp - remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset.dp } }.value
         ), label = ""
     )
 
@@ -424,12 +424,15 @@ fun PostGrid(posts: List<Post>, onPostClick: (Post) -> Unit) {
 
 @Composable
 fun PostThumbnail(post: Post, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    val imageModifier = modifier
+        .aspectRatio(1f) // This ensures the image is a square
+        .padding(2.dp)
+        .clickable(onClick = onClick)
+
     AsyncImage(
         model = post.imageUrl,
         contentDescription = null,
         contentScale = ContentScale.Crop,
-        modifier = modifier
-            .padding(2.dp)
-            .clickable(onClick = onClick)
+        modifier = imageModifier
     )
 }

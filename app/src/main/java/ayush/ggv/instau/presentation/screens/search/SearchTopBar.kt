@@ -1,6 +1,9 @@
 package ayush.ggv.instau.presentation.screens.search
 
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -34,28 +37,19 @@ import ayush.ggv.instau.ui.theme.Purple500
 fun SearchTopBar(
     text: String,
     onTextChange: (String) -> Unit,
+    onCloseClicked: () -> Unit,
     onSearchClicked: () -> Unit,
-    onCloseClicked: () -> Unit
+    isDarkTheme: Boolean = isSystemInDarkTheme()
 ) {
-    SearchWidget(text, onTextChange, onSearchClicked, onCloseClicked)
-}
-
-@Composable
-fun SearchWidget(
-    text: String,
-    onTextChange: (String) -> Unit,
-    onSearchClicked: () -> Unit,
-    onCloseClicked: () -> Unit
-) {
-    val topBarBackgroundColor = if (isSystemInDarkTheme()) Color.Black else Color.White
-    val topBarContentColor = if (isSystemInDarkTheme()) Color.LightGray else Color.Black
+    val backgroundColor = if (isDarkTheme) Color.DarkGray else Color.LightGray
+    val contentColor = if (isDarkTheme) Color.White else Color.Black
 
     Surface(
-        elevation = AppBarDefaults.TopAppBarElevation,
-        color = topBarBackgroundColor,
         modifier = Modifier
             .fillMaxWidth()
-            .height(56.dp)
+            .height(60.dp),
+        elevation = 8.dp,
+        color = backgroundColor
     ) {
         TextField(
             modifier = Modifier.fillMaxWidth(),
@@ -63,57 +57,39 @@ fun SearchWidget(
             onValueChange = { onTextChange(it.lowercase()) },
             placeholder = {
                 Text(
-                    modifier = Modifier.alpha(ContentAlpha.medium),
                     text = "Search User",
-                    color = if(isSystemInDarkTheme()) Color.White else Color.Black,
+                    color = contentColor.copy(alpha = 0.6f)
                 )
             },
-            textStyle = MaterialTheme.typography.body1.copy(color = topBarContentColor),
+            textStyle = MaterialTheme.typography.body1.copy(color = contentColor),
             singleLine = true,
             leadingIcon = {
-                IconButton(
-                    modifier = Modifier.alpha(ContentAlpha.medium),
-                    onClick = { /*TODO*/ }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = null,
-                        tint = topBarContentColor
-                    )
-                }
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = "Search Icon",
+                    tint = contentColor
+                )
             },
             trailingIcon = {
-                IconButton(
-                    onClick = {
-                        if (text.isNotEmpty()) {
-                            onTextChange("")
-                        } else {
-                            onCloseClicked()
-                        }
-                    }
+                AnimatedVisibility(
+                    visible = text.isNotEmpty(),
+                    enter = fadeIn(),
+                    exit = fadeOut()
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = null,
-                        tint = topBarContentColor
-                    )
+                    IconButton(onClick = { onTextChange("") }) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Clear search",
+                            tint = contentColor
+                        )
+                    }
                 }
             },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Search
-            ),
-            keyboardActions = KeyboardActions(
-                onSearch = {
-                    onSearchClicked()
-                }
-            ),
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+            keyboardActions = KeyboardActions(onSearch = { onSearchClicked() }),
             colors = TextFieldDefaults.textFieldColors(
-                textColor = topBarContentColor,
-                cursorColor = topBarContentColor,
-                leadingIconColor = topBarContentColor,
-                trailingIconColor = topBarContentColor,
                 backgroundColor = Color.Transparent,
+                cursorColor = contentColor,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent
             )
