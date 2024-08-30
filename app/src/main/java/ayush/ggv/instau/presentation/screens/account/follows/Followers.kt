@@ -1,7 +1,5 @@
 package ayush.ggv.instau.presentation.screens.account.follows
 
-import android.util.Log
-import androidx.paging.compose.collectAsLazyPagingItems
 import ayush.ggv.instau.presentation.screens.destinations.ProfileDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator

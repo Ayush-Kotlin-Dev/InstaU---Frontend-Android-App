@@ -50,14 +50,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ayush.ggv.instau.R
 import ayush.ggv.instau.presentation.components.CircleImage
 import ayush.ggv.instau.presentation.components.CustomTextFields
-import ayush.ggv.instau.ui.theme.ExtraLargeSpacing
-import ayush.ggv.instau.ui.theme.LargeSpacing
-import ayush.ggv.instau.ui.theme.SmallSpacing
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
