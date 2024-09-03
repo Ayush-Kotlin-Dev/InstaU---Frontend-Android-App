@@ -67,16 +67,16 @@ fun AddPostScreen(
     captionText: String,
     onCaptionChange: (String) -> Unit,
     initialSelectedImageUri: String,
-    onUploadPost: (ByteArray, String) -> Unit,
+    onUploadPost: (Uri, String) -> Unit,
     onUploadSuccess: () -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     var imageSelected by remember { mutableStateOf(false) }
-    var selectedImageUri by remember { mutableStateOf(initialSelectedImageUri) }
+    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
     val galleryLauncher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
-            selectedImageUri = uri.toString()
+            selectedImageUri = uri
             imageSelected = uri != null
         }
     var isLoading by remember { mutableStateOf(false) }
@@ -158,12 +158,11 @@ fun AddPostScreen(
                     if (imageSelected) {
                         coroutineScope.launch {
                             val resolver = context.contentResolver
-                            val imageBytes = resolver.openInputStream(Uri.parse(selectedImageUri))?.readBytes()
 
-                            if (imageBytes != null) {
+                            if (imageSelected && selectedImageUri != null) {
                                 isLoading = true
                                 try {
-                                    onUploadPost(imageBytes, captionText)
+                                    onUploadPost(selectedImageUri!!, captionText)
                                     isLoading = false
                                 } catch (e: Exception) {
                                     isLoading = false
@@ -230,10 +229,10 @@ fun AddPostScreen(
         }
     }
 
-    LaunchedEffect(addPostUiState.uploadSuccess, addPostUiState.error) {
+    LaunchedEffect(addPostUiState.uploadScheduled, addPostUiState.error) {
         when {
-            addPostUiState.uploadSuccess -> {
-                Toast.makeText(context, "Post uploaded successfully", Toast.LENGTH_SHORT).show()
+            addPostUiState.uploadScheduled -> {
+                Toast.makeText(context, "Post scheduled for upload", Toast.LENGTH_SHORT).show()
                 onUploadSuccess()
             }
             addPostUiState.error != null -> {

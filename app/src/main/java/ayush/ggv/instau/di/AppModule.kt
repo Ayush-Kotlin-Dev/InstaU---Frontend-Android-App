@@ -147,7 +147,7 @@ val appModule = module {
     viewModel{ ProfileScreenViewModel( get() , get()  , get() , get() ) }
     viewModel { EditProfileViewModel(get() ,get()) }
     viewModel{ FollowsViewModel(get() , get()) }
-    viewModel { AddPostViewModel( get()) }
+    viewModel { AddPostViewModel( get() , androidContext()) }
     viewModel{PostListItemViewModel(get() , get() , get())  }
     viewModel{SearchViewModel(get())}
     viewModel{FriendListScreenViewModel(get() ,  get() )}
