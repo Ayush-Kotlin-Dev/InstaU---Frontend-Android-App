@@ -54,4 +54,7 @@ fun Profile(
         navigator = navigator,
         isFollowing = viewModel.isFollowing
     )
+    LaunchedEffect (userId){
+        viewModel.fetchProfile(userId)
+    }
 }

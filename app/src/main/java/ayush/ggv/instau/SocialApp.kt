@@ -54,6 +54,7 @@ import ayush.ggv.instau.presentation.components.opposite
 import ayush.ggv.instau.presentation.screens.NavGraphs
 import ayush.ggv.instau.presentation.screens.destinations.AddPostDestination
 import ayush.ggv.instau.presentation.screens.destinations.ChatRoomDestination
+import ayush.ggv.instau.presentation.screens.destinations.Destination
 import ayush.ggv.instau.presentation.screens.destinations.FriendListDestination
 import ayush.ggv.instau.presentation.screens.destinations.HomeDestination
 import ayush.ggv.instau.presentation.screens.destinations.LoginDestination
@@ -67,6 +68,9 @@ import com.exyte.animatednavbar.animation.indendshape.Height
 import com.exyte.animatednavbar.animation.indendshape.shapeCornerRadius
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ramcosta.composedestinations.DestinationsNavHost
+import com.ramcosta.composedestinations.navigation.popUpTo
+import com.ramcosta.composedestinations.spec.DestinationSpec
+import com.ramcosta.composedestinations.spec.Direction
 import com.ramcosta.composedestinations.utils.currentDestinationAsState
 import kotlin.math.roundToInt
 
@@ -103,13 +107,11 @@ fun SocialApp(
     var drawerState by remember { mutableStateOf(CustomDrawerState.Closed) }
     var selectedNavigationItem by remember { mutableStateOf(NavigationItem.Home) }
 
+    // Drawer animation properties
     val configuration = LocalConfiguration.current
     val density = LocalDensity.current.density
-
-    val screenWidth = remember {
-        derivedStateOf { (configuration.screenWidthDp * density).roundToInt() }
-    }
-    val offsetValue by remember { derivedStateOf { (screenWidth.value / 4.5).dp } }
+    val screenWidth = remember { (configuration.screenWidthDp * density).roundToInt() }
+    val offsetValue by remember { derivedStateOf { (screenWidth / 4.5).dp } }
     val animatedOffset by animateDpAsState(
         targetValue = if (drawerState.isOpened()) offsetValue else 0.dp,
         label = "Animated Offset"
@@ -136,9 +138,9 @@ fun SocialApp(
                 selectedNavigationItem = it
                 drawerState = CustomDrawerState.Closed
                 when(it){
-                    NavigationItem.Home -> Toast.makeText(context, "Home", Toast.LENGTH_SHORT).show()
-                    NavigationItem.Profile -> navHostController.navigate(QnaDestination(currentUserId = userId!! , token!!).route)
-                    NavigationItem.Events ->  Toast.makeText(context, "Events", Toast.LENGTH_SHORT).show()
+                    NavigationItem.Home -> navHostController.navigate(HomeDestination.route)
+                    NavigationItem.Qna -> navHostController.navigate(QnaDestination(currentUserId = userId ?: return@CustomDrawer, token ?: return@CustomDrawer).route)
+                    NavigationItem.Events -> Toast.makeText(context, "Events", Toast.LENGTH_SHORT).show()
                     NavigationItem.Settings -> Toast.makeText(context, "Settings", Toast.LENGTH_SHORT).show()
                 }
             },
@@ -168,44 +170,24 @@ fun SocialApp(
                         AddPostDestination.route,
                         ProfileDestination.route,
                         SearchDestination.route
-                )) {
-                    Box(modifier = Modifier.padding(top = 10.dp)) {
-                        AnimatedNavigationBar(
-                            modifier = Modifier.height(64.dp),
-                            selectedIndex = selectedIndex,
-                            cornerRadius = shapeCornerRadius(34.dp),
-                            ballAnimation = Parabolic(tween(300)),
-                            indentAnimation = Height(tween(300)),
-                            ballColor = MaterialTheme.colors.primary,
-                            barColor = MaterialTheme.colors.surface,
-                        ) {
-                            navigationBarItems.forEachIndexed { index, item ->
-                                Box(
-                                    modifier = Modifier
-                                        .noRippleClickable {
-                                            selectedIndex = item.ordinal
-                                            when (item) {
-                                                NavigationBarItems.HOME -> navHostController.navigate(HomeDestination.route)
-                                                NavigationBarItems.SEARCH -> navHostController.navigate(SearchDestination.route)
-                                                NavigationBarItems.ADD -> navHostController.navigate(AddPostDestination().route)
-                                                NavigationBarItems.PROFILE -> navHostController.navigate(ProfileDestination(userId!!).route)
-                                            }
-                                        }
-                                        .fillMaxSize(),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Icon(
-                                        modifier = Modifier.size(24.dp),
-                                        imageVector = item.icons,
-                                        contentDescription = null,
-                                        tint = if (selectedIndex == index) MaterialTheme.colors.primary else MaterialTheme.colors.onSurface.copy(
-                                            alpha = 0.6f
-                                        )
-                                    )
+                    )
+                ) {
+                    BottomNavBar(
+                        selectedIndex = selectedIndex,
+                        onItemSelected = { index, destination ->
+                            if (currentDestination?.route != destination.route) {
+                                selectedIndex = index
+                                navHostController.navigate(destination.route) {
+                                    launchSingleTop = true
+                                    restoreState = true
+                                    popUpTo(NavGraphs.root.startRoute) {
+                                        saveState = true
+                                    }
                                 }
                             }
-                        }
-                    }
+                        },
+                        userId = userId
+                    )
                 }
             }
         ) { innerPadding ->
@@ -225,13 +207,56 @@ fun SocialApp(
                 }
             }
         }
+
         if (drawerState.isOpened()) {
             BackHandler {
                 drawerState = CustomDrawerState.Closed
             }
         }
     }
+}
 
+@Composable
+fun BottomNavBar(
+    selectedIndex: Int,
+    onItemSelected: (Int, Direction) -> Unit,  // Adjust to Direction if that's the type used
+    userId: Long?
+) {
+    Box(modifier = Modifier.padding(top = 10.dp)) {
+        AnimatedNavigationBar(
+            modifier = Modifier.height(64.dp),
+            selectedIndex = selectedIndex,
+            cornerRadius = shapeCornerRadius(34.dp),
+            ballAnimation = Parabolic(tween(300)),
+            indentAnimation = Height(tween(300)),
+            ballColor = MaterialTheme.colors.primary,
+            barColor = MaterialTheme.colors.surface,
+        ) {
+            NavigationBarItems.entries.forEachIndexed { index, item ->
+                val destination: Direction = when (item) {
+                    NavigationBarItems.HOME -> HomeDestination
+                    NavigationBarItems.SEARCH -> SearchDestination
+                    NavigationBarItems.ADD -> AddPostDestination()
+                    NavigationBarItems.PROFILE -> ProfileDestination(userId ?: return@forEachIndexed)
+                }
+                Box(
+                    modifier = Modifier
+                        .noRippleClickable {
+                            onItemSelected(index, destination)
+                        }
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        modifier = Modifier.size(24.dp),
+                        imageVector = item.icons,
+                        contentDescription = null,
+                        tint = if (selectedIndex == index) MaterialTheme.colors.primary else MaterialTheme.colors.onSurface.copy(alpha = 0.6f)
+                    )
+                }
+            }
+        }
+    }
 }
 
 enum class NavigationBarItems(val icons: ImageVector) {
