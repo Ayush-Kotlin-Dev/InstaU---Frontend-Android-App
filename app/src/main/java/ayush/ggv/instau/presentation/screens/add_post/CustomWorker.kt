@@ -1,5 +1,6 @@
 package ayush.ggv.instau.presentation.screens.add_post
 
+import android.app.Notification
 import androidx.work.Worker
 
 import android.content.Context
@@ -53,5 +54,17 @@ class UploadPostWorker(
         }
     }
 
-    // ... rest of the class remains the same
+    fun createForegroundInfo(progress: String): ForegroundInfo {
+        val notification = Notification.Builder(applicationContext, "upload_post")
+            .setContentTitle("Uploading post")
+            .setProgress(100, 0, true)
+            .build()
+
+        return ForegroundInfo(1, notification)
+    }
+
+    companion object {
+        const val TAG = "UploadPostWorker"
+    }
+
 }
