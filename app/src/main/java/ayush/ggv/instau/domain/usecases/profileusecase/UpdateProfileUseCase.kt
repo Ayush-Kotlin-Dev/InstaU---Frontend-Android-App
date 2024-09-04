@@ -10,8 +10,9 @@ class UpdateProfileUseCase : KoinComponent {
     private val repository: ProfileRepository by inject()
 
     suspend operator fun invoke(
+        imageUri : ByteArray,
         updateUserParams: UpdateUserParams,
     ): Result<ProfileResponse> {
-        return repository.updateUserProfile(updateUserParams)
+        return repository.updateUserProfile(imageUri ,updateUserParams)
     }
 }

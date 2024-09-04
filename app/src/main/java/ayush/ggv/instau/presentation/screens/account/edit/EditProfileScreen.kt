@@ -68,12 +68,11 @@ fun EditProfileScreen(
     onNameChange: (String) -> Unit,
     bioTextFieldValue: TextFieldValue,
     onBioChange: (TextFieldValue) -> Unit,
-    onUploadButtonClick: () -> Unit,
+    onUploadButtonClick: (imageByteArray: ByteArray) -> Unit,
     onUploadSuccess: () -> Unit,
     fetchProfile: () -> Unit
 ) {
     val context = LocalContext.current
-    val storage = FirebaseStorage.getInstance()
     val coroutineScope = rememberCoroutineScope()
 
     var selectedImageUri by remember { mutableStateOf<String?>(null) }
@@ -119,17 +118,24 @@ fun EditProfileScreen(
                         onClick = {
                             viewModel.setLoadingState(true)
                             if (selectedImageUri != null) {
-                                uploadImage(
-                                    selectedImageUri!!,
-                                    storage,
-                                    editProfileUiState.profile.name,
-                                    viewModel,
-                                    context,
-                                    coroutineScope,
-                                    onUploadButtonClick
-                                )
+                                coroutineScope.launch {
+                                    val resolver = context.contentResolver
+                                    val imageBytes =
+                                        resolver.openInputStream(Uri.parse(selectedImageUri))
+                                            ?.readBytes()
+                                    if (imageBytes != null) {
+                                        onUploadButtonClick(imageBytes)
+                                    } else {
+                                        viewModel.setLoadingState(false)
+                                        Toast.makeText(
+                                            context,
+                                            "Failed to read image",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                }
                             } else {
-                                onUploadButtonClick()
+                                viewModel.setLoadingState(false)
                             }
                         },
                         modifier = Modifier
@@ -321,35 +327,6 @@ fun DeleteConfirmationDialog(
             }
         }
     )
-}
-
-private fun uploadImage(
-    imageUri: String,
-    storage: FirebaseStorage,
-    userName: String,
-    viewModel: EditProfileViewModel,
-    context: Context,
-    coroutineScope: CoroutineScope,
-    onUploadButtonClick: () -> Unit
-) {
-    val uri = Uri.parse(imageUri)
-    val storageRef = storage.reference.child("Profile_Images/${userName}_${uri.lastPathSegment}")
-
-    coroutineScope.launch {
-        try {
-            val uploadTask = storageRef.putFile(uri).await()
-            val downloadUri = uploadTask.storage.downloadUrl.await()
-            viewModel.updateImageUrl(downloadUri.toString())
-            onUploadButtonClick()
-        } catch (e: Exception) {
-            viewModel.setLoadingState(false)
-            Toast.makeText(
-                context,
-                "Failed to upload image: ${e.message}",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-    }
 }
 
 @Composable

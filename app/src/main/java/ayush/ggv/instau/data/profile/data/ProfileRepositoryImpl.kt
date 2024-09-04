@@ -23,9 +23,9 @@ class ProfileRepositoryImpl(
     ): Result<ProfileResponse> {
         return try {
             val userData  = userPreferences.getUserData()
-            if(userData.id== userId){
-                return Result.Success(ProfileResponse(true,userData.toDomainProfile()))
-            }
+//            if(userData.id== userId){
+//                return Result.Success(ProfileResponse(true,userData.toDomainProfile()))
+//            }
             val response = profileService.getUserProfile(userId, userData.id, userData.token)
 
             if (response.success) {
@@ -40,11 +40,12 @@ class ProfileRepositoryImpl(
     }
 
     override suspend fun updateUserProfile(
+        image : ByteArray,
         updateUserParams: UpdateUserParams,
     ): Result<ProfileResponse> {
         return try {
             val token = userPreferences.getUserData().token
-            val response = profileService.updateUserProfile(updateUserParams, token)
+            val response = profileService.updateUserProfile( image , updateUserParams, token)
 
             if (response.success) {
                 // Convert UpdateUserParams to UserSettings and save it

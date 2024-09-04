@@ -1,5 +1,6 @@
 package ayush.ggv.instau.presentation.screens.account.edit
 
+import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -65,18 +66,20 @@ class EditProfileViewModel(
         }
     }
 
-    fun updateProfile() {
+    fun updateProfile(
+        imageUri: ByteArray,
+    ) {
 
         viewModelScope.launch {
             uiState = uiState.copy(
                 isLoading = true
             )
             val result = updateProfileUseCase(
+                imageUri,
                 UpdateUserParams(
                     userId = uiState.profile?.id ?: 0,
-                    name = uiState.profile?.name ?: "",
+                    name = (uiState.profile?.name ?: "").lowercase(),
                     bio = bioTextFieldValue.text,
-                    imageUrl = uiState.profile?.imageUrl
                 )
             )
 
