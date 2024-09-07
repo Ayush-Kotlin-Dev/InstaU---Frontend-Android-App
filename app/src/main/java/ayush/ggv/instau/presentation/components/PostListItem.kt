@@ -2,27 +2,20 @@ package ayush.ggv.instau.presentation.components
 
 import android.app.DownloadManager
 import android.content.Context
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.net.Uri
 import android.os.Environment
 import android.widget.Toast
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
-import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
@@ -30,7 +23,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.IconToggleButton
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -44,7 +36,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
@@ -52,36 +43,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
 import ayush.ggv.instau.R
 import ayush.ggv.instau.model.Post
 import ayush.ggv.instau.presentation.screens.account.profile.ProfileScreenViewModel
 import ayush.ggv.instau.presentation.screens.destinations.HomeDestination
 import ayush.ggv.instau.presentation.screens.destinations.PostDetailDestination
-import ayush.ggv.instau.presentation.screens.destinations.ProfileDestination
 import ayush.ggv.instau.presentation.screens.home.HomeScreenViewModel
-import ayush.ggv.instau.ui.theme.DarkGray
-import ayush.ggv.instau.ui.theme.ExtraLargeSpacing
-import ayush.ggv.instau.ui.theme.LargeSpacing
-import ayush.ggv.instau.ui.theme.LightGray
-import ayush.ggv.instau.ui.theme.MediumSpacing
-import ayush.ggv.instau.ui.theme.SocialAppTheme
 import ayush.ggv.instau.util.formatTimeAgo
 import coil.compose.AsyncImage
 import com.ramcosta.composedestinations.utils.currentDestinationAsState
-import instaU.ayush.com.model.LikeParams
 import org.koin.androidx.compose.koinViewModel
-import java.time.Duration
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
 
 @Composable
 fun PostListItem(
@@ -93,7 +67,7 @@ fun PostListItem(
     onCommentClick: (Long) -> Unit,
     isDetailScreen: Boolean = false
 ) {
-    val viewModel: PostListItemViewModel = koinViewModel()
+    val viewModel: HomeScreenViewModel = koinViewModel()
     val homeScreenViewModel: HomeScreenViewModel = koinViewModel()
     val profileScreenViewModel: ProfileScreenViewModel = koinViewModel()
     val navHostController = rememberNavController()
@@ -135,13 +109,13 @@ fun PostListItem(
                 contentDescription = "Post image",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(250.dp),
+                    .height(if (isDetailScreen) 400.dp else 250.dp),
                 contentScale = ContentScale.Crop
             )
 
             UpgradedPostLikeRow(
                 onLikeClick = {
-                    viewModel.likePost(LikeParams(postId = post.postId))
+                    onLikeClick()
                 },
                 onCommentClick = { onCommentClick(post.postId) },
                 likesCount = likesCount,
@@ -185,7 +159,7 @@ fun UpgradedPostItemHeader(
             imageUrl = profileUrl,
             modifier = Modifier
                 .size(40.dp)
-        ){
+        ) {
             onProfileClick()
         }
 
@@ -239,9 +213,13 @@ fun UpgradedPostItemHeader(
                     .setTitle("Download")
                     .setDescription("Downloading image")
                     .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                    .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "${System.currentTimeMillis()}.jpg")
+                    .setDestinationInExternalPublicDir(
+                        Environment.DIRECTORY_DOWNLOADS,
+                        "${System.currentTimeMillis()}.jpg"
+                    )
 
-                val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+                val downloadManager =
+                    context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
                 downloadManager.enqueue(request)
                 showMenu = false
                 Toast.makeText(context, "Image download started", Toast.LENGTH_SHORT).show()

@@ -65,7 +65,6 @@ import ayush.ggv.instau.domain.usecases.qnausecase.QnaUseCase
 import ayush.ggv.instau.domain.usecases.signinusecase.SignInuseCase
 import ayush.ggv.instau.domain.usecases.signupusecases.SignUpUseCase
 import ayush.ggv.instau.model.GetCommentsResponse
-import ayush.ggv.instau.presentation.components.PostListItemViewModel
 import ayush.ggv.instau.presentation.screens.account.edit.EditProfileViewModel
 import ayush.ggv.instau.presentation.screens.account.follows.FollowsViewModel
 import ayush.ggv.instau.presentation.screens.account.profile.ProfileScreenViewModel
@@ -142,13 +141,12 @@ val appModule = module {
     viewModel { SignUpViewModel(get() , get(), get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
     viewModel { LoginViewModel(get() , get() , get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
     viewModel { MainActivityViewModel(get()) }
-    viewModel{ HomeScreenViewModel(get(),get () , get() ,get()  ) }
+    viewModel{ HomeScreenViewModel(get(),get () , get() ,get() , get() , get() ) }
     viewModel { PostDetailScreenViewModel(get(), get(), get(), get()  ) }
     viewModel{ ProfileScreenViewModel( get() , get()  , get() , get() ) }
     viewModel { EditProfileViewModel(get() ,get()) }
     viewModel{ FollowsViewModel(get() , get()) }
     viewModel { AddPostViewModel( get() , androidContext()) }
-    viewModel{PostListItemViewModel(get() , get() , get())  }
     viewModel{SearchViewModel(get())}
     viewModel{FriendListScreenViewModel(get() ,  get() )}
     viewModel{ChatRoomViewModel(get() , get() )}

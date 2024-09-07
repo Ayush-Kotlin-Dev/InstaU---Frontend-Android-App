@@ -67,8 +67,8 @@ fun HomeScreen(
     postsUiState: PostsUiState,
     onPostClick: (Post) -> Unit,
     onProfileClick: (Long) -> Unit,
-    onLikeClick: (String) -> Unit,
-    onCommentClick: (String) -> Unit,
+    onLikeClick: (Long) -> Unit,
+    onCommentClick: (Long) -> Unit,
 
     //onboarding
     onBoardingFinish: () -> Unit,
@@ -120,8 +120,8 @@ fun HomeScreen(
                             post = it,
                             onPostClick = onPostClick,
                             onProfileClick = onProfileClick,
-                            onLikeClick = { onLikeClick(it.postId.toString()) },
-                            onCommentClick = { },
+                            onLikeClick = { onLikeClick(it.postId) },
+                            onCommentClick = { onCommentClick(it) }
                         )
                     }
                 }

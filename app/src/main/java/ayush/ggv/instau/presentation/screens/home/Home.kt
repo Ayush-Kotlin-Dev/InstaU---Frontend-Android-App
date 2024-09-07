@@ -13,6 +13,7 @@ import ayush.ggv.instau.presentation.screens.destinations.ProfileDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import instaU.ayush.com.model.FollowsParams
+import instaU.ayush.com.model.LikeParams
 import org.koin.androidx.compose.koinViewModel
 
 @SuppressLint("SuspiciousIndentation")
@@ -51,10 +52,17 @@ fun Home(
                 navigator.navigate(ProfileDestination(userId))
             },
             onLikeClick = { postId ->
+                viewModel.likePost(LikeParams(
+                    postId = postId
+                ))
 
             },
-            onCommentClick = { postId ->
-
+            onCommentClick = {  postId ->
+                navigator.navigate(
+                    PostDetailDestination(
+                        postId,
+                    )
+                )
             },
             onBoardingFinish = {
                  viewModel.saveOnBoardingState(true)
@@ -65,6 +73,7 @@ fun Home(
             },
 
             onFollowClick = {
+                // Follow the user TODO : Implement this
 
             },
             profileScreenViewModel = profileScreenViewModel,
