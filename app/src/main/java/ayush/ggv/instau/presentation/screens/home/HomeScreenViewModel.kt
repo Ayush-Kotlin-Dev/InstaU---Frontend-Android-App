@@ -170,6 +170,20 @@ class HomeScreenViewModel(
             }
         }
     }
+    fun unlikePost(likeParams: LikeParams) {
+        viewModelScope.launch {
+            val result = PostUnLikeUseCase(likeParams)
+            likeResult.value = result
+            if (result is Result.Success) {
+                isPostLiked.value = !result.data?.success!!
+                if (result.data.success == true) {
+                    likesCount.value = (likesCount.value ?: 0) - 1
+                } else {
+                    likesCount.value = (likesCount.value ?: 0) + 1
+                }
+            }
+        }
+    }
 
     fun saveOnBoardingState(completed: Boolean) {
         viewModelScope.launch {

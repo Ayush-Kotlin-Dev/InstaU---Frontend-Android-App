@@ -52,9 +52,19 @@ fun Home(
                 navigator.navigate(ProfileDestination(userId))
             },
             onLikeClick = { postId ->
-                viewModel.likePost(LikeParams(
-                    postId = postId
-                ))
+                if (viewModel.isPostLiked.value != null && viewModel.isPostLiked.value!!) {
+                    viewModel.unlikePost(
+                        LikeParams(
+                            postId = postId
+                        )
+                    )
+                } else {
+                    viewModel.likePost(
+                        LikeParams(
+                            postId = postId
+                        )
+                    )
+                }
 
             },
             onCommentClick = {  postId ->

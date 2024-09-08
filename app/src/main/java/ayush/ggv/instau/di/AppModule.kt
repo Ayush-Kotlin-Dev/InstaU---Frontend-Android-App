@@ -141,7 +141,7 @@ val appModule = module {
     viewModel { SignUpViewModel(get() , get(), get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
     viewModel { LoginViewModel(get() , get() , get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
     viewModel { MainActivityViewModel(get()) }
-    viewModel{ HomeScreenViewModel(get(),get () , get() ,get() , get() , get() ) }
+    viewModel{ HomeScreenViewModel(get(),get () , get() ,get() , get() , get() , get()) }
     viewModel { PostDetailScreenViewModel(get(), get(), get(), get()  ) }
     viewModel{ ProfileScreenViewModel( get() , get()  , get() , get() ) }
     viewModel { EditProfileViewModel(get() ,get()) }
