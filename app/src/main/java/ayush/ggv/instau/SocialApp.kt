@@ -55,12 +55,14 @@ import ayush.ggv.instau.presentation.screens.NavGraphs
 import ayush.ggv.instau.presentation.screens.destinations.AddPostDestination
 import ayush.ggv.instau.presentation.screens.destinations.ChatRoomDestination
 import ayush.ggv.instau.presentation.screens.destinations.Destination
+import ayush.ggv.instau.presentation.screens.destinations.EventsDestination
 import ayush.ggv.instau.presentation.screens.destinations.FriendListDestination
 import ayush.ggv.instau.presentation.screens.destinations.HomeDestination
 import ayush.ggv.instau.presentation.screens.destinations.LoginDestination
 import ayush.ggv.instau.presentation.screens.destinations.ProfileDestination
 import ayush.ggv.instau.presentation.screens.destinations.QnaDestination
 import ayush.ggv.instau.presentation.screens.destinations.SearchDestination
+import ayush.ggv.instau.presentation.screens.events.Event
 import ayush.ggv.instau.util.coloredShadow
 import com.exyte.animatednavbar.AnimatedNavigationBar
 import com.exyte.animatednavbar.animation.balltrajectory.Parabolic
@@ -140,7 +142,10 @@ fun SocialApp(
                 when(it){
                     NavigationItem.Home -> navHostController.navigate(HomeDestination.route)
                     NavigationItem.Qna -> navHostController.navigate(QnaDestination(currentUserId = userId ?: return@CustomDrawer, token ?: return@CustomDrawer).route)
-                    NavigationItem.Events -> Toast.makeText(context, "Events", Toast.LENGTH_SHORT).show()
+                    NavigationItem.Events -> {
+                        Toast.makeText(context, "Events", Toast.LENGTH_SHORT).show()
+                        navHostController.navigate(EventsDestination.route)
+                    }
                     NavigationItem.Settings -> Toast.makeText(context, "Settings", Toast.LENGTH_SHORT).show()
                 }
             },
