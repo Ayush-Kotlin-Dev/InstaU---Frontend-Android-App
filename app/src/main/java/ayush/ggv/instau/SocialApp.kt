@@ -62,7 +62,6 @@ import ayush.ggv.instau.presentation.screens.destinations.LoginDestination
 import ayush.ggv.instau.presentation.screens.destinations.ProfileDestination
 import ayush.ggv.instau.presentation.screens.destinations.QnaDestination
 import ayush.ggv.instau.presentation.screens.destinations.SearchDestination
-import ayush.ggv.instau.presentation.screens.events.Event
 import ayush.ggv.instau.util.coloredShadow
 import com.exyte.animatednavbar.AnimatedNavigationBar
 import com.exyte.animatednavbar.animation.balltrajectory.Parabolic

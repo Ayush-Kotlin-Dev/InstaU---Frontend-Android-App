@@ -6,6 +6,7 @@ import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.websocket.WebSockets
 import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.request.headers
 import io.ktor.http.ContentType
 import io.ktor.http.URLProtocol
 import io.ktor.http.contentType
@@ -38,6 +39,10 @@ abstract class KtorApi {
             takeFrom(BASE_URL)
             path(path)
             contentType(ContentType.Application.Json)
+            headers {
+                append("api-key", "ayush")
+            }
+
         }
     }
     fun HttpRequestBuilder.webSocketEndPoint(path: String) {

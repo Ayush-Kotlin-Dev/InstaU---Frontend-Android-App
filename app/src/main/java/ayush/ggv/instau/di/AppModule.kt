@@ -17,6 +17,9 @@ import ayush.ggv.instau.data.KtorApi
 import ayush.ggv.instau.data.auth.domain.repository.AuthRepository
 import ayush.ggv.instau.data.chat.data.ChatRepositoryImpl
 import ayush.ggv.instau.data.chat.domain.ChatRepository
+import ayush.ggv.instau.data.events.data.EventsRepositoryImpl
+import ayush.ggv.instau.data.events.data.EventsService
+import ayush.ggv.instau.data.events.domain.EventsRepository
 import ayush.ggv.instau.data.followunfollow.data.FollowRepositoryImpl
 import ayush.ggv.instau.data.followunfollow.data.FollowService
 import ayush.ggv.instau.data.followunfollow.domain.FollowRepository
@@ -42,6 +45,9 @@ import ayush.ggv.instau.data.qna.data.QnaService
 import ayush.ggv.instau.data.qna.domain.QnaRepository
 import ayush.ggv.instau.domain.usecases.chat_service.FriendListUseCase
 import ayush.ggv.instau.domain.usecases.chat_service.GetRoomHistoryUseCase
+import ayush.ggv.instau.domain.usecases.eventsusecase.AddEventUseCase
+import ayush.ggv.instau.domain.usecases.eventsusecase.DeleteEventsUseCase
+import ayush.ggv.instau.domain.usecases.eventsusecase.GetEventsUseCase
 import ayush.ggv.instau.domain.usecases.followsusecase.FollowsUseCase
 import ayush.ggv.instau.domain.usecases.followsusecase.GetFollowersUseCase
 import ayush.ggv.instau.domain.usecases.followsusecase.GetFollowingUseCase
@@ -50,6 +56,7 @@ import ayush.ggv.instau.domain.usecases.postcommentusecase.CommentUseCase
 import ayush.ggv.instau.domain.usecases.postcommentusecase.DeleteCommentUseCase
 import ayush.ggv.instau.domain.usecases.postcommentusecase.GetCommentsUseCase
 import ayush.ggv.instau.domain.usecases.postlikeusecase.PostLikeUseCase
+import ayush.ggv.instau.domain.usecases.postlikeusecase.PostUnLikeUseCase
 import ayush.ggv.instau.domain.usecases.postsusecase.AddPostUseCase
 import ayush.ggv.instau.domain.usecases.postsusecase.DeletePostUseCase
 import ayush.ggv.instau.domain.usecases.postsusecase.GetPostByIdUseCase
@@ -72,6 +79,7 @@ import ayush.ggv.instau.presentation.screens.add_post.AddPostScreen
 import ayush.ggv.instau.presentation.screens.add_post.AddPostViewModel
 import ayush.ggv.instau.presentation.screens.chat.friends_list.FriendListScreenViewModel
 import ayush.ggv.instau.presentation.screens.chat.single_chat.ChatRoomViewModel
+import ayush.ggv.instau.presentation.screens.events.EventsViewModel
 import ayush.ggv.instau.presentation.screens.home.HomeScreenViewModel
 import ayush.ggv.instau.presentation.screens.post.PostDetailScreenViewModel
 import ayush.ggv.instau.presentation.screens.qna.QnaViewModel
@@ -105,6 +113,7 @@ val appModule = module {
     single <PostLikesRepository>{PostLikesRepositoryImpl(get(),get())  }
     single <ChatRepository>{ChatRepositoryImpl(get(), get()) }
     single <QnaRepository>{ QnaRepositoryImpl(get(),get()) }
+    single <EventsRepository>{EventsRepositoryImpl(get() , get())}
     factory { ChatService() }
 
     factory { AuthService() }
@@ -114,6 +123,7 @@ val appModule = module {
     factory { PostCommentService() }
     factory {NotificationService() }
     factory { QnaService() }
+    factory { EventsService() }
 
     factory { SignUpUseCase() }
     factory { SignInuseCase() }
@@ -127,6 +137,7 @@ val appModule = module {
     factory { GetPostsStreamUseCase() }
     factory { FollowsUseCase() }
     factory { PostLikeUseCase() }
+    factory { PostUnLikeUseCase() }
     factory {CommentUseCase() }
     factory { GetCommentsUseCase() }
     factory { DeleteCommentUseCase() }
@@ -138,6 +149,9 @@ val appModule = module {
     factory { QnaDetailUseCase() }
     factory { AddAnswerUseCase() }
     factory { AddQuestionUseCase() }
+    factory { AddEventUseCase() }
+    factory { DeleteEventsUseCase() }
+    factory { GetEventsUseCase() }
     viewModel { SignUpViewModel(get() , get(), get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
     viewModel { LoginViewModel(get() , get() , get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
     viewModel { MainActivityViewModel(get()) }
@@ -152,6 +166,7 @@ val appModule = module {
     viewModel{ChatRoomViewModel(get() , get() )}
     viewModel{QnaViewModel(get(),get())}
     viewModel{QnaDetailViewModel(get() , get())}
+    viewModel{ EventsViewModel(get()) }
 
     single{
         DataStoreFactory.create(

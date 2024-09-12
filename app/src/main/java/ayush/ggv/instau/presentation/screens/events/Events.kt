@@ -10,5 +10,9 @@ import org.koin.androidx.compose.koinViewModel
 fun  Events(){
     val viewModel: EventsViewModel = koinViewModel()
 
-    EventsScreen(viewModel)
+    EventsScreen(
+        eventsUiState = viewModel.qnaUiState.value,
+        onRefresh = viewModel::loadEvents,
+        onEventAddClick = viewModel::addEvent,
+    )
 }

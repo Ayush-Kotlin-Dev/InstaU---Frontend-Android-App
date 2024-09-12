@@ -45,7 +45,6 @@ fun Qna(
         onRefresh = {
             viewModel.fetchQuestionsWithAnswers()
             Toast.makeText(context, "Refreshed", Toast.LENGTH_SHORT).show()
-
         }
     )
 }
