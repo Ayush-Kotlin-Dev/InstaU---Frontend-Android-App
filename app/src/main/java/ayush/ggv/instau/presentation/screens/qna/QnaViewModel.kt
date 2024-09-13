@@ -5,22 +5,25 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import ayush.ggv.instau.domain.usecases.qnausecase.AddQuestionUseCase
 import ayush.ggv.instau.domain.usecases.qnausecase.QnaUseCase
-import ayush.ggv.instau.model.qna.QuestionsResponse
 import ayush.ggv.instau.model.qna.QuestionWithAnswer
+import ayush.ggv.instau.paging.PaginationManager
 import ayush.ggv.instau.util.Result
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class QnaViewModel(
     private val qnaUseCase: QnaUseCase,
     private val addQuestionUseCase: AddQuestionUseCase
 ) : ViewModel() {
 
-    private val _qnaUiState = mutableStateOf(QnaUiState())
-    val qnaUiState: State<QnaUiState> = _qnaUiState
+    private val _uiState = MutableStateFlow(QnaUiState())
+    val uiState = _uiState.asStateFlow()
 
     private val _questionText = mutableStateOf("")
     val questionText: State<String> = _questionText
@@ -31,63 +34,42 @@ class QnaViewModel(
     init {
         fetchQuestionsWithAnswers()
     }
-    fun addQuestion(content: String) {
-        viewModelScope.launch {
-            try {
-                _qnaUiState.value = _qnaUiState.value.copy(isLoading = true)
-                when (val result = addQuestionUseCase(content)) {
-                    is Result.Success -> {
-                        _qnaUiState.value = _qnaUiState.value.copy(
-                            isLoading = false,
-                            errorMessage = null
-                        )
-                        fetchQuestionsWithAnswers() // Refresh questions
-                    }
-                    is Result.Error -> {
-                        _qnaUiState.value = _qnaUiState.value.copy(
-                            isLoading = false,
-                            errorMessage = result.message
-                        )
-                    }
-                    is Result.Loading -> {
-                        // Handle loading state if needed
-                    }
-                }
-            } catch (e: Exception) {
-                _qnaUiState.value = _qnaUiState.value.copy(
-                    isLoading = false,
-                    errorMessage = "Error adding question: ${e.message}"
-                )
-            }
-        }
-    }
 
     fun fetchQuestionsWithAnswers() {
         viewModelScope.launch {
-            _qnaUiState.value = _qnaUiState.value.copy(isLoading = true)
-            try {
-                when (val questions = qnaUseCase()) {
-                    is Result.Success -> {
-                        _qnaUiState.value = _qnaUiState.value.copy(
-                            isLoading = false,
-                            questionsWithAnswers = questions.data?.questions
-                        )
-                    }
-                    is Result.Error -> {
-                        _qnaUiState.value = _qnaUiState.value.copy(
-                            isLoading = false,
-                            errorMessage = questions.message
-                        )
-                    }
-                    is Result.Loading -> {
-                        // Handle loading state if needed
+            val questionsPagingFlow = PaginationManager.createPagingFlow(
+                fetcher = { page, pageSize ->
+                    when (val result = qnaUseCase(page, pageSize)) {
+                        is Result.Success -> result.data?.questions ?: emptyList()
+                        else -> emptyList()
                     }
                 }
-            } catch (e: Exception) {
-                _qnaUiState.value = _qnaUiState.value.copy(
-                    isLoading = false,
-                    errorMessage = "Error fetching data: ${e.message}"
-                )
+            ).flow.cachedIn(viewModelScope)
+
+            _uiState.value = _uiState.value.copy(questionsWithAnswers = questionsPagingFlow)
+        }
+    }
+
+    fun addQuestion(content: String) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true)
+            when (val result = addQuestionUseCase(content)) {
+                is Result.Success -> {
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        errorMessage = null
+                    )
+                    fetchQuestionsWithAnswers() // Refresh questions
+                }
+                is Result.Error -> {
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        errorMessage = result.message
+                    )
+                }
+                is Result.Loading -> {
+                    // Handle loading state if needed
+                }
             }
         }
     }
@@ -95,6 +77,6 @@ class QnaViewModel(
 
 data class QnaUiState(
     val isLoading: Boolean = false,
-    val questionsWithAnswers: List<QuestionWithAnswer>? = emptyList(),
+    val questionsWithAnswers: Flow<PagingData<QuestionWithAnswer>>? = null,
     val errorMessage: String? = null
 )

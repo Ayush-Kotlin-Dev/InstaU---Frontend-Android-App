@@ -10,6 +10,7 @@ import io.ktor.client.call.body
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.headers
+import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 
@@ -32,6 +33,8 @@ class EventsService : KtorApi() {
     }
 
     suspend fun getEvents(
+        page : Int,
+        limit : Int,
         token: String
     ): EventsListResponse {
         val response = client.get {
@@ -39,6 +42,8 @@ class EventsService : KtorApi() {
             headers {
                 append("Authorization", "Bearer $token")
             }
+            parameter("page", page)
+            parameter("limit", limit)
         }
         Log.d("EventsService", "getEventsService: ${response.body<EventsListResponse>()}")
         return response.body<EventsListResponse>()

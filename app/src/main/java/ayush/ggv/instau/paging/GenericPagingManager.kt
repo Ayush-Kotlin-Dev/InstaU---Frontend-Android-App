@@ -37,8 +37,8 @@ class GenericPagingSource<T : Any>(
 
 object PaginationManager {
     inline fun <reified T : Any> createPagingFlow(
-        crossinline fetcher: suspend (page: Int, pageSize: Int) -> List<T>,
-        pageSize: Int = 10
+        noinline fetcher: suspend (page: Int, pageSize: Int) -> List<T>, // Add `noinline` here
+        pageSize: Int = 3
     ): androidx.paging.Pager<Int, T> {
         return androidx.paging.Pager(
             config = androidx.paging.PagingConfig(

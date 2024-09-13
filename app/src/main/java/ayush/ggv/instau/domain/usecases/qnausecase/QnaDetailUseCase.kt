@@ -6,7 +6,7 @@ import ayush.ggv.instau.util.Result
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class QnaDetailUseCase : KoinComponent {
+class GetAnswersUseCase : KoinComponent {
     private val repository: QnaRepository by inject()
 
     suspend operator fun invoke(

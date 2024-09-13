@@ -67,7 +67,7 @@ import ayush.ggv.instau.domain.usecases.profileusecase.SearchUserUseCase
 import ayush.ggv.instau.domain.usecases.profileusecase.UpdateProfileUseCase
 import ayush.ggv.instau.domain.usecases.qnausecase.AddAnswerUseCase
 import ayush.ggv.instau.domain.usecases.qnausecase.AddQuestionUseCase
-import ayush.ggv.instau.domain.usecases.qnausecase.QnaDetailUseCase
+import ayush.ggv.instau.domain.usecases.qnausecase.GetAnswersUseCase
 import ayush.ggv.instau.domain.usecases.qnausecase.QnaUseCase
 import ayush.ggv.instau.domain.usecases.signinusecase.SignInuseCase
 import ayush.ggv.instau.domain.usecases.signupusecases.SignUpUseCase
@@ -146,7 +146,7 @@ val appModule = module {
     factory { FriendListUseCase() }
     factory { GetRoomHistoryUseCase() }
     factory { QnaUseCase() }
-    factory { QnaDetailUseCase() }
+    factory { GetAnswersUseCase() }
     factory { AddAnswerUseCase() }
     factory { AddQuestionUseCase() }
     factory { AddEventUseCase() }
@@ -166,7 +166,7 @@ val appModule = module {
     viewModel{ChatRoomViewModel(get() , get() )}
     viewModel{QnaViewModel(get(),get())}
     viewModel{QnaDetailViewModel(get() , get())}
-    viewModel{ EventsViewModel(get()) }
+    viewModel{ EventsViewModel(get() , get()) }
 
     single{
         DataStoreFactory.create(

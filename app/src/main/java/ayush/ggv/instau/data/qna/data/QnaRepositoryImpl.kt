@@ -14,11 +14,14 @@ class QnaRepositoryImpl(
     private val qnaService: QnaService,
     private val userPreferences: UserPreferences
 ) : QnaRepository {
-    override suspend fun getQuestions(): Result<QuestionsResponse> {
+    override suspend fun getQuestions(
+        page: Int,
+        pageSize: Int
+    ): Result<QuestionsResponse> {
         return try {
             val userToken = userPreferences.getUserData().token
 
-            val response = qnaService.getQuestions(userToken)
+            val response = qnaService.getQuestions(page, pageSize, userToken)
 
             Result.Success(response)
         } catch (e: Exception) {

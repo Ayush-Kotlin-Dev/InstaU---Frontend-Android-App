@@ -6,7 +6,10 @@ import ayush.ggv.instau.model.qna.QuestionsResponse
 import ayush.ggv.instau.util.Result
 
 interface QnaRepository {
-    suspend fun getQuestions(): Result<QuestionsResponse>
+    suspend fun getQuestions(
+        page: Int,
+        pageSize: Int
+    ): Result<QuestionsResponse>
 
     suspend fun addQuestion(content: String): Result<QuestionResponse>
 

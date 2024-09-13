@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
@@ -37,24 +36,29 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import ayush.ggv.instau.model.events.Event
 import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
-
+import androidx.paging.compose.items
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun EventsScreen(
     eventsUiState: EventsUiState,
     onRefresh: () -> Unit,
-    onEventAddClick: (Event) -> Unit
+    onEventAddClick: (Event) -> Unit,
+    onAddEventDialogDismiss: () -> Unit
 ) {
-    var showDialog by rememberSaveable { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(false) }
     var simulatedProgress by remember { mutableStateOf(0f) }
-    val pullRefreshState = rememberPullRefreshState(eventsUiState.isLoading, { onRefresh() })
+    val events: LazyPagingItems<Event>? = eventsUiState.events?.collectAsLazyPagingItems()
+    val pullRefreshState = rememberPullRefreshState(eventsUiState.isAddingEvent, onRefresh)
 
-    LaunchedEffect(key1 = eventsUiState.isLoading) {
-        if (eventsUiState.isLoading) {
+    LaunchedEffect(eventsUiState.isAddingEvent) {
+        if (eventsUiState.isAddingEvent) {
             simulatedProgress = 0f
             while (simulatedProgress < 1f) {
                 delay(100)
@@ -62,47 +66,104 @@ fun EventsScreen(
             }
         }
     }
+
+    LaunchedEffect(eventsUiState.addEventSuccess) {
+        if (eventsUiState.addEventSuccess) {
+            showDialog = false
+            onAddEventDialogDismiss()
+        }
+    }
+
     Box(modifier = Modifier
         .fillMaxSize()
-        .pullRefresh(pullRefreshState)) {
-        if (eventsUiState.isLoading) {
-            CircularProgressIndicator(
-                progress = simulatedProgress,
-                modifier = Modifier.align(Alignment.Center)
-            )
-        }else {
+        .pullRefresh(pullRefreshState)
+    ) {
+        if (events != null) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(eventsUiState.events ?: emptyList()) { event ->
-                    EventCard(event = event)
+                items(
+                    items = events,
+                    key = { event -> event.id.toString() }
+                ) { event ->
+                    event?.let { EventCard(event = it) }
+                }
+
+                when (events.loadState.append) {
+                    is LoadState.Loading -> {
+                        item { LoadingItem() }
+                    }
+                    is LoadState.Error -> {
+                        item { ErrorItem((events.loadState.append as LoadState.Error).error) }
+                    }
+                    else -> {}
                 }
             }
         }
-        PullRefreshIndicator(eventsUiState.isLoading, pullRefreshState, Modifier.align(Alignment.TopCenter))
+
+        PullRefreshIndicator(eventsUiState.isAddingEvent, pullRefreshState, Modifier.align(Alignment.TopCenter))
+
+        if (eventsUiState.isAddingEvent) {
+            CircularProgressIndicator(
+                progress = simulatedProgress,
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
 
         ExtendedFloatingActionButton(
             onClick = { showDialog = true },
-            icon = {
-                Icon(Icons.Filled.Add, contentDescription = "Add Event")
-            },
+            icon = { Icon(Icons.Filled.Add, contentDescription = "Add Event") },
             text = { Text("Add Event") },
-            modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp),
             backgroundColor = MaterialTheme.colors.primary,
             contentColor = MaterialTheme.colors.onPrimary,
         )
+
         if (showDialog) {
             AddEventDialog(
                 onDismiss = { showDialog = false },
-                onEventAdded = { event ->
-                    onEventAddClick(event)
-                    showDialog = false
-                }
+                onEventAdded = onEventAddClick
+            )
+        }
+
+        eventsUiState.errorMessage?.let { error ->
+            Text(
+                text = error,
+                color = MaterialTheme.colors.error,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .align(Alignment.BottomCenter)
             )
         }
     }
+}
+
+@Composable
+fun LoadingItem() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator()
+    }
+}
+
+@Composable
+fun ErrorItem(error: Throwable) {
+    Text(
+        text = "Error: ${error.message}",
+        color = MaterialTheme.colors.error,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    )
 }
 
 @Composable
@@ -114,7 +175,7 @@ fun EventCard(event: Event) {
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            AsyncImage(model = event.imageUrl, contentDescription = "null")
+            AsyncImage(model = event.imageUrl, contentDescription = null)
             Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = event.name,
@@ -142,9 +203,9 @@ fun EventCard(event: Event) {
             Text(text = event.additionalInfo, style = MaterialTheme.typography.body1)
         }
     }
-
-
 }
+
+// Keep the AddEventDialog as it was in the original code
 
 @Composable
 fun AddEventDialog(

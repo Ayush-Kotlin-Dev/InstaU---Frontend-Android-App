@@ -4,9 +4,11 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.paging.compose.collectAsLazyPagingItems
 import ayush.ggv.instau.model.qna.QuestionWithAnswer
 import ayush.ggv.instau.presentation.screens.destinations.QnaDetailDestination
 import com.ramcosta.composedestinations.annotation.Destination
@@ -20,9 +22,8 @@ fun Qna(
     currentUserId: Long,
     token: String,
 ) {
-    Log.d("Qna", "Qna: $token")
     val viewModel: QnaViewModel = koinViewModel()
-    val qnaUiState by remember { viewModel.qnaUiState }
+    val qnaUiState = viewModel.uiState.collectAsState().value
     val questionText by remember { viewModel.questionText }
     val context = LocalContext.current
 

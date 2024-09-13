@@ -16,6 +16,8 @@ import io.ktor.client.request.setBody
 
 class QnaService : KtorApi() {
     suspend fun getQuestions(
+        page : Int,
+        pageSize : Int,
         token: String
     ): QuestionsResponse {
         val response = client.get {
@@ -23,6 +25,8 @@ class QnaService : KtorApi() {
             headers {
                 append("Authorization", "Bearer $token")
             }
+            parameter("page", page)
+            parameter("limit", pageSize)
         }
         return response.body<QuestionsResponse>()
     }

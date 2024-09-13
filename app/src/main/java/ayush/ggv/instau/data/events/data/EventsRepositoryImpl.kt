@@ -32,7 +32,7 @@ class EventsRepositoryImpl(
     ): Result<EventsListResponse> {
         return try {
             val token = userPreferences.getUserData().token
-            val result = eventsService.getEvents(token)
+            val result = eventsService.getEvents(pageNumber, pageSize, token)
             Log.d("EventsService", "getEventsREPO: $result")
             Result.Success(result)
         }catch (e : Exception){

@@ -55,7 +55,7 @@ class EventsViewModel(
                 is Result.Error -> {
                     _uiState.value = _uiState.value.copy(
                         isAddingEvent = false,
-                        error = result.message
+                        errorMessage = result.message
                     )
                 }
                 is Result.Loading -> {
@@ -64,11 +64,15 @@ class EventsViewModel(
             }
         }
     }
+
+    fun onAddEventDialogDismiss() {
+        _uiState.value = _uiState.value.copy(addEventSuccess = false)
+    }
 }
 
 data class EventsUiState(
+    val errorMessage: String? = null,
     val events: Flow<PagingData<Event>>? = null,
     val isAddingEvent: Boolean = false,
     val addEventSuccess: Boolean = false,
-    val error: String? = null
 )

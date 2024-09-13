@@ -47,7 +47,9 @@ import ayush.ggv.instau.presentation.components.QuestionItem
 import ayush.ggv.instau.presentation.screens.qna.qna_detailed.QnaDetailViewModel
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
-
+import androidx.paging.LoadState
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.items
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -59,9 +61,10 @@ fun QnaScreen(
     onTextChange: (String) -> Unit,
     onRefresh: () -> Unit
 ) {
-    var showDialog by rememberSaveable { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(false) }
     var simulatedProgress by remember { mutableStateOf(0f) }
-    val pullRefreshState = rememberPullRefreshState(qnaUiState.isLoading, { onRefresh() })
+    val questionsWithAnswers = qnaUiState.questionsWithAnswers?.collectAsLazyPagingItems()
+    val pullRefreshState = rememberPullRefreshState(qnaUiState.isLoading, onRefresh)
 
     LaunchedEffect(key1 = qnaUiState.isLoading) {
         if (qnaUiState.isLoading) {
@@ -73,26 +76,39 @@ fun QnaScreen(
         }
     }
 
-    val questionsWithAnswers = qnaUiState.questionsWithAnswers ?: emptyList()
-
     Box(modifier = Modifier.fillMaxSize().pullRefresh(pullRefreshState)) {
-        if (qnaUiState.isLoading) {
-            CircularProgressIndicator(
-                progress = simulatedProgress,
-                modifier = Modifier.align(Alignment.Center)
-            )
-        } else if (questionsWithAnswers.isEmpty()) {
-            EmptyQuestionsPlaceholder(modifier = Modifier.align(Alignment.Center))
-        } else {
+        if (questionsWithAnswers != null) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(16.dp)
             ) {
-                items(questionsWithAnswers) { questionWithAnswer ->
-                    QuestionItem(questionWithAnswer, onQuestionClick)
-                    Spacer(modifier = Modifier.height(16.dp))
+                items(
+                    items = questionsWithAnswers,
+                    key = { it.id }
+                ) { questionWithAnswer ->
+                    questionWithAnswer?.let {
+                        QuestionItem(it, onQuestionClick)
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+                }
+
+                when (questionsWithAnswers.loadState.append) {
+                    is LoadState.Loading -> {
+                        item { LoadingItem() }
+                    }
+                    is LoadState.Error -> {
+                        item { ErrorItem((questionsWithAnswers.loadState.append as LoadState.Error).error) }
+                    }
+                    else -> {}
                 }
             }
+        } else if (qnaUiState.isLoading) {
+            CircularProgressIndicator(
+                progress = simulatedProgress,
+                modifier = Modifier.align(Alignment.Center)
+            )
+        } else {
+            EmptyQuestionsPlaceholder(modifier = Modifier.align(Alignment.Center))
         }
 
         PullRefreshIndicator(qnaUiState.isLoading, pullRefreshState, Modifier.align(Alignment.TopCenter))
@@ -118,6 +134,29 @@ fun QnaScreen(
             )
         }
     }
+}
+
+@Composable
+fun LoadingItem() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator()
+    }
+}
+
+@Composable
+fun ErrorItem(error: Throwable) {
+    Text(
+        text = "Error: ${error.message}",
+        color = MaterialTheme.colors.error,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    )
 }
 
 @Composable
