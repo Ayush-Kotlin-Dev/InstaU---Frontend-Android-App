@@ -14,8 +14,11 @@ class GetEventsUseCase  : KoinComponent {
 
     private val repository : EventsRepository by inject()
 
-    suspend operator fun invoke (): Result<EventsListResponse> {
-        val result = repository.getEvents()
+    suspend operator fun invoke (
+        pageNumber: Int,
+        pageSize: Int,
+    ): Result<EventsListResponse> {
+        val result = repository.getEvents(pageNumber, pageSize)
         Log.d("EventsService", "getEventsUSECASE: $result")
         return result
     }

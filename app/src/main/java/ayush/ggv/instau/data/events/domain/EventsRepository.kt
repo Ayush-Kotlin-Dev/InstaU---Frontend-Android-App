@@ -10,6 +10,8 @@ interface EventsRepository {
     ): Result<EventResponse>
 
     suspend fun getEvents(
+        pageNumber: Int,
+        pageSize: Int,
     ): Result<EventsListResponse>
 
     suspend fun getEvent(

@@ -17,6 +17,7 @@ import ayush.ggv.instau.domain.usecases.followsusecase.GetFollowingUseCase
 import ayush.ggv.instau.model.Post
 import ayush.ggv.instau.paging.FollowPagingSource
 import ayush.ggv.instau.paging.ListType
+import ayush.ggv.instau.paging.PaginationManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ayush.ggv.instau.util.Result
@@ -30,26 +31,19 @@ class FollowsViewModel(
 
     var uiState by mutableStateOf(FollowsUiState())
         private set
+
     private fun fetchFollowers(userId: Long): Flow<PagingData<FollowUserData>> {
-        return Pager(
-            config = PagingConfig(
-                pageSize = 10,
-                enablePlaceholders = false
-            ),
-            pagingSourceFactory = {
-                FollowPagingSource(followersUseCase.repository, userId, listType = ListType.FOLLOWERS)
+        return PaginationManager.createPagingFlow(
+            fetcher = { page, pageSize ->
+                followersUseCase.repository.getFollowers(userId, page, pageSize).data?.follows ?: emptyList()
             }
         ).flow.cachedIn(viewModelScope)
     }
 
     private fun fetchFollowing(userId: Long): Flow<PagingData<FollowUserData>> {
-        return Pager(
-            config = PagingConfig(
-                pageSize = 10,
-                enablePlaceholders = false
-            ),
-            pagingSourceFactory = {
-                FollowPagingSource(followingUseCase.repository, userId , listType = ListType.FOLLOWING)
+        return PaginationManager.createPagingFlow(
+            fetcher = { page, pageSize ->
+                followingUseCase.repository.getFollowing(userId, page, pageSize).data?.follows ?: emptyList()
             }
         ).flow.cachedIn(viewModelScope)
     }
@@ -57,7 +51,7 @@ class FollowsViewModel(
     fun fetchFollows(userId: Long) {
         viewModelScope.launch {
             val followers = fetchFollowers(userId)
-            val following = fetchFollowing(userId )
+            val following = fetchFollowing(userId)
             uiState = uiState.copy(
                 followUsers = followers,
                 followingUsers = following

@@ -26,7 +26,10 @@ class EventsRepositoryImpl(
         }
     }
 
-    override suspend fun getEvents(): Result<EventsListResponse> {
+    override suspend fun getEvents(
+        pageNumber: Int,
+        pageSize: Int
+    ): Result<EventsListResponse> {
         return try {
             val token = userPreferences.getUserData().token
             val result = eventsService.getEvents(token)

@@ -1,22 +1,26 @@
 package ayush.ggv.instau.presentation.screens.events
 
-import android.util.Log
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ayush.ggv.instau.domain.usecases.eventsusecase.AddEventUseCase
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import ayush.ggv.instau.domain.usecases.eventsusecase.GetEventsUseCase
+import ayush.ggv.instau.domain.usecases.eventsusecase.AddEventUseCase
 import ayush.ggv.instau.model.events.Event
+import ayush.ggv.instau.paging.PaginationManager
 import ayush.ggv.instau.util.Result
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class EventsViewModel(
     private val eventsUseCase: GetEventsUseCase,
     private val addEventUseCase: AddEventUseCase
 ) : ViewModel() {
-    private val _eventsUiState = mutableStateOf(EventsUiState())
-    val qnaUiState: State<EventsUiState> = _eventsUiState
+
+    private val _uiState = MutableStateFlow(EventsUiState())
+    val uiState = _uiState.asStateFlow()
 
     init {
         loadEvents()
@@ -24,68 +28,47 @@ class EventsViewModel(
 
     fun loadEvents() {
         viewModelScope.launch {
-            _eventsUiState.value = _eventsUiState.value.copy(isLoading = true)
-            when (val result = eventsUseCase()) {
-                is Result.Success -> {
-                    Log.d("EventsService", "getEventsVm: $result")
-                    _eventsUiState.value = _eventsUiState.value.copy(
-                        isLoading = false,
-                        events = result.data?.events
-                    )
+            val eventsPagingFlow = PaginationManager.createPagingFlow(
+                fetcher = { page, pageSize ->
+                    when (val result = eventsUseCase(page, pageSize)) {
+                        is Result.Success -> result.data?.events ?: emptyList()
+                        else -> emptyList()
+                    }
                 }
+            ).flow.cachedIn(viewModelScope)
 
-                is Result.Error -> {
-                    Log.d("EventsService", "getEventsVmError: $result")
-                    _eventsUiState.value = _eventsUiState.value.copy(
-                        isLoading = false,
-                        errorMessage = result.message
-                    )
-                }
-
-                is Result.Loading -> {
-                    _eventsUiState.value = _eventsUiState.value.copy(
-                        isLoading = true
-                    )
-                }
-            }
-
+            _uiState.value = _uiState.value.copy(events = eventsPagingFlow)
         }
     }
 
     fun addEvent(event: Event) {
         viewModelScope.launch {
-            _eventsUiState.value = _eventsUiState.value.copy(isLoading = true)
+            _uiState.value = _uiState.value.copy(isAddingEvent = true)
             when (val result = addEventUseCase(event)) {
                 is Result.Success -> {
-                    Log.d("EventsService", "addEventVm: $result")
-                    loadEvents()
-                    _eventsUiState.value = _eventsUiState.value.copy(
-                        isLoading = false
+                    _uiState.value = _uiState.value.copy(
+                        isAddingEvent = false,
+                        addEventSuccess = true
                     )
+                    loadEvents() // Refresh events after adding a new one
                 }
-
                 is Result.Error -> {
-                    Log.d("EventsService", "addEventVmError: $result")
-                    _eventsUiState.value = _eventsUiState.value.copy(
-                        isLoading = false,
-                        errorMessage = result.message
+                    _uiState.value = _uiState.value.copy(
+                        isAddingEvent = false,
+                        error = result.message
                     )
                 }
-
                 is Result.Loading -> {
-                    _eventsUiState.value = _eventsUiState.value.copy(
-                        isLoading = true
-                    )
+                    // Handle loading state if needed
                 }
             }
         }
-
     }
 }
 
-
 data class EventsUiState(
-    val isLoading: Boolean = false,
-    val events: List<Event>? = emptyList(),
-    val errorMessage: String? = null
+    val events: Flow<PagingData<Event>>? = null,
+    val isAddingEvent: Boolean = false,
+    val addEventSuccess: Boolean = false,
+    val error: String? = null
 )
