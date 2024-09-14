@@ -34,5 +34,7 @@ data class Event(
     val dateTime: String,
     val organizer: String,
     val howToJoin: String,
-    val additionalInfo: String
+    val additionalInfo: String,
+    val location: String,
+//    val tags: List<String> = emptyList(),
 )

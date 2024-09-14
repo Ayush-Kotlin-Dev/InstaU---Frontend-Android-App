@@ -34,6 +34,7 @@ class QnaDetailViewModel(
     }
 
     fun fetchAnswers(token: String, questionId: Long) {
+        _answersUiState.value = _answersUiState.value.copy(isLoading = true)
         viewModelScope.launch {
             val answersPagingFlow = PaginationManager.createPagingFlow(
                 fetcher = { page, pageSize ->
@@ -44,7 +45,9 @@ class QnaDetailViewModel(
                 }
             ).flow.cachedIn(viewModelScope)
 
-            _answersUiState.value = _answersUiState.value.copy(answers = answersPagingFlow)
+
+            _answersUiState.value = _answersUiState.value.copy(answers = answersPagingFlow , isLoading = false)
+
         }
     }
 

@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import ayush.ggv.instau.domain.usecases.eventsusecase.GetEventsUseCase
 import ayush.ggv.instau.domain.usecases.eventsusecase.AddEventUseCase
+import ayush.ggv.instau.domain.usecases.eventsusecase.GetEventsUseCase
 import ayush.ggv.instau.model.events.Event
 import ayush.ggv.instau.paging.PaginationManager
 import ayush.ggv.instau.util.Result
@@ -27,21 +27,35 @@ class EventsViewModel(
     }
 
     fun loadEvents() {
+        _uiState.value = _uiState.value.copy(isLoading = true)
         viewModelScope.launch {
             val eventsPagingFlow = PaginationManager.createPagingFlow(
                 fetcher = { page, pageSize ->
                     when (val result = eventsUseCase(page, pageSize)) {
-                        is Result.Success -> result.data?.events ?: emptyList()
+                        is Result.Success -> {
+                            _uiState.value = _uiState.value.copy(isLoading = false)
+                            result.data?.events ?: emptyList()
+                        }
+                        is Result.Error -> {
+                            _uiState.value = _uiState.value.copy(
+                                isLoading = false,
+                                errorMessage = result.message
+                            )
+                            emptyList()
+                        }
+
                         else -> emptyList()
                     }
                 }
             ).flow.cachedIn(viewModelScope)
 
-            _uiState.value = _uiState.value.copy(events = eventsPagingFlow)
+            _uiState.value = _uiState.value.copy(events = eventsPagingFlow , isLoading = false)
         }
+
     }
 
     fun addEvent(event: Event) {
+        _uiState.value = _uiState.value.copy(isAddingEvent = true)
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isAddingEvent = true)
             when (val result = addEventUseCase(event)) {
@@ -71,6 +85,7 @@ class EventsViewModel(
 }
 
 data class EventsUiState(
+    val isLoading: Boolean = false,
     val errorMessage: String? = null,
     val events: Flow<PagingData<Event>>? = null,
     val isAddingEvent: Boolean = false,

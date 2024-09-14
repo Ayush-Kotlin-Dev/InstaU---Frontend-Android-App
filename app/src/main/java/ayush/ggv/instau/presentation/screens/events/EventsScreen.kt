@@ -1,5 +1,9 @@
 package ayush.ggv.instau.presentation.screens.events
 
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,6 +38,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
@@ -43,6 +48,19 @@ import ayush.ggv.instau.model.events.Event
 import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
 import androidx.paging.compose.items
+import java.util.Calendar
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -57,7 +75,7 @@ fun EventsScreen(
     val events: LazyPagingItems<Event>? = eventsUiState.events?.collectAsLazyPagingItems()
     val pullRefreshState = rememberPullRefreshState(eventsUiState.isAddingEvent, onRefresh)
 
-    LaunchedEffect(eventsUiState.isAddingEvent) {
+    LaunchedEffect(eventsUiState.isAddingEvent || eventsUiState.isLoading) {
         if (eventsUiState.isAddingEvent) {
             simulatedProgress = 0f
             while (simulatedProgress < 1f) {
@@ -105,7 +123,7 @@ fun EventsScreen(
 
         PullRefreshIndicator(eventsUiState.isAddingEvent, pullRefreshState, Modifier.align(Alignment.TopCenter))
 
-        if (eventsUiState.isAddingEvent) {
+        if (eventsUiState.isAddingEvent || eventsUiState.isLoading) {
             CircularProgressIndicator(
                 progress = simulatedProgress,
                 modifier = Modifier.align(Alignment.Center)
@@ -207,67 +225,186 @@ fun EventCard(event: Event) {
 
 // Keep the AddEventDialog as it was in the original code
 
+
 @Composable
 fun AddEventDialog(
     onDismiss: () -> Unit,
-    onEventAdded: (Event) -> Unit // Pass event details back when added
+    onEventAdded: (Event) -> Unit
 ) {
-    var name by rememberSaveable { mutableStateOf("") }
-    var description by rememberSaveable { mutableStateOf("") }
-    var imageUrl by rememberSaveable { mutableStateOf("") }
-    var dateTime by rememberSaveable { mutableStateOf("") }
-    var organizer by rememberSaveable { mutableStateOf("") }
-    var howToJoin by rememberSaveable { mutableStateOf("") }
-    var additionalInfo by rememberSaveable { mutableStateOf("") }
+    var name by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
+    var imageUrl by remember { mutableStateOf("") }
+    var organizer by remember { mutableStateOf("") }
+    var howToJoin by remember { mutableStateOf("") }
+    var additionalInfo by remember { mutableStateOf("") }
+    var location by remember { mutableStateOf("") }
+    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+    var selectedTime by remember { mutableStateOf(LocalTime.now()) }
+//    var tags by remember { mutableStateOf("") }
+
+    var showErrors by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
+    val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+    val scrollState = rememberScrollState()
+
+    fun showDatePicker() {
+        val datePickerDialog = DatePickerDialog(
+            context,
+            { _, year, month, dayOfMonth ->
+                selectedDate = LocalDate.of(year, month + 1, dayOfMonth)
+            },
+            selectedDate.year,
+            selectedDate.monthValue - 1,
+            selectedDate.dayOfMonth
+        )
+        datePickerDialog.show()
+    }
+
+    fun showTimePicker() {
+        val timePickerDialog = TimePickerDialog(
+            context,
+            { _, hourOfDay, minute ->
+                selectedTime = LocalTime.of(hourOfDay, minute)
+            },
+            selectedTime.hour,
+            selectedTime.minute,
+            true
+        )
+        timePickerDialog.show()
+    }
+
+    fun validateInputs(): Boolean {
+        return name.isNotBlank() && description.isNotBlank() && imageUrl.isNotBlank() &&
+                organizer.isNotBlank() && howToJoin.isNotBlank() && location.isNotBlank()
+    }
 
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(text = "Add New Event") },
         text = {
-            Column {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(scrollState),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Event Name") })
+                    label = { Text("Event Name") },
+                    modifier = Modifier.fillMaxWidth(),
+                    isError = showErrors && name.isBlank()
+                )
                 OutlinedTextField(
                     value = description,
                     onValueChange = { description = it },
-                    label = { Text("Description") })
+                    label = { Text("Description") },
+                    modifier = Modifier.fillMaxWidth(),
+                    isError = showErrors && description.isBlank()
+                )
                 OutlinedTextField(
                     value = imageUrl,
                     onValueChange = { imageUrl = it },
-                    label = { Text("Image URL") })
+                    label = { Text("Image URL") },
+                    modifier = Modifier.fillMaxWidth(),
+                    isError = showErrors && imageUrl.isBlank()
+                )
+                AsyncImage(
+                    model = imageUrl,
+                    contentDescription = "Event Image Preview",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp),
+                    contentScale = ContentScale.Crop
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    OutlinedTextField(
+                        value = selectedDate.format(dateFormatter),
+                        onValueChange = { },
+                        label = { Text("Date") },
+                        modifier = Modifier
+                            .weight(1f)
+                            .clickable { showDatePicker() },
+                        enabled = false
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    OutlinedTextField(
+                        value = selectedTime.format(timeFormatter),
+                        onValueChange = { },
+                        label = { Text("Time") },
+                        modifier = Modifier
+                            .weight(1f)
+                            .clickable { showTimePicker() },
+                        enabled = false
+                    )
+                }
                 OutlinedTextField(
-                    value = dateTime,
-                    onValueChange = { dateTime = it },
-                    label = { Text("Date and Time") })
+                    value = location,
+                    onValueChange = { location = it },
+                    label = { Text("Location") },
+                    modifier = Modifier.fillMaxWidth(),
+                    isError = showErrors && location.isBlank()
+                )
                 OutlinedTextField(
                     value = organizer,
                     onValueChange = { organizer = it },
-                    label = { Text("Organizer") })
+                    label = { Text("Organizer") },
+                    modifier = Modifier.fillMaxWidth(),
+                    isError = showErrors && organizer.isBlank()
+                )
                 OutlinedTextField(
                     value = howToJoin,
                     onValueChange = { howToJoin = it },
-                    label = { Text("How to Join") })
+                    label = { Text("How to Join") },
+                    modifier = Modifier.fillMaxWidth(),
+                    isError = showErrors && howToJoin.isBlank()
+                )
+//                OutlinedTextField(
+//                    value = tags,
+//                    onValueChange = { tags = it },
+//                    label = { Text("Tags (comma-separated)") },
+//                    modifier = Modifier.fillMaxWidth()
+//                )
                 OutlinedTextField(
                     value = additionalInfo,
                     onValueChange = { additionalInfo = it },
-                    label = { Text("Additional Info") })
+                    label = { Text("Additional Info") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                AnimatedVisibility(visible = showErrors && !validateInputs()) {
+                    Text(
+                        "Please fill in all required fields",
+                        color = Color.Red,
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
+                }
             }
         },
         confirmButton = {
-            TextButton(onClick = {
-                val newEvent = Event(
-                    name = name,
-                    description = description,
-                    imageUrl = imageUrl,
-                    dateTime = dateTime,
-                    organizer = organizer,
-                    howToJoin = howToJoin,
-                    additionalInfo = additionalInfo
-                )
-                onEventAdded(newEvent)
-                onDismiss()
+            Button(onClick = {
+                if (validateInputs()) {
+                    val dateTime = selectedDate.atTime(selectedTime).atOffset(ZoneOffset.UTC).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+                    val newEvent = Event(
+                        name = name,
+                        description = description,
+                        imageUrl = imageUrl,
+                        dateTime = dateTime,
+                        organizer = organizer,
+                        howToJoin = howToJoin,
+                        additionalInfo = additionalInfo,
+                        location = location,
+//                        tags = tags.split(",").map { it.trim() }
+                    )
+                    onEventAdded(newEvent)
+                    onDismiss()
+                } else {
+                    showErrors = true
+                }
             }) {
                 Text("Add Event")
             }
