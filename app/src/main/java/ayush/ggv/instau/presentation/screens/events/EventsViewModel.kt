@@ -27,35 +27,28 @@ class EventsViewModel(
     }
 
     fun loadEvents() {
-        _uiState.value = _uiState.value.copy(isLoading = true)
         viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true)
             val eventsPagingFlow = PaginationManager.createPagingFlow(
                 fetcher = { page, pageSize ->
                     when (val result = eventsUseCase(page, pageSize)) {
                         is Result.Success -> {
-                            _uiState.value = _uiState.value.copy(isLoading = false)
                             result.data?.events ?: emptyList()
                         }
                         is Result.Error -> {
-                            _uiState.value = _uiState.value.copy(
-                                isLoading = false,
-                                errorMessage = result.message
-                            )
+                            _uiState.value = _uiState.value.copy(errorMessage = result.message)
                             emptyList()
                         }
-
                         else -> emptyList()
                     }
                 }
             ).flow.cachedIn(viewModelScope)
 
-            _uiState.value = _uiState.value.copy(events = eventsPagingFlow , isLoading = false)
+            _uiState.value = _uiState.value.copy(events = eventsPagingFlow, isLoading = false)
         }
-
     }
 
     fun addEvent(event: Event) {
-        _uiState.value = _uiState.value.copy(isAddingEvent = true)
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isAddingEvent = true)
             when (val result = addEventUseCase(event)) {
@@ -73,7 +66,7 @@ class EventsViewModel(
                     )
                 }
                 is Result.Loading -> {
-                    // Handle loading state if needed
+                    // This state is handled by setting isAddingEvent to true above
                 }
             }
         }

@@ -2,7 +2,6 @@ package ayush.ggv.instau.presentation.screens.events
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import ayush.ggv.instau.presentation.screens.destinations.Destination
 import org.koin.androidx.compose.koinViewModel
 
 

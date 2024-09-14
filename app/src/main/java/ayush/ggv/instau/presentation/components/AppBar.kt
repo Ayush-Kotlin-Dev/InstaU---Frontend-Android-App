@@ -40,6 +40,7 @@ import ayush.ggv.instau.R
 import ayush.ggv.instau.presentation.screens.account.profile.ProfileScreenViewModel
 import ayush.ggv.instau.presentation.screens.destinations.AddPostDestination
 import ayush.ggv.instau.presentation.screens.destinations.EditProfileDestination
+import ayush.ggv.instau.presentation.screens.destinations.EventsDestination
 import ayush.ggv.instau.presentation.screens.destinations.FollowersDestination
 import ayush.ggv.instau.presentation.screens.destinations.FollowingDestination
 import ayush.ggv.instau.presentation.screens.destinations.FriendListDestination
@@ -185,6 +186,10 @@ fun getAppBarTitle(currentDestinationRoute: String?): Int {
         FollowingDestination.route -> R.string.following_text
         FollowersDestination.route -> R.string.followers_text
         QnaDestination.route -> R.string.qna_destination_title
+        SearchDestination.route -> R.string.search_destination_title
+        AddPostDestination.route -> R.string.add_post_destination_title
+        EventsDestination.route -> R.string.events_destination_title
+
         else -> R.string.app_name
 
     }
