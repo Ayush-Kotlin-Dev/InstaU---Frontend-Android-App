@@ -16,33 +16,42 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 class FriendListScreenViewModel(
     private val dataStore: DataStore<UserSettings>,
     private val useCase: FriendListUseCase
 ) : ViewModel() {
 
-
     val currentUserId = mutableLongStateOf(-1L)
     val userAvatar = mutableStateOf("")
 
     private val _searchState = mutableStateOf("")
     val searchState: State<String> = _searchState
-    fun onSearchTextChange(result: String) {
-        // TODO: I'm too lazy to handle search :D
-        _searchState.value = result
-    }
 
     private val _friendListState = mutableStateOf(FriendListState())
     val friendListState: State<FriendListState> = _friendListState
 
+    private val _filteredFriendListState = mutableStateOf<List<FriendList.FriendInfo>>(emptyList())
+    val filteredFriendListState: State<List<FriendList.FriendInfo>> = _filteredFriendListState
+
+    fun onSearchTextChange(query: String) {
+        _searchState.value = query
+        filterFriendList(query)
+    }
+
+    private fun filterFriendList(query: String) {
+        val lowercaseQuery = query.lowercase(Locale.ROOT)
+        _filteredFriendListState.value = _friendListState.value.data.filter { friend ->
+            friend.username.lowercase(Locale.ROOT).contains(lowercaseQuery)
+        }
+    }
+
     fun getFriendList() {
         viewModelScope.launch {
-            // Fetch token and currentUserId
             dataStore.data.map { it.toAuthResultData() }.collect { userSettings ->
                 currentUserId.longValue = userSettings.id
                 userAvatar.value = userSettings.avatar.orEmpty()
-                // Once token and currentUserId are fetched, call useCase
                 fetchFriendList()
             }
         }
@@ -51,15 +60,17 @@ class FriendListScreenViewModel(
     private fun fetchFriendList() {
         viewModelScope.launch {
             _friendListState.value = FriendListState(isLoading = true)
-            useCase(currentUserId.value).onEach {
+            useCase(currentUserId.longValue).onEach {
                 when (it) {
                     is ResponseResource.Error ->
                         _friendListState.value =
                             FriendListState(error = it.errorMessage.errorMessage.orEmpty())
 
-                    is ResponseResource.Success ->
-                        _friendListState.value =
-                            FriendListState(data = it.data.friendInfo.orEmpty())
+                    is ResponseResource.Success -> {
+                        val friendList = it.data.friendInfo.orEmpty()
+                        _friendListState.value = FriendListState(data = friendList)
+                        _filteredFriendListState.value = friendList // Initialize filtered list with all friends
+                    }
                 }
                 Log.d("FriendListScreenViewModel", "getFriendList: $it")
             }.launchIn(viewModelScope)

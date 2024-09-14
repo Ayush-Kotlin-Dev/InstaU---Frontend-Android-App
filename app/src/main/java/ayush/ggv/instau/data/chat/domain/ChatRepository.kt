@@ -3,6 +3,7 @@ package ayush.ggv.instau.data.chat.domain
 import ayush.ggv.instau.model.FriendListResponseDto
 import ayush.ggv.instau.model.chatRoom.ChatRoomResponseDto
 import ayush.ggv.instau.model.chatRoom.MessageResponseDto
+import ayush.ggv.instau.model.friendList.RoomHistoryList
 import ayush.ggv.instau.util.ResponseResource
 import ayush.ggv.instau.util.Result
 import instaU.ayush.com.model.FollowsAndUnfollowsResponse
@@ -23,5 +24,6 @@ interface ChatRepository {
     suspend fun sendMessage(message: String)
     fun receiveMessage(): Flow<MessageResponseDto>
     suspend fun disconnectSocket()
-
+    suspend fun getLocalMessages(sender: Long, receiver: Long): List<RoomHistoryList.Message>
+    suspend fun saveMessagesToLocal(messages: List<ChatRoomResponseDto.ChatRoomData>)
 }

@@ -4,12 +4,15 @@ import ChatService
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
 import androidx.room.Room
+import androidx.room.RoomDatabase
 import ayush.ggv.instau.MainActivityViewModel
 import ayush.ggv.instau.common.datastore.UserPreferences
 import ayush.ggv.instau.common.datastore.UserPreferencesImpl
 import ayush.ggv.instau.presentation.screens.auth.signup.SignUpViewModel
 import ayush.ggv.instau.presentation.screens.auth.login.LoginViewModel
 import ayush.ggv.instau.common.datastore.UserSettingsSerializer
+import ayush.ggv.instau.dao.chat.AppDatabase
+import ayush.ggv.instau.dao.chat.MessageDao
 import ayush.ggv.instau.dao.post.PostsDatabase
 import ayush.ggv.instau.data.auth.data.AuthRepositoryImpl
 import ayush.ggv.instau.data.auth.data.AuthService
@@ -102,6 +105,18 @@ val appModule = module {
         ).fallbackToDestructiveMigration()
             .build()
     }
+    single{
+        Room.databaseBuilder(
+            androidContext(),
+            AppDatabase::class.java,
+            "message_database"
+        ).fallbackToDestructiveMigration()
+            .build(
+        )
+    }
+    single { get<AppDatabase>().messageDao() }
+
+
     single<UserPreferences> { UserPreferencesImpl(get()) }
     single <PostRepository> { PostsRepositoryImpl(get() ,  get() , get()) }
     single  <ProfileRepository>{ProfileRepositoryImpl(get(),get()) }
@@ -111,7 +126,7 @@ val appModule = module {
     single { GetFollowingUseCase() }
     single <FollowRepository>{ FollowRepositoryImpl(get(),get()) }
     single <PostLikesRepository>{PostLikesRepositoryImpl(get(),get())  }
-    single <ChatRepository>{ChatRepositoryImpl(get(), get()) }
+    single <ChatRepository>{ChatRepositoryImpl(get(), get(), get())}
     single <QnaRepository>{ QnaRepositoryImpl(get(),get()) }
     single <EventsRepository>{EventsRepositoryImpl(get() , get())}
     factory { ChatService() }

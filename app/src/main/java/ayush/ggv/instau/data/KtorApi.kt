@@ -50,6 +50,8 @@ abstract class KtorApi {
             takeFrom("wss://instau-backend-server-z7e1.onrender.com")
             path(path)
             contentType(ContentType.Application.Json)
-        }
+            headers {
+                append("api-key", "ayush")
+            }        }
     }
 }

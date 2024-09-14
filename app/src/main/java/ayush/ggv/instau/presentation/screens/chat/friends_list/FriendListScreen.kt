@@ -35,10 +35,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import ayush.ggv.instau.R
+import ayush.ggv.instau.model.FriendList
 
 @Composable
 fun FriendListScreen(
     friendListState: FriendListState,
+    filteredFriendList: List<FriendList.FriendInfo>,
+    searchQuery: String,
+    onSearchQueryChange: (String) -> Unit,
     onNavigateToChatScreen: (Long, String, String) -> Unit,
     onGroupChatClick: () -> Unit
 ) {
@@ -48,7 +52,7 @@ fun FriendListScreen(
                 title = { Text("Friends") },
                 actions = {
                     IconButton(onClick = onGroupChatClick) {
-                        Icon(Icons.Outlined.AccountBox, contentDescription = "Search")
+                        Icon(Icons.Outlined.AccountBox, contentDescription = "Group Chat")
                     }
                 }
             )
@@ -61,25 +65,29 @@ fun FriendListScreen(
                 .padding(horizontal = 16.dp)
         ) {
             SearchBar(
+                searchQuery = searchQuery,
+                onSearchQueryChange = onSearchQueryChange,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 16.dp)
             )
 
-            if (friendListState.data.isNotEmpty()) {
+            if (filteredFriendList.isNotEmpty()) {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(friendListState.data) { friendData ->
+                    items(filteredFriendList) { friendData ->
                         FriendListItemRow(
                             friendData = friendData,
                             onNavigateToChatScreen = onNavigateToChatScreen
                         )
                     }
                 }
-            } else if (!friendListState.isLoading) {
+            } else if (!friendListState.isLoading && searchQuery.isEmpty()) {
                 EmptyFriendList()
+            } else if (!friendListState.isLoading && searchQuery.isNotEmpty()) {
+                NoSearchResults()
             }
 
             if (friendListState.isLoading) {
@@ -92,12 +100,14 @@ fun FriendListScreen(
 }
 
 @Composable
-fun SearchBar(modifier: Modifier = Modifier) {
-    var searchQuery by remember { mutableStateOf("") } //TODO implement search functionality here later
-
+fun SearchBar(
+    searchQuery: String,
+    onSearchQueryChange: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
     OutlinedTextField(
         value = searchQuery,
-        onValueChange = { searchQuery = it },
+        onValueChange = onSearchQueryChange,
         modifier = modifier,
         placeholder = { Text("Search User") },
         leadingIcon = {
@@ -105,7 +115,7 @@ fun SearchBar(modifier: Modifier = Modifier) {
         },
         trailingIcon = {
             if (searchQuery.isNotEmpty()) {
-                IconButton(onClick = { searchQuery = "" }) {
+                IconButton(onClick = { onSearchQueryChange("") }) {
                     Icon(Icons.Filled.Clear, contentDescription = "Clear search")
                 }
             }
@@ -133,4 +143,16 @@ fun EmptyFriendList() {
         }
     }
 }
+
+@Composable
+fun NoSearchResults() {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text(
+            "No matching friends found",
+            style = MaterialTheme.typography.h6,
+            color = MaterialTheme.colors.onSurface.copy(alpha = 0.6f)
+        )
+    }
+}
+
 

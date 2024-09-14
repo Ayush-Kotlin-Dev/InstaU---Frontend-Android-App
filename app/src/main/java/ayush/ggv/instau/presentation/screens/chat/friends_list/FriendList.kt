@@ -45,9 +45,9 @@ fun FriendList(
                 viewModel.currentUserId.longValue,
             ).route)
         },
-        onGroupChatClick = { navigator.navigate(TestChatScreenDestination) }
-
-
+        onGroupChatClick = { navigator.navigate(TestChatScreenDestination) },
+        searchQuery = viewModel.searchState.value,
+        onSearchQueryChange = { query -> viewModel.onSearchTextChange(query) },
+        filteredFriendList = viewModel.filteredFriendListState.value
     )
-
 }
