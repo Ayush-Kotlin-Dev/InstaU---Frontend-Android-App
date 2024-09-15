@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class GetRoomHistoryUseCase : KoinComponent {
     private val repository: ChatRepository by inject()
@@ -18,7 +20,6 @@ class GetRoomHistoryUseCase : KoinComponent {
         emit(ResponseResource.Success(RoomHistoryList(roomData = localMessages)))
 
         try {
-            // Then, fetch from network and update local storage
             repository.getRoomHistory(sender, receiver).collect { response ->
                 when (response) {
                     is ResponseResource.Success -> {
@@ -29,8 +30,6 @@ class GetRoomHistoryUseCase : KoinComponent {
                         emit(ResponseResource.Success(RoomHistoryList(roomData = combinedMessages)))
                     }
                     is ResponseResource.Error -> {
-                        // If there's a network error, we'll just emit the local data again
-                        // This ensures that the UI always has the most recent local data
                         emit(ResponseResource.Success(RoomHistoryList(roomData = localMessages)))
                     }
                 }
@@ -48,6 +47,6 @@ fun ChatRoomResponseDto.ChatRoomData.toRoomHistoryMessage() = RoomHistoryList.Me
     sender = sender,
     textMessage = textMessage,
     timestamp = timestamp,
-    formattedTime = null, // You might want to format this
-    formattedDate = null  // You might want to format this
+    formattedTime = SimpleDateFormat("hh:mm a", Locale.getDefault()).format(timestamp),
+    formattedDate = SimpleDateFormat("dd MMM", Locale.getDefault()).format(timestamp)
 )

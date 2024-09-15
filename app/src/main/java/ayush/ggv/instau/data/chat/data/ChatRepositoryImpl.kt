@@ -12,6 +12,11 @@ import ayush.ggv.instau.model.friendList.RoomHistoryList
 import ayush.ggv.instau.util.ResponseResource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
+import java.util.Locale.*
 
 class ChatRepositoryImpl(
     private val chatService: ChatService,
@@ -87,13 +92,19 @@ fun MessageEntity.toRoomHistoryMessage() = RoomHistoryList.Message(
     formattedDate = formattedDate
 )
 
-fun ChatRoomResponseDto.ChatRoomData.toMessageEntity() = MessageEntity(
-    id = "${sender}_${receiver}_$timestamp",
-    sessionId = null, // ChatRoomData doesn't have sessionId
-    receiver = receiver,
-    sender = sender,
-    textMessage = textMessage,
-    timestamp = timestamp,
-    formattedTime = null, // You might want to format this
-    formattedDate = null  // You might want to format this
-)
+fun ChatRoomResponseDto.ChatRoomData.toMessageEntity(): MessageEntity {
+    val timestampLong = timestamp?.toLongOrNull() ?: System.currentTimeMillis()
+    val date = Date(timestampLong)
+    val calendar = Calendar.getInstance().apply { time = date }
+
+    return MessageEntity(
+        id = "${sender}_${receiver}_$timestamp",
+        sessionId = null, // ChatRoomData doesn't have sessionId
+        receiver = receiver,
+        sender = sender,
+        textMessage = textMessage,
+        timestamp = timestamp,
+        formattedTime = SimpleDateFormat("hh:mm a", getDefault()).format(calendar.time),
+        formattedDate = SimpleDateFormat("dd/MM/yyyy", getDefault()).format(calendar.time)
+    )
+}
