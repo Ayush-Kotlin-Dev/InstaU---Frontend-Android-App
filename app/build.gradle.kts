@@ -120,7 +120,7 @@ dependencies {
 //    implementation("dev.chrisbanes.haze:haze:0.6.0")
 //    implementation("dev.chrisbanes.haze:haze-materials:0.6.0")
     implementation("androidx.work:work-runtime-ktx:2.9.1")
-
+    implementation("com.google.accompanist:accompanist-swiperefresh:0.27.0")
 
 
 

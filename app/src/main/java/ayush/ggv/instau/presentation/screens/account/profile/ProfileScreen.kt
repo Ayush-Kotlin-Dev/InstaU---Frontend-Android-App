@@ -1,6 +1,5 @@
 package ayush.ggv.instau.presentation.screens.account.profile
 
-import android.widget.Toast
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -21,7 +20,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Tab
@@ -31,13 +31,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -59,18 +54,13 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import ayush.ggv.instau.R
 import ayush.ggv.instau.model.Post
-import ayush.ggv.instau.presentation.components.CircleImage
-import ayush.ggv.instau.presentation.components.FollowsButton
 import ayush.ggv.instau.presentation.components.ShimmerProfileScreenPlaceholder
 import ayush.ggv.instau.presentation.screens.destinations.EditProfileDestination
-import ayush.ggv.instau.ui.theme.LargeSpacing
-import ayush.ggv.instau.ui.theme.SmallSpacing
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
-
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ProfileScreen(
     modifier: Modifier = Modifier,
@@ -86,22 +76,21 @@ fun ProfileScreen(
     navigator: DestinationsNavigator,
     isFollowing: Boolean,
 ) {
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = userInfoUiState.isLoading && profilePostsUiState.isLoading,
-        onRefresh = { fetchData() }
+    val swipeRefreshState = rememberSwipeRefreshState(
+        isRefreshing = userInfoUiState.isLoading && profilePostsUiState.isLoading
     )
     val scrollState = rememberLazyListState()
     val headerHeight by animateDpAsState(
         targetValue = max(
-            100.dp, // minHeaderHeight
-            300.dp - remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset.dp } }.value
-        ), label = ""
+            100.dp,
+            300.dp - scrollState.firstVisibleItemScrollOffset.dp
+        )
     )
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .pullRefresh(state = pullRefreshState)
+    SwipeRefresh(
+        state = swipeRefreshState,
+        onRefresh = fetchData,
+        modifier = Modifier.fillMaxSize()
     ) {
         LazyColumn(
             state = scrollState,
@@ -134,17 +123,12 @@ fun ProfileScreen(
             item {
                 ProfileContent(
                     posts = profilePostsUiState.posts,
-                    mentions = emptyList(), // You'll need to provide this data
-                    likes = emptyList(), // You'll need to provide this data
+                    mentions = emptyList(),
+                    likes = emptyList(),
                     onPostClick = onPostClick
                 )
             }
         }
-        PullRefreshIndicator(
-            refreshing = userInfoUiState.isLoading && profilePostsUiState.isLoading,
-            state = pullRefreshState,
-            modifier = modifier.align(Alignment.TopCenter)
-        )
     }
 }
 
@@ -161,7 +145,6 @@ fun ProfileHeader(
             .fillMaxWidth()
             .height(headerHeight)
     ) {
-        // Add a background image or gradient
         Image(
             painter = painterResource(id = R.drawable.ad_ex_3),
             contentDescription = null,
@@ -169,7 +152,6 @@ fun ProfileHeader(
             modifier = Modifier.fillMaxSize()
         )
 
-        // Overlay a semi-transparent scrim for better text visibility
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -214,23 +196,26 @@ fun ProfileHeaderSection(
             .fillMaxWidth()
             .padding(bottom = 16.dp)
             .background(color = MaterialTheme.colors.surface.copy(alpha = 0.7f))
-            .padding(all = LargeSpacing)
+            .padding(all = 16.dp)
     ) {
-        CircleImage(
+        AsyncImage(
+            model = imageUrl,
+            contentDescription = "Profile Picture",
             modifier = Modifier
                 .size(120.dp)
+                .clip(CircleShape)
                 .border(
                     width = 4.dp,
                     color = MaterialTheme.colors.surface,
                     shape = CircleShape
-                ),
-            imageUrl = imageUrl,
-            onClick = { showDialog = true }
+                )
+                .clickable { showDialog = true },
+            contentScale = ContentScale.Crop
         )
-        Spacer(modifier = Modifier.height(SmallSpacing))
+        Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = name,
-            style = MaterialTheme.typography.h5,
+            style = MaterialTheme.typography.h6,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
@@ -240,32 +225,24 @@ fun ProfileHeaderSection(
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )
-        Spacer(modifier = Modifier.height(SmallSpacing))
+        Spacer(modifier = Modifier.height(8.dp))
 
-        if (isCurrentUser) {
-            FollowsButton(
-                text = R.string.editProfileLabel,
-                onFollowButtonClick = onButtonClick,
-                modifier = Modifier
-                    .height(40.dp)
-                    .fillMaxWidth(),
-                isOutline = true
+        Button(
+            onClick = onButtonClick,
+            modifier = Modifier
+                .height(40.dp)
+                .fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = if (isCurrentUser || isFollowing) MaterialTheme.colors.surface else MaterialTheme.colors.primary,
+                contentColor = if (isCurrentUser || isFollowing) MaterialTheme.colors.primary else MaterialTheme.colors.onPrimary
             )
-        } else {
-            FollowsButton(
-                text = if (isFollowing) R.string.unfollow_button_label else R.string.follow_button_label,
-                onFollowButtonClick = {
-                    onButtonClick()
-                    Toast.makeText(
-                        context,
-                        if (isFollowing) "Unfollowed" else "Followed",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                },
-                modifier = Modifier
-                    .height(40.dp)
-                    .fillMaxWidth(),
-                isOutline = isFollowing
+        ) {
+            Text(
+                text = when {
+                    isCurrentUser -> stringResource(R.string.editProfileLabel)
+                    isFollowing -> stringResource(R.string.unfollow_button_label)
+                    else -> stringResource(R.string.follow_button_label)
+                }
             )
         }
     }
@@ -278,12 +255,11 @@ fun ProfileHeaderSection(
             Box(
                 modifier = Modifier
                     .size(300.dp)
-                    .padding(10.dp)
                     .clip(RoundedCornerShape(16.dp))
             ) {
-                Image(
-                    painter = rememberAsyncImagePainter(model = imageUrl),
-                    contentDescription = null,
+                AsyncImage(
+                    model = imageUrl,
+                    contentDescription = "Full size profile picture",
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
                 )
@@ -291,7 +267,6 @@ fun ProfileHeaderSection(
         }
     }
 }
-
 
 @Composable
 fun UserStatistics(
@@ -302,7 +277,9 @@ fun UserStatistics(
     onFollowingClick: () -> Unit
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 16.dp),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         StatItem(
@@ -337,15 +314,16 @@ fun StatItem(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.clickable(onClick = onClick)
     ) {
-        Icon(imageVector = icon, contentDescription = null)
+        Icon(imageVector = icon, contentDescription = null, tint = MaterialTheme.colors.primary)
         Text(
             text = count.toString(),
-            style = MaterialTheme.typography.h6,
+            style = MaterialTheme.typography.subtitle1,
             fontWeight = FontWeight.Bold
         )
         Text(text = label, style = MaterialTheme.typography.caption)
     }
 }
+
 @Composable
 fun ProfileContent(
     posts: List<Post>,
@@ -353,11 +331,15 @@ fun ProfileContent(
     likes: List<Post>,
     onPostClick: (Post) -> Unit
 ) {
-    var selectedTabIndex by remember { mutableIntStateOf(0) }
+    var selectedTabIndex by remember { mutableStateOf(0) }
     val tabs = listOf("Posts", "Mentions", "Likes")
 
     Column {
-        TabRow(selectedTabIndex = selectedTabIndex) {
+        TabRow(
+            selectedTabIndex = selectedTabIndex,
+            backgroundColor = MaterialTheme.colors.surface,
+            contentColor = MaterialTheme.colors.primary
+        ) {
             tabs.forEachIndexed { index, title ->
                 Tab(
                     text = { Text(title) },
@@ -390,7 +372,6 @@ fun PostGrid(posts: List<Post>, onPostClick: (Post) -> Unit) {
                         modifier = Modifier.weight(1f)
                     )
                 }
-                // Fill empty spaces if the row is not complete
                 repeat(3 - rowPosts.size) {
                     Spacer(modifier = Modifier.weight(1f))
                 }
@@ -401,15 +382,13 @@ fun PostGrid(posts: List<Post>, onPostClick: (Post) -> Unit) {
 
 @Composable
 fun PostThumbnail(post: Post, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    val imageModifier = modifier
-        .aspectRatio(1f) // This ensures the image is a square
-        .padding(2.dp)
-        .clickable(onClick = onClick)
-
     AsyncImage(
         model = post.imageUrl,
         contentDescription = null,
         contentScale = ContentScale.Crop,
-        modifier = imageModifier
+        modifier = modifier
+            .aspectRatio(1f)
+            .padding(2.dp)
+            .clickable(onClick = onClick)
     )
 }
