@@ -59,7 +59,9 @@ fun QnaScreen(
     onQuestionAddClick: (String) -> Unit,
     questionText: String,
     onTextChange: (String) -> Unit,
-    onRefresh: () -> Unit
+    onRefresh: () -> Unit,
+    onDeleteQuestion: (Long) -> Unit,
+    currentUserId: Long
 ) {
     var showDialog by remember { mutableStateOf(false) }
     var simulatedProgress by remember { mutableStateOf(0f) }
@@ -87,7 +89,12 @@ fun QnaScreen(
                     key = { it.id }
                 ) { questionWithAnswer ->
                     questionWithAnswer?.let {
-                        QuestionItem(it, onQuestionClick)
+                        QuestionItem(
+                            it,
+                            onQuestionClick,
+                            onDeleteQuestion,
+                            currentUserId
+                        )
                         Spacer(modifier = Modifier.height(16.dp))
                     }
                 }

@@ -3,6 +3,7 @@ package ayush.ggv.instau.data.qna.data
 import android.util.Log
 import ayush.ggv.instau.common.datastore.UserPreferences
 import ayush.ggv.instau.data.qna.domain.QnaRepository
+import ayush.ggv.instau.model.qna.AnswerResponse
 import ayush.ggv.instau.model.qna.AnswerTextParams
 import ayush.ggv.instau.model.qna.AnswersResponse
 import ayush.ggv.instau.model.qna.QnaTextParams
@@ -67,6 +68,26 @@ class QnaRepositoryImpl(
             val userData = userPreferences.getUserData()
             val response = qnaService.addAnswer(userData.token, answerTextParams = AnswerTextParams(content, userData.id ,questionId))
 
+            Result.Success(response)
+        } catch (e: Exception) {
+            Result.Error(e.toString())
+        }
+    }
+
+    override suspend fun deleteQuestion( questionId: Long): Result<QuestionResponse> {
+        return try {
+            val token = userPreferences.getUserData().token
+            val response = qnaService.deleteQuestion(token, questionId)
+            Result.Success(response)
+        } catch (e: Exception) {
+            Result.Error(e.toString())
+        }
+    }
+
+    override suspend fun deleteAnswer( answerId: Long): Result<AnswerResponse> {
+        return try {
+            val token = userPreferences.getUserData().token
+            val response = qnaService.deleteAnswer(token, answerId)
             Result.Success(response)
         } catch (e: Exception) {
             Result.Error(e.toString())

@@ -70,6 +70,8 @@ import ayush.ggv.instau.domain.usecases.profileusecase.SearchUserUseCase
 import ayush.ggv.instau.domain.usecases.profileusecase.UpdateProfileUseCase
 import ayush.ggv.instau.domain.usecases.qnausecase.AddAnswerUseCase
 import ayush.ggv.instau.domain.usecases.qnausecase.AddQuestionUseCase
+import ayush.ggv.instau.domain.usecases.qnausecase.DeleteAnswerUseCase
+import ayush.ggv.instau.domain.usecases.qnausecase.DeleteQuestionsUseCase
 import ayush.ggv.instau.domain.usecases.qnausecase.GetAnswersUseCase
 import ayush.ggv.instau.domain.usecases.qnausecase.QnaUseCase
 import ayush.ggv.instau.domain.usecases.signinusecase.SignInuseCase
@@ -167,6 +169,8 @@ val appModule = module {
     factory { AddEventUseCase() }
     factory { DeleteEventsUseCase() }
     factory { GetEventsUseCase() }
+    factory { DeleteAnswerUseCase() }
+    factory { DeleteQuestionsUseCase() }
     viewModel { SignUpViewModel(get() , get(), get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
     viewModel { LoginViewModel(get() , get() , get()) } //Provide DataStore<UserSettings> as an instance of DataStore<UserSettings>
     viewModel { MainActivityViewModel(get()) }
@@ -179,7 +183,7 @@ val appModule = module {
     viewModel{SearchViewModel(get())}
     viewModel{FriendListScreenViewModel(get() ,  get() )}
     viewModel{ChatRoomViewModel(get() , get() )}
-    viewModel{QnaViewModel(get(),get())}
+    viewModel{QnaViewModel(get(),get(),get())}
     viewModel{QnaDetailViewModel(get() , get())}
     viewModel{ EventsViewModel(get() , get()) }
 

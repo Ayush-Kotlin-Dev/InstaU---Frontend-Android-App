@@ -2,12 +2,14 @@ package ayush.ggv.instau.data.qna.data
 
 import android.util.Log
 import ayush.ggv.instau.data.KtorApi
+import ayush.ggv.instau.model.qna.AnswerResponse
 import ayush.ggv.instau.model.qna.AnswerTextParams
 import ayush.ggv.instau.model.qna.AnswersResponse
 import ayush.ggv.instau.model.qna.QnaTextParams
 import ayush.ggv.instau.model.qna.QuestionResponse
 import ayush.ggv.instau.model.qna.QuestionsResponse
 import io.ktor.client.call.body
+import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.headers
 import io.ktor.client.request.parameter
@@ -44,6 +46,20 @@ class QnaService : KtorApi() {
         Log.d("QnaService", "addQuestion: ${response.body<QuestionResponse>()}")
             return response.body<QuestionResponse>()
     }
+
+    suspend fun deleteQuestion(
+        token: String,
+        questionId: Long
+    ): QuestionResponse {
+        val response = client.delete {
+            endPoint(path = "/qna/question/$questionId")
+            headers {
+                append("Authorization", "Bearer $token")
+            }
+            parameter("questionId", questionId)
+        }
+        return response.body<QuestionResponse>()
+    }
     suspend fun getAnswers(
         token: String,
         questionId: Long,
@@ -76,5 +92,17 @@ class QnaService : KtorApi() {
         return response.body<AnswersResponse>()
     }
 
-
+    suspend fun deleteAnswer(
+        token: String,
+        answerId: Long
+    ): AnswerResponse {
+        val response = client.delete {
+            endPoint(path = "/qna/answer/$answerId")
+            headers {
+                append("Authorization", "Bearer $token")
+            }
+            parameter("answerId", answerId)
+        }
+        return response.body<AnswerResponse>()
+    }
 }

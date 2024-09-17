@@ -46,6 +46,11 @@ fun Qna(
         onRefresh = {
             viewModel.fetchQuestionsWithAnswers()
             Toast.makeText(context, "Refreshed", Toast.LENGTH_SHORT).show()
-        }
+        },
+        onDeleteQuestion = { questionId ->
+            viewModel.deleteQuestion(questionId)
+            Toast.makeText(context, "Deleted", Toast.LENGTH_SHORT).show()
+        },
+        currentUserId = currentUserId
     )
 }

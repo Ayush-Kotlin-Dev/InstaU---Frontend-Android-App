@@ -25,3 +25,9 @@ data class AnswerTextParams(
     val authorId: Long,
     val questionId: Long
 )
+@Serializable
+data class AnswerResponse(
+    val success: Boolean,
+    val answer: Answer? = null,
+    val message: String? = null
+)
