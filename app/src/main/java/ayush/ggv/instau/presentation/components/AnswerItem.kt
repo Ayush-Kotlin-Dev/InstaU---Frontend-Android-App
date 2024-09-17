@@ -1,8 +1,10 @@
 package ayush.ggv.instau.presentation.components
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,9 +19,15 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,11 +44,15 @@ import ayush.ggv.instau.R
 import ayush.ggv.instau.data.dateTimeFormat
 import ayush.ggv.instau.model.qna.Answer
 import coil.compose.rememberAsyncImagePainter
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AnswerBubble(
     answer: Answer,
     isSender: Boolean,
+    onDeleteAnswer: (Long) -> Unit
 ) {
+    var showDropdown by remember { mutableStateOf(false) }
+
     val radius = if (isSender) {
         RoundedCornerShape(topStart = 16.dp, bottomStart = 16.dp, topEnd = 4.dp, bottomEnd = 16.dp)
     } else {
@@ -61,6 +73,10 @@ fun AnswerBubble(
 
     Column(
         modifier = Modifier.padding(vertical = 8.dp)
+            .combinedClickable(
+                onClick = { },
+                onLongClick = { showDropdown = true }
+            )
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -101,6 +117,17 @@ fun AnswerBubble(
                     color = textColor.copy(alpha = 0.5f),
                     modifier = Modifier.align(if (isSender) Alignment.End else Alignment.Start)
                 )
+                DropdownMenu(
+                    expanded = showDropdown,
+                    onDismissRequest = { showDropdown = false }
+                ) {
+                    DropdownMenuItem(onClick = {
+                        onDeleteAnswer(answer.id)
+                        showDropdown = false
+                    }) {
+                        Text("Delete Answer")
+                    }
+                }
             }
 
             if (isSender) {
@@ -150,18 +177,3 @@ fun AvatarHeadQna(
     }
 }
 
-@Composable
-@Preview
-fun AnswerBubblePreview() {
-    AnswerBubble(
-        answer = Answer(
-            id = 1,
-            questionId = 1,
-            authorId = 1,
-            authorName = "John Doe",
-            answer = "This is a sample answer",
-            createdAt = ""
-        ),
-        isSender = true
-    )
-}

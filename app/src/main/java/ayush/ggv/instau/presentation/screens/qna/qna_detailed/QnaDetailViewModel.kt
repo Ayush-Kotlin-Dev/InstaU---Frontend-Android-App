@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import ayush.ggv.instau.domain.usecases.qnausecase.AddAnswerUseCase
+import ayush.ggv.instau.domain.usecases.qnausecase.DeleteAnswerUseCase
 import ayush.ggv.instau.domain.usecases.qnausecase.GetAnswersUseCase
 import ayush.ggv.instau.model.qna.Answer
 import ayush.ggv.instau.paging.PaginationManager
@@ -20,7 +21,8 @@ import kotlinx.coroutines.launch
 
 class QnaDetailViewModel(
     private val qnaUseCase: GetAnswersUseCase,
-    private val addAnswerUseCase: AddAnswerUseCase
+    private val addAnswerUseCase: AddAnswerUseCase,
+    private val deleteAnswerUseCase: DeleteAnswerUseCase
 ) : ViewModel() {
 
     private val _answersUiState = MutableStateFlow(AnswersState())
@@ -75,6 +77,33 @@ class QnaDetailViewModel(
             }
         }
     }
+
+    fun deleteAnswer( token: String, questionId: Long, answerId: Long) {
+        viewModelScope.launch {
+            _answersUiState.value = _answersUiState.value.copy(isLoading = true)
+
+            when (val result = deleteAnswerUseCase( answerId)) {
+                is Result.Success -> {
+                    _answersUiState.value = _answersUiState.value.copy(
+                        isLoading = false,
+                        errorMessage = null
+                    )
+                    fetchAnswers(token, questionId)
+                }
+                is Result.Error -> {
+                    _answersUiState.value = _answersUiState.value.copy(
+                        isLoading = false,
+                        errorMessage = result.message
+                    )
+                }
+                is Result.Loading -> {
+                    // Handle loading state if needed
+                }
+            }
+        }
+    }
+
+
 }
 
 data class AnswersState(

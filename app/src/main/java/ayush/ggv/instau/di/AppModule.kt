@@ -184,7 +184,7 @@ val appModule = module {
     viewModel{FriendListScreenViewModel(get() ,  get() )}
     viewModel{ChatRoomViewModel(get() , get() )}
     viewModel{QnaViewModel(get(),get(),get())}
-    viewModel{QnaDetailViewModel(get() , get())}
+    viewModel{QnaDetailViewModel(get() , get() , get())}
     viewModel{ EventsViewModel(get() , get()) }
 
     single{

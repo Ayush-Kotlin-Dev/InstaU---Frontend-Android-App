@@ -38,6 +38,9 @@ fun QnaDetail(
         },
         addAnswer = viewModel.addAnswerUiState.collectAsState().value,
         onTextChange = viewModel::onTextChange,
-        questionId = questionId // Pass questionId to QnaDetailedPage
+        questionId = questionId ,
+        onDeleteAnswer = { answerId ->
+            viewModel.deleteAnswer(token, questionId, answerId)
+        }
     )
 }

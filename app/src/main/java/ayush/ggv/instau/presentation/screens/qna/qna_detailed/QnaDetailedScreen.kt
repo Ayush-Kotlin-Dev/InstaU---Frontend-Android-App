@@ -37,6 +37,7 @@ fun QnaDetailedPage(
     fetchData: () -> Unit,
     onAddAnswer: (String) -> Unit,
     addAnswer: AddAnswerUiState,
+    onDeleteAnswer: (Long) -> Unit,
     onTextChange: (String) -> Unit,
     questionId: Long
 ) {
@@ -99,7 +100,15 @@ fun QnaDetailedPage(
                             key = { it.id }
                         ) { answer ->
                             val isSender = answer.authorId == currentUserId
-                            AnswerBubble(answer = answer, isSender = isSender)
+                            AnswerBubble(
+                                answer = answer,
+                                isSender = isSender,
+                                onDeleteAnswer = { answerId ->
+                                    if (isSender) {
+                                        onDeleteAnswer(answerId)
+                                    }
+                                }
+                            )
                         }
                     }
 
