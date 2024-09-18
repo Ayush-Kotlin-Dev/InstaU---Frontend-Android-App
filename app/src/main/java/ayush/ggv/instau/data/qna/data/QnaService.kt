@@ -56,7 +56,6 @@ class QnaService : KtorApi() {
             headers {
                 append("Authorization", "Bearer $token")
             }
-            parameter("questionId", questionId)
         }
         return response.body<QuestionResponse>()
     }
@@ -101,7 +100,6 @@ class QnaService : KtorApi() {
             headers {
                 append("Authorization", "Bearer $token")
             }
-            parameter("answerId", answerId)
         }
         return response.body<AnswerResponse>()
     }
