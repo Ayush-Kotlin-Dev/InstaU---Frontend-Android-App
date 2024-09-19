@@ -1,6 +1,7 @@
 package ayush.ggv.instau.presentation.screens.account.profile
 
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -32,6 +33,7 @@ import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,7 +51,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.max
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import ayush.ggv.instau.R
@@ -80,11 +81,30 @@ fun ProfileScreen(
         isRefreshing = userInfoUiState.isLoading && profilePostsUiState.isLoading
     )
     val scrollState = rememberLazyListState()
-    val headerHeight by animateDpAsState(
-        targetValue = max(
-            100.dp,
-            300.dp - scrollState.firstVisibleItemScrollOffset.dp
-        )
+
+    val maxHeaderHeight = 300.dp
+    val minHeaderHeight = 100.dp
+    val headerHeightDifference = maxHeaderHeight - minHeaderHeight
+    val scrollThreshold = 200f
+
+    val headerHeight by remember {
+        derivedStateOf {
+            val scrollOffset = scrollState.firstVisibleItemScrollOffset.toFloat()
+            val firstVisibleItem = scrollState.firstVisibleItemIndex
+
+            when {
+                firstVisibleItem > 0 -> minHeaderHeight
+                else -> {
+                    val scrollProgress = (scrollOffset / scrollThreshold).coerceIn(0f, 1f)
+                    maxHeaderHeight - (headerHeightDifference * scrollProgress)
+                }
+            }
+        }
+    }
+
+    val animatedHeaderHeight by animateDpAsState(
+        targetValue = headerHeight,
+        animationSpec = tween(durationMillis = 150)
     )
 
     SwipeRefresh(
@@ -101,7 +121,7 @@ fun ProfileScreen(
                     ShimmerProfileScreenPlaceholder()
                 } else {
                     ProfileHeader(
-                        headerHeight = headerHeight,
+                        headerHeight = animatedHeaderHeight,
                         userInfoUiState = userInfoUiState,
                         onButtonClick = onButtonClick,
                         isFollowing = isFollowing,

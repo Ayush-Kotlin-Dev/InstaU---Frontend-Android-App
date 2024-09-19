@@ -6,7 +6,6 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import ayush.ggv.instau.presentation.screens.destinations.ChatRoomDestination
-import ayush.ggv.instau.presentation.screens.destinations.TestChatScreenDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
@@ -45,7 +44,7 @@ fun FriendList(
                 viewModel.currentUserId.longValue,
             ).route)
         },
-        onGroupChatClick = { navigator.navigate(TestChatScreenDestination) },
+        onGroupChatClick = {  },
         searchQuery = viewModel.searchState.value,
         onSearchQueryChange = { query -> viewModel.onSearchTextChange(query) },
         filteredFriendList = viewModel.filteredFriendListState.value
