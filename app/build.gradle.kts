@@ -78,7 +78,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    implementation ("androidx.compose.material:material:1.6.8")
+    implementation ("androidx.compose.material:material:1.7.2")
     implementation("io.github.raamcosta.compose-destinations:core:1.8.38-beta")
     ksp("io.github.raamcosta.compose-destinations:ksp:1.8.38-beta")
     implementation("androidx.core:core-splashscreen:1.0.1")
@@ -111,12 +111,12 @@ dependencies {
     implementation("androidx.room:room-paging:2.6.1")
 
     // Paging 3.0
-    implementation("androidx.paging:paging-compose:1.0.0-alpha14")
+    implementation("androidx.paging:paging-compose:3.3.2")
 
     implementation("com.exyte:animated-navigation-bar:1.0.0")
-    implementation ("androidx.compose.runtime:runtime-livedata:1.6.8")
+    implementation ("androidx.compose.runtime:runtime-livedata:1.7.2")
     implementation("io.ktor:ktor-client-websockets:$ktorVersion")
-    implementation(platform("com.google.firebase:firebase-bom:33.1.1"))
+    implementation(platform("com.google.firebase:firebase-bom:33.3.0"))
 //    implementation("dev.chrisbanes.haze:haze:0.6.0")
 //    implementation("dev.chrisbanes.haze:haze-materials:0.6.0")
     implementation("androidx.work:work-runtime-ktx:2.9.1")
